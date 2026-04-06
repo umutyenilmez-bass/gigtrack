@@ -1,4 +1,5 @@
-# GigTrack, müzisyen davulcu Janis Mehmet Akyol tarafından düşünülmüş ve sektördeki temel bir ihtiyacı karşılamak üzere hayata geçirilmiştir. Bas gitarist ve müzisyen Umut Yenilmez, uygulamanın geliştirilmesine ve işlevselliğine katkı sağlamak amacıyla çeşitli yapısal ve kullanıcı deneyimi odaklı değişiklik önerileri sunmuştur.
+# GigTrack,
+müzisyen davulcu Janis Mehmet Akyol tarafından düşünülmüş ve sektördeki temel bir ihtiyacı karşılamak üzere hayata geçirilmiştir. Bas gitarist ve müzisyen Umut Yenilmez, uygulamanın geliştirilmesine ve işlevselliğine katkı sağlamak amacıyla çeşitli yapısal ve kullanıcı deneyimi odaklı değişiklik önerileri sunmuştur.
 # GigTrack
 
 **GigTrack**, müzisyenlerin, sahne sanatçılarının ve serbest çalışan etkinlik profesyonellerinin sahne takvimlerini ve konser ödemelerini tek bir yerden, kusursuz bir şekilde yönetmeleri için tasarlanmış çevrimdışı öncelikli, bağımsız bir (PWA) asistan uygulamasıdır. 
