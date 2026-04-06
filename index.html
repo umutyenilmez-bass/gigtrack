@@ -549,9 +549,10 @@
   <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
 </div>
 
+<div class="filter-bar" id="filterBar"></div>
+
 <!-- TAB: İşlerim -->
 <div id="tab-gigs" class="tab-content">
-  <div class="filter-bar" id="filterBar"></div>
   <div class="content" id="gigsList"></div>
 </div>
 
@@ -644,6 +645,17 @@
 
       <div class="form-row">
         <div class="form-group">
+          <label class="form-label" data-i18n="lblExpenseName">Masraf Adı (opsiyonel)</label>
+          <input type="text" class="form-input" id="fExpenseName" placeholder="örn. Taksi" data-i18n="plcExpenseName" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblExpenseAmount">Masraf Tutarı</label>
+          <input type="number" class="form-input" id="fExpenseAmount" placeholder="Tutar" data-i18n="plcExpenseAmount" autocomplete="off" step="any">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
           <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
           <select class="form-select" id="fRepeat" onchange="toggleRepeatUntil()">
             <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
@@ -675,6 +687,8 @@
       <button class="btn-submit" id="submitBtn" onclick="saveGig()" data-i18n="btnSave">Kaydet</button>
     </div>
   </div>
+</div>
+
 </div>
 
 <!-- CONFIRM DIALOG -->
@@ -726,7 +740,9 @@ const T = {
     valNoVenue: "No venue", valNoArtist: "No artist",
     filterClearTitle: "Clear Name",
     filterClearText: "Are you sure you want to remove '{val}' from your list and all related gigs? (Gigs won't be deleted, only this name will be cleared)",
-    chipFeeNone: "No fee"
+    chipFeeNone: "No fee",
+    lblExpenseName: "Expense Name (opt)", lblExpenseAmount: "Expense Amount",
+    plcExpenseName: "e.g. Taxi", plcExpenseAmount: "Amount"
   },
   tr: {
     addGigBtn: "<span style=\"font-size:16px;line-height:1\">＋</span> İş Ekle", exportData: "⬇ Dışa Aktar", importData: "⬆ İçe Aktar",
@@ -758,7 +774,9 @@ const T = {
     valNoVenue: "Mekan yok", valNoArtist: "Sanatçı yok",
     filterClearTitle: "İsmi Temizle",
     filterClearText: "'{val}' isimli {lbl} listenden ve ilgili tüm iş kayıtlarından silmek istediğine emin misin? (İşler silinmez, sadece bu isim temizlenir)",
-    chipFeeNone: "Ücret yok"
+    chipFeeNone: "Ücret yok",
+    lblExpenseName: "Masraf Adı (opsiyonel)", lblExpenseAmount: "Masraf Tutarı",
+    plcExpenseName: "örn. Taksi", plcExpenseAmount: "Tutar"
   }
 }[userLang];
 
@@ -898,8 +916,7 @@ function setFilter(type, value) {
   } else {
     filterArtist = filterVenue = null;
   }
-  renderGigs();
-  renderFilterBar();
+  render();
 }
 
 function renderFilterBar() {
@@ -960,6 +977,7 @@ function gigCard(gig) {
     </div>
     <div class="gig-fee-block">
       <div class="gig-fee">${feeDisplay}</div>
+      ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
       <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
       </button>
@@ -1007,7 +1025,10 @@ function renderGigs() {
 }
 
 function renderUnpaid() {
-  const unpaid = sorted(gigs.filter(g => !g.paid && isGigVisible(g)));
+  let unpaid = sorted(gigs.filter(g => !g.paid && isGigVisible(g)));
+  if (filterArtist) unpaid = unpaid.filter(g => g.artist === filterArtist);
+  if (filterVenue)  unpaid = unpaid.filter(g => g.venue  === filterVenue);
+  
   const badge  = document.getElementById('unpaidBadge');
   badge.textContent = unpaid.length;
   badge.classList.toggle('hidden', unpaid.length === 0);
@@ -1019,7 +1040,9 @@ function renderUnpaid() {
 }
 
 function renderPaid() {
-  const paidGigs = sorted(gigs.filter(g => g.paid && isGigVisible(g)));
+  let paidGigs = sorted(gigs.filter(g => g.paid && isGigVisible(g)));
+  if (filterArtist) paidGigs = paidGigs.filter(g => g.artist === filterArtist);
+  if (filterVenue)  paidGigs = paidGigs.filter(g => g.venue  === filterVenue);
 
   const el = document.getElementById('paidList');
   el.innerHTML = paidGigs.length
@@ -1029,43 +1052,50 @@ function renderPaid() {
 
 function renderAnalysis() {
   const currentYear = new Date().getFullYear();
-  // We sum items based on currency for accurate grouping
-  const thisYearPaid = gigs.filter(g => g.paid && g.date.startsWith(currentYear.toString()));
+  
+  let thisYearPaid = gigs.filter(g => g.paid && g.date.startsWith(currentYear.toString()));
+  if (filterArtist) thisYearPaid = thisYearPaid.filter(g => g.artist === filterArtist);
+  if (filterVenue)  thisYearPaid = thisYearPaid.filter(g => g.venue  === filterVenue);
   
   const yearlyTotals = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-  const monthlyTotals = {}; // { 1: {TRY: 0, USD: 0}, ... }
+  const monthlyTotals = {};
   for(let i=1; i<=12; i++) {
     monthlyTotals[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
   }
   
-  let hasEarnings = false;
+  let hasEarningsOrExpenses = false;
 
   thisYearPaid.forEach(g => {
-    const val = parseFee(g.fee);
-    if (val !== null) {
+    let feeVal = parseFee(g.fee);
+    let expVal = parseFloat(g.expenseAmount);
+    if (isNaN(expVal)) expVal = 0;
+    
+    if (feeVal !== null || expVal > 0) {
+      if (feeVal === null) feeVal = 0;
+      const val = feeVal - expVal;
       const c = g.currency || 'TRY';
-      yearlyTotals[c] = (yearlyTotals[c] || 0) + val;
-      
+      yearlyTotals[c] += val;
       const month = parseInt(g.date.split('-')[1], 10);
-      monthlyTotals[month][c] = (monthlyTotals[month][c] || 0) + val;
-      hasEarnings = true;
+      monthlyTotals[month][c] += val;
+      hasEarningsOrExpenses = true;
     }
   });
 
-  // build stats card
   let statsHtml = '';
   Object.keys(yearlyTotals).forEach(c => {
-    if (yearlyTotals[c] > 0) {
+    // Only show if there is non-zero total or if they specifically tracked that currency
+    const gigCount = thisYearPaid.filter(g => g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
+    if (yearlyTotals[c] !== 0 || gigCount > 0) {
       statsHtml += `
-      <div class="stat-card accent" ${Object.keys(yearlyTotals).filter(k => yearlyTotals[k] > 0).length === 1 ? 'style="grid-column: span 2;"' : ''}>
-        <div class="stat-label">${currentYear} Toplam (${c})</div>
+      <div class="stat-card accent" ${Object.keys(yearlyTotals).filter(k => yearlyTotals[k] !== 0 || thisYearPaid.some(g => g.currency===k)).length === 1 ? 'style="grid-column: span 2;"' : ''}>
+        <div class="stat-label">${currentYear} Toplam Net (${c})</div>
         <div class="stat-value">${SYM[c] || ''}${yearlyTotals[c].toLocaleString('tr')}</div>
-        <div class="stat-sub">${thisYearPaid.filter(g => g.currency === c && parseFee(g.fee) !== null).length} iş</div>
+        <div class="stat-sub">${gigCount} iş</div>
       </div>`;
     }
   });
 
-  if (!hasEarnings) {
+  if (!hasEarningsOrExpenses) {
      statsHtml = `
       <div class="stat-card accent" style="grid-column: span 2;">
         <div class="stat-label">${currentYear} Yılı Toplam Kazancı</div>
@@ -1077,8 +1107,8 @@ function renderAnalysis() {
   document.getElementById('statsGrid').innerHTML = statsHtml;
 
   const el = document.getElementById('analysisList');
-  if (!hasEarnings) {
-    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Kayıt Bulunamadı</div><div class="empty-text">${currentYear} yılına ait ödenmiş ve ücreti girilmiş işin yok.</div></div>`;
+  if (!hasEarningsOrExpenses) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Kayıt Bulunamadı</div><div class="empty-text">${currentYear} yılına ait ödenmiş işin veya masrafın yok.</div></div>`;
     return;
   }
 
@@ -1086,10 +1116,11 @@ function renderAnalysis() {
   for (let i=12; i>=1; i--) {
     let monthHtml = '';
     Object.keys(monthlyTotals[i]).forEach(c => {
-      if (monthlyTotals[i][c] > 0) {
+      if (monthlyTotals[i][c] !== 0) {
+        let isNeg = monthlyTotals[i][c] < 0;
         monthHtml += `
-          <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: var(--accent); margin-bottom: 2px;">
-             ${SYM[c] || ''}${monthlyTotals[i][c].toLocaleString('tr')}
+          <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: ${isNeg ? 'var(--red)' : 'var(--accent)'}; margin-bottom: 2px;">
+             ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyTotals[i][c]).toLocaleString('tr')}
           </div>
         `;
       }
@@ -1144,6 +1175,8 @@ function openAddModal() {
   document.getElementById('fTime').value    = '';
   document.getElementById('fFee').value     = '';
   document.getElementById('fCurrency').value = 'TRY';
+  document.getElementById('fExpenseName').value = '';
+  document.getElementById('fExpenseAmount').value = '';
   document.getElementById('fRepeat').value   = 'none';
   document.getElementById('fRepeatUntil').value = '';
   document.getElementById('fNotes').value   = '';
@@ -1206,6 +1239,8 @@ function editGig(id) {
   document.getElementById('fTime').value    = gig.time   || '';
   document.getElementById('fFee').value     = gig.fee    || '';
   document.getElementById('fCurrency').value = gig.currency || 'TRY';
+  document.getElementById('fExpenseName').value = gig.expenseName || '';
+  document.getElementById('fExpenseAmount').value = gig.expenseAmount || '';
   document.getElementById('fRepeat').value   = gig.repeat || 'none';
   document.getElementById('fRepeatUntil').value = gig.repeatUntil || '';
   document.getElementById('fNotes').value   = gig.notes  || '';
@@ -1240,6 +1275,8 @@ function saveGig() {
     time:        document.getElementById('fTime').value,
     fee:         document.getElementById('fFee').value.trim(),
     currency:    document.getElementById('fCurrency').value,
+    expenseName: document.getElementById('fExpenseName').value.trim(),
+    expenseAmount: document.getElementById('fExpenseAmount').value,
     repeat:      document.getElementById('fRepeat').value,
     repeatUntil: document.getElementById('fRepeatUntil').value,
     notes:       document.getElementById('fNotes').value.trim(),
