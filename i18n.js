@@ -36,7 +36,13 @@ const T = {
     valNoVenue: "No venue", valNoArtist: "No artist",
     filterClearTitle: "Clear Name",
     filterClearText: "Are you sure you want to remove '{val}' from your list and all related gigs? (Gigs won't be deleted, only this name will be cleared)",
-    chipFeeNone: "No fee"
+    chipFeeNone: "No fee",
+    lblExpenseName: "Expense Name (opt)", lblExpenseAmount: "Expense Amount",
+    plcExpenseName: "e.g. Taxi", plcExpenseAmount: "Amount",
+    lblAutoFuel: "Auto Fuel Calculation", lblDistance: "Distance (KM)", plcDistance: "e.g. 50",
+    lblFuelRate: "Fuel Price/L", plcFuelRate: "e.g. 43.5",
+    lblFuelCons: "Consumption (L/100km) - Default: 7", plcFuelCons: "7",
+    calcTitle: "Calculator"
   },
   tr: {
     addGigBtn: "<span style=\\"font-size:16px;line-height:1\\">＋</span> İş Ekle", exportData: "⬇ Dışa Aktar", importData: "⬆ İçe Aktar",
@@ -68,7 +74,13 @@ const T = {
     valNoVenue: "Mekan yok", valNoArtist: "Sanatçı yok",
     filterClearTitle: "İsmi Temizle",
     filterClearText: "'{val}' isimli {lbl} listenden ve ilgili tüm iş kayıtlarından silmek istediğine emin misin? (İşler silinmez, sadece bu isim temizlenir)",
-    chipFeeNone: "Ücret yok"
+    chipFeeNone: "Ücret yok",
+    lblExpenseName: "Masraf Adı (opsiyonel)", lblExpenseAmount: "Masraf Tutarı",
+    plcExpenseName: "örn. Taksi", plcExpenseAmount: "Tutar",
+    lblAutoFuel: "Otomatik Yakıt Hesaplama", lblDistance: "Gidilen Mesafe (KM)", plcDistance: "Örn. 50",
+    lblFuelRate: "Litre Fiyatı (TL)", plcFuelRate: "Örn. 43.5",
+    lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
+    calcTitle: "Hesap Makinesi"
   }
 }[userLang];
 

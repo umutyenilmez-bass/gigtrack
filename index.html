@@ -536,6 +536,9 @@
     <span class="app-title">GigTrack</span>
   </div>
   <div class="header-actions">
+    <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center;" onclick="openCalcModal()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="10.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
+    </button>
     <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">
       
     </button>
@@ -601,7 +604,12 @@
     <div class="modal-handle"></div>
     <div class="modal-header">
       <h2 class="modal-title" id="modalTitle" data-i18n="modalTitle">Yeni İş</h2>
-      <button class="btn-close" onclick="closeModal()">✕</button>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn-close" style="width: auto; padding: 0 10px; border-radius: 15px; color: var(--accent); border-color: rgba(244, 196, 48, 0.3);" onclick="openCalcModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="10.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
+        </button>
+        <button class="btn-close" onclick="closeModal()">✕</button>
+      </div>
     </div>
     <div class="form">
       <div class="quick-fill-list hidden" id="quickFillList"></div>
@@ -654,6 +662,26 @@
         </div>
       </div>
 
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 13px;">
+        <div style="font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;" data-i18n="lblAutoFuel">
+          Otomatik Yakıt Hesaplama
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom: 6px;">
+            <label class="form-label" data-i18n="lblDistance">Gidilen Mesafe (KM)</label>
+            <input type="number" class="form-input" id="fDistance" placeholder="Örn. 50" data-i18n="plcDistance" oninput="calculateFuel()">
+          </div>
+          <div class="form-group" style="margin-bottom: 6px;">
+            <label class="form-label" data-i18n="lblFuelRate">Litre Fiyatı (TL)</label>
+            <input type="number" class="form-input" id="fFuelRate" placeholder="Örn. 43.5" data-i18n="plcFuelRate" step="any" oninput="calculateFuel()">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label" data-i18n="lblFuelCons">Tüketim (L/100km) - Varsayılan: 7</label>
+          <input type="number" class="form-input" id="fFuelCons" value="7" placeholder="7" data-i18n="plcFuelCons" step="any" oninput="calculateFuel()">
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
@@ -689,6 +717,45 @@
   </div>
 </div>
 
+</div>
+
+<!-- CALC MODAL -->
+<div class="modal-overlay" id="calcModalOverlay" onclick="handleCalcOverlayClick(event)" style="z-index: 1000;">
+  <div class="modal" id="calcModalBox" style="max-width: 380px; margin: auto; bottom: auto; top: 10vh; transform: translateY(-20px) scale(0.95); opacity: 0; transition: all 0.25s; border-radius: 22px; border-bottom: 1px solid var(--border);">
+    <div class="modal-handle" style="display:none;"></div>
+    <div class="modal-header">
+      <h2 class="modal-title" data-i18n="calcTitle">Hesap Makinesi</h2>
+      <button class="btn-close" onclick="closeCalcModal()">✕</button>
+    </div>
+    <div class="form" style="padding: 15px 20px 20px;">
+      <div style="background: var(--bg); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 15px; text-align: right; font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; color: var(--text); min-height: 64px; overflow-x: auto; white-space: nowrap;" id="calcDisplay">0</div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+        <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('C')">C</button>
+        <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('()')">( )</button>
+        <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('%')">%</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('/')">÷</button>
+        
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('7')">7</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('8')">8</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('9')">9</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('*')">×</button>
+        
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('4')">4</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('5')">5</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('6')">6</button>
+        <button class="btn-data" style="font-size: 24px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('-')">-</button>
+        
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('1')">1</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('2')">2</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('3')">3</button>
+        <button class="btn-data" style="font-size: 22px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('+')">+</button>
+        
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600; grid-column: span 2;" onclick="calcInput('0')">0</button>
+        <button class="btn-data" style="font-size: 22px; padding: 14px 0; font-weight:700;" onclick="calcInput('.')">.</button>
+        <button class="btn-submit" style="font-size: 22px; padding: 14px 0; margin-top: 0;" onclick="calcInput('=')">=</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- CONFIRM DIALOG -->
@@ -742,7 +809,11 @@ const T = {
     filterClearText: "Are you sure you want to remove '{val}' from your list and all related gigs? (Gigs won't be deleted, only this name will be cleared)",
     chipFeeNone: "No fee",
     lblExpenseName: "Expense Name (opt)", lblExpenseAmount: "Expense Amount",
-    plcExpenseName: "e.g. Taxi", plcExpenseAmount: "Amount"
+    plcExpenseName: "e.g. Taxi", plcExpenseAmount: "Amount",
+    lblAutoFuel: "Auto Fuel Calculation", lblDistance: "Distance (KM)", plcDistance: "e.g. 50",
+    lblFuelRate: "Fuel Price/L", plcFuelRate: "e.g. 43.5",
+    lblFuelCons: "Consumption (L/100km) - Default: 7", plcFuelCons: "7",
+    calcTitle: "Calculator"
   },
   tr: {
     addGigBtn: "<span style=\"font-size:16px;line-height:1\">＋</span> İş Ekle", exportData: "⬇ Dışa Aktar", importData: "⬆ İçe Aktar",
@@ -776,7 +847,11 @@ const T = {
     filterClearText: "'{val}' isimli {lbl} listenden ve ilgili tüm iş kayıtlarından silmek istediğine emin misin? (İşler silinmez, sadece bu isim temizlenir)",
     chipFeeNone: "Ücret yok",
     lblExpenseName: "Masraf Adı (opsiyonel)", lblExpenseAmount: "Masraf Tutarı",
-    plcExpenseName: "örn. Taksi", plcExpenseAmount: "Tutar"
+    plcExpenseName: "örn. Taksi", plcExpenseAmount: "Tutar",
+    lblAutoFuel: "Otomatik Yakıt Hesaplama", lblDistance: "Gidilen Mesafe (KM)", plcDistance: "Örn. 50",
+    lblFuelRate: "Litre Fiyatı (TL)", plcFuelRate: "Örn. 43.5",
+    lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
+    calcTitle: "Hesap Makinesi"
   }
 }[userLang];
 
@@ -1057,10 +1132,17 @@ function renderAnalysis() {
   if (filterArtist) thisYearPaid = thisYearPaid.filter(g => g.artist === filterArtist);
   if (filterVenue)  thisYearPaid = thisYearPaid.filter(g => g.venue  === filterVenue);
   
-  const yearlyTotals = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-  const monthlyTotals = {};
+  const yearlyGross = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+  const yearlyExp = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+  const yearlyNet = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+  
+  const monthlyGross = {};
+  const monthlyExp = {};
+  const monthlyNet = {};
   for(let i=1; i<=12; i++) {
-    monthlyTotals[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+    monthlyGross[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+    monthlyExp[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+    monthlyNet[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
   }
   
   let hasEarningsOrExpenses = false;
@@ -1072,25 +1154,36 @@ function renderAnalysis() {
     
     if (feeVal !== null || expVal > 0) {
       if (feeVal === null) feeVal = 0;
-      const val = feeVal - expVal;
+      const netVal = feeVal - expVal;
       const c = g.currency || 'TRY';
-      yearlyTotals[c] += val;
+      yearlyGross[c] += feeVal;
+      yearlyExp[c] += expVal;
+      yearlyNet[c] += netVal;
       const month = parseInt(g.date.split('-')[1], 10);
-      monthlyTotals[month][c] += val;
+      monthlyGross[month][c] += feeVal;
+      monthlyExp[month][c] += expVal;
+      monthlyNet[month][c] += netVal;
       hasEarningsOrExpenses = true;
     }
   });
 
   let statsHtml = '';
-  Object.keys(yearlyTotals).forEach(c => {
-    // Only show if there is non-zero total or if they specifically tracked that currency
+  Object.keys(yearlyNet).forEach(c => {
     const gigCount = thisYearPaid.filter(g => g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
-    if (yearlyTotals[c] !== 0 || gigCount > 0) {
+    if (yearlyGross[c] !== 0 || yearlyExp[c] !== 0 || gigCount > 0) {
       statsHtml += `
-      <div class="stat-card accent" ${Object.keys(yearlyTotals).filter(k => yearlyTotals[k] !== 0 || thisYearPaid.some(g => g.currency===k)).length === 1 ? 'style="grid-column: span 2;"' : ''}>
-        <div class="stat-label">${currentYear} Toplam Net (${c})</div>
-        <div class="stat-value">${SYM[c] || ''}${yearlyTotals[c].toLocaleString('tr')}</div>
-        <div class="stat-sub">${gigCount} iş</div>
+      <div class="stat-card accent" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+           <div>
+             <div class="stat-label" style="margin-bottom: 2px;">${currentYear} Yılı Net Kazanç (${c})</div>
+             <div class="stat-value">${SYM[c] || ''}${yearlyNet[c].toLocaleString('tr')}</div>
+           </div>
+           <div class="stat-sub" style="margin: 0;">${gigCount} iş</div>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 13px;">
+          <div style="color: var(--text-2);">+Brüt: ${SYM[c] || ''}${yearlyGross[c].toLocaleString('tr')}</div>
+          <div style="color: var(--red);">-Masraf: ${SYM[c] || ''}${yearlyExp[c].toLocaleString('tr')}</div>
+        </div>
       </div>`;
     }
   });
@@ -1115,12 +1208,15 @@ function renderAnalysis() {
   let listHtml = '<div class="section-label">${T.sumMonthly}</div>';
   for (let i=12; i>=1; i--) {
     let monthHtml = '';
-    Object.keys(monthlyTotals[i]).forEach(c => {
-      if (monthlyTotals[i][c] !== 0) {
-        let isNeg = monthlyTotals[i][c] < 0;
+    Object.keys(monthlyNet[i]).forEach(c => {
+      if (monthlyGross[i][c] !== 0 || monthlyExp[i][c] !== 0) {
+        let isNeg = monthlyNet[i][c] < 0;
         monthHtml += `
-          <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: ${isNeg ? 'var(--red)' : 'var(--accent)'}; margin-bottom: 2px;">
-             ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyTotals[i][c]).toLocaleString('tr')}
+          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 8px;">
+            <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: ${isNeg ? 'var(--red)' : 'var(--accent)'};">
+               ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}
+            </div>
+            ${monthlyExp[i][c] > 0 ? `<div style="font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); margin-top:2px;">Brüt: ${SYM[c]||''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:var(--red)">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>` : ''}
           </div>
         `;
       }
@@ -1177,6 +1273,8 @@ function openAddModal() {
   document.getElementById('fCurrency').value = 'TRY';
   document.getElementById('fExpenseName').value = '';
   document.getElementById('fExpenseAmount').value = '';
+  document.getElementById('fDistance').value = '';
+  document.getElementById('fFuelRate').value = '';
   document.getElementById('fRepeat').value   = 'none';
   document.getElementById('fRepeatUntil').value = '';
   document.getElementById('fNotes').value   = '';
@@ -1241,6 +1339,8 @@ function editGig(id) {
   document.getElementById('fCurrency').value = gig.currency || 'TRY';
   document.getElementById('fExpenseName').value = gig.expenseName || '';
   document.getElementById('fExpenseAmount').value = gig.expenseAmount || '';
+  document.getElementById('fDistance').value = '';
+  document.getElementById('fFuelRate').value = '';
   document.getElementById('fRepeat').value   = gig.repeat || 'none';
   document.getElementById('fRepeatUntil').value = gig.repeatUntil || '';
   document.getElementById('fNotes').value   = gig.notes  || '';
@@ -1261,6 +1361,22 @@ function updatePaidUI() { document.getElementById('paidToggle').classList.toggle
 function toggleRepeatUntil() {
   const r = document.getElementById('fRepeat').value;
   document.getElementById('repeatUntilGroup').style.display = r === 'none' ? 'none' : 'block';
+}
+
+function calculateFuel() {
+  const dist = parseFloat(document.getElementById('fDistance').value);
+  const rate = parseFloat(document.getElementById('fFuelRate').value);
+  let cons = parseFloat(document.getElementById('fFuelCons').value);
+  if(isNaN(cons) || cons <= 0) cons = 7;
+  
+  if (!isNaN(dist) && !isNaN(rate)) {
+    const total = (dist / 100) * cons * rate;
+    document.getElementById('fExpenseAmount').value = total.toFixed(2);
+    const expNameEl = document.getElementById('fExpenseName');
+    if (!expNameEl.value || expNameEl.value.startsWith('Yakıt (') || expNameEl.value.startsWith('Fuel (')) {
+      expNameEl.value = (userLang === 'tr' ? 'Yakıt' : 'Fuel') + ` (${dist}km)`;
+    }
+  }
 }
 
 // ===== SAVE =====
@@ -1404,6 +1520,49 @@ function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ===== CALCULATOR =====
+let calcExp = '';
+function openCalcModal() {
+  calcExp = '';
+  document.getElementById('calcDisplay').innerText = '0';
+  document.getElementById('calcModalOverlay').classList.add('open');
+  setTimeout(() => { 
+    document.getElementById('calcModalBox').style.opacity = '1';
+    document.getElementById('calcModalBox').style.transform = 'translateY(0) scale(1)';
+  }, 10);
+}
+function closeCalcModal() {
+  document.getElementById('calcModalBox').style.opacity = '0';
+  document.getElementById('calcModalBox').style.transform = 'translateY(-20px) scale(0.95)';
+  setTimeout(() => { document.getElementById('calcModalOverlay').classList.remove('open'); }, 250);
+}
+function handleCalcOverlayClick(e) {
+  if (e.target === document.getElementById('calcModalOverlay')) closeCalcModal();
+}
+function calcInput(k) {
+  if (k === 'C') { calcExp = ''; }
+  else if (k === '=') {
+    try { 
+      let safeExp = calcExp.replace(/×/g, '*').replace(/÷/g, '/');
+      calcExp = eval(safeExp).toString(); 
+    } catch { calcExp = 'Error'; }
+  }
+  else if (k === '()') {
+     let open = (calcExp.match(/\(/g) || []).length;
+     let closed = (calcExp.match(/\)/g) || []).length;
+     if (open > closed && !calcExp.endsWith('(')) calcExp += ')';
+     else calcExp += '(';
+  }
+  else if (k === '*' || k === '/') {
+     calcExp += k === '*' ? '×' : '÷';
+  }
+  else {
+    if (calcExp === '0' || calcExp === 'Error') calcExp = '';
+    calcExp += k;
+  }
+  document.getElementById('calcDisplay').innerText = calcExp || '0';
 }
 
 // ===== INIT =====
