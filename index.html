@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#080808">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="logo.png">
+  <title>GigTrack</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      color-scheme: dark;
+      --bg: #080808;
+      --surface: #111111;
+      --surface-2: #1a1a1a;
+      --border: #242424;
+      --accent: #F4C430;
+      --accent-dim: rgba(244, 196, 48, 0.11);
+      --text: #f0ede8;
+      --text-2: #888;
+      --text-3: #444;
+      --green: #4ade80;
+      --green-dim: rgba(74, 222, 128, 0.11);
+      --red: #f87171;
+      --red-dim: rgba(248, 113, 113, 0.11);
+      --radius: 14px;
+      --radius-sm: 9px;
+      --nav-height: 72px;
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* HEADER */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,8,8,0.94);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 10px; }
+
+    .logo-mark {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden;
+    }
+    .logo-mark img {
+      width: 100%; height: 100%; object-fit: cover;
+      transform: scale(1.15);
+    }
+
+    .app-title { font-size: 19px; font-weight: 800; letter-spacing: -0.5px; }
+
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+
+    .btn-add {
+      display: flex; align-items: center; gap: 6px;
+      padding: 9px 16px;
+      background: var(--accent); border: none; border-radius: var(--radius-sm);
+      color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-add:active { transform: scale(0.94); opacity: 0.85; }
+    .btn-add:hover { background: #f7d060; }
+
+    /* DATA ACTIONS */
+    .data-actions {
+      display: flex; gap: 8px; padding: 10px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .btn-data {
+      flex: 1; padding: 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-2);
+      font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
+      transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-data:hover { color: var(--text); border-color: #3a3a3a; }
+    .btn-data:active { transform: scale(0.96); }
+
+    /* FILTER BAR */
+    .filter-bar {
+      padding: 10px 18px; display: flex; align-items: center; gap: 7px;
+      overflow-x: auto; scrollbar-width: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      flex-shrink: 0; padding: 5px 12px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-2);
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .filter-chip.active {
+      background: var(--accent-dim); border-color: var(--accent); color: var(--accent);
+    }
+    .filter-chip:active { transform: scale(0.93); }
+
+    .filter-chip-delete {
+      margin-left: 5px; color: var(--text-3); font-weight: 800; font-size: 13px;
+      padding: 0 4px; border-radius: 4px; display: inline-block;
+    }
+    .filter-chip-delete:hover { color: var(--red); background: rgba(248,113,113,0.15); }
+
+    /* CONTENT */
+    .content {
+      padding: 14px 18px;
+      padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 14px);
+    }
+
+    /* SECTION LABEL */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 9px; margin-top: 22px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label:first-child { margin-top: 0; }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* GIG CARD */
+    .gig-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 9px; overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .gig-card:hover { border-color: #2e2e2e; }
+    .gig-card.paid   { border-left: 3px solid var(--green); }
+    .gig-card.unpaid { border-left: 3px solid var(--red); }
+
+    .gig-main {
+      padding: 13px 14px;
+      display: grid; grid-template-columns: 46px 1fr auto;
+      gap: 11px; align-items: start;
+    }
+
+    .gig-date-block { text-align: center; }
+
+    .gig-date-day {
+      font-family: 'DM Mono', monospace;
+      font-size: 28px; font-weight: 500; line-height: 1; color: var(--text);
+    }
+    .gig-date-month {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; color: var(--text-2);
+      text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+    }
+    .gig-date-day-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; color: var(--text-3); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
+    }
+
+    .gig-info { min-width: 0; display: flex; flex-direction: column; }
+
+    .gig-venue {
+      font-size: 16px; font-weight: 800; color: var(--accent); /* Vurgulu mekan adı */
+      cursor: pointer; transition: color 0.1s;
+      display: flex; align-items: center; gap: 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      order: 1;
+    }
+    .gig-venue:hover { color: #f7d060; }
+    
+    .gig-artist {
+      font-size: 13px; font-weight: 500; color: var(--text-2); /* Daha arka planda sanatçı adı */
+      cursor: pointer; transition: color 0.1s;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+      order: 2;
+    }
+    .gig-artist:hover { color: var(--text); }
+
+    .gig-meta {
+      display: flex; align-items: center; gap: 5px;
+      margin-top: 6px; flex-wrap: wrap;
+      order: 3;
+    }
+
+    .gig-time {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--text-3);
+      display: flex; align-items: center; gap: 3px;
+    }
+
+    .gig-repeat-badge {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      padding: 2px 6px; border-radius: 4px;
+      background: var(--accent-dim); color: var(--accent);
+      border: 1px solid rgba(244, 196, 48, 0.2);
+    }
+
+    .gig-fee-block { text-align: right; flex-shrink: 0; min-width: 0; }
+
+    .gig-fee {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px; font-weight: 500; color: var(--text);
+      word-break: break-all; max-width: 90px;
+    }
+
+    /* Hızlı Ödeme Durumu Değiştirme Butonu */
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 800;
+      padding: 5px 10px; border-radius: 20px;
+      cursor: pointer; transition: all 0.15s;
+      letter-spacing: 0.3px; margin-top: 8px; border: none;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      font-family: 'Syne', sans-serif;
+    }
+    .status-badge.paid   { background: var(--green); color: #000;  }
+    .status-badge.unpaid { background: var(--surface-2); color: var(--text-2); border: 1px solid var(--border); }
+    .status-badge:active { transform: scale(0.9); }
+    
+    .status-badge.paid:hover { background: #5eead4; }
+    .status-badge.unpaid:hover { background: var(--surface); color: var(--text); border-color: var(--text-3); }
+
+    .gig-notes {
+      padding: 0 14px 11px; font-size: 12px;
+      color: var(--text-2); font-style: italic; line-height: 1.55;
+      border-top: 1px solid var(--border); padding-top: 9px; margin-top: 0;
+    }
+
+    /* GIG ACTIONS */
+    .gig-actions {
+      display: flex; border-top: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .gig-action-btn {
+      flex: 1; padding: 9px;
+      display: flex; align-items: center; justify-content: center; gap: 4px;
+      font-size: 11px; font-weight: 600; color: var(--text-2);
+      cursor: pointer; transition: all 0.15s;
+      border: none; background: none;
+      font-family: 'Syne', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gig-action-btn:not(:last-child) { border-right: 1px solid var(--border); }
+    .gig-action-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .gig-action-btn:active { transform: scale(0.93); }
+    .gig-action-btn.danger:hover { color: var(--red); }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+      background: rgba(8,8,8,0.96);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      padding-bottom: var(--safe-bottom);
+      height: calc(var(--nav-height) + var(--safe-bottom));
+    }
+
+    .nav-item {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 4px;
+      padding: 12px 0;
+      cursor: pointer; color: var(--text-3);
+      transition: color 0.15s; -webkit-tap-highlight-color: transparent;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.3px;
+      text-transform: uppercase; position: relative;
+    }
+    .nav-item.active { color: var(--accent); }
+    .nav-item:active { transform: scale(0.9); }
+    .nav-icon { font-size: 21px; line-height: 1; }
+
+    .nav-badge {
+      position: absolute; top: 7px; right: calc(50% - 18px);
+      background: var(--red); color: white;
+      font-size: 9px; font-weight: 800;
+      min-width: 16px; height: 16px;
+      border-radius: 8px; padding: 0 3px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      display: flex; align-items: flex-end;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      width: 100%; max-height: 93dvh;
+      background: var(--surface);
+      border-radius: 22px 22px 0 0;
+      border: 1px solid var(--border); border-bottom: none;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    .modal-handle {
+      width: 36px; height: 4px;
+      background: var(--border); border-radius: 2px;
+      margin: 12px auto 0;
+    }
+
+    .modal-header {
+      padding: 16px 20px 0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .modal-title { font-size: 20px; font-weight: 800; }
+
+    .btn-close {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface-2);
+      color: var(--text-2); display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; transition: all 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-close:hover { color: var(--text); }
+    .btn-close:active { transform: scale(0.9); }
+
+    /* FORM */
+    .form { padding: 18px 20px 20px; }
+
+    .quick-fill-list {
+      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
+      margin-bottom: 16px; padding-bottom: 5px;
+    }
+    .quick-fill-list::-webkit-scrollbar { display: none; }
+    .quick-fill-chip {
+      flex-shrink: 0; padding: 7px 12px; border-radius: var(--radius-sm);
+      background: var(--surface-2); border: 1px solid var(--border);
+      cursor: pointer; display: flex; flex-direction: column; gap: 3px;
+      -webkit-tap-highlight-color: transparent; transition: all 0.15s;
+    }
+    .quick-fill-chip:active { transform: scale(0.96); }
+    .quick-fill-chip:hover { border-color: var(--accent); }
+    .quick-fill-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .quick-fill-sub { font-size: 10px; font-weight: 500; color: var(--text-3); font-family: 'DM Mono', monospace; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .form-group { margin-bottom: 13px; }
+
+    .form-label {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text-2); margin-bottom: 6px; display: block;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 11px 13px;
+      color: var(--text); font-family: 'Syne', sans-serif;
+      font-size: 14px; font-weight: 500;
+      outline: none; transition: border-color 0.15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-input::placeholder { color: var(--text-3); font-weight: 400; }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--accent); }
+
+    .form-select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+      padding-right: 34px;
+    }
+    .form-select option { background: #1a1a1a; }
+
+    .form-textarea { resize: vertical; min-height: 76px; line-height: 1.5; }
+
+    .form-hint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+    .fee-row { display: flex; gap: 8px; }
+    .fee-input { flex: 1; }
+    .fee-currency { width: 88px; flex-shrink: 0; }
+
+    /* Paid toggle */
+    .paid-toggle {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 13px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .paid-toggle-label { font-size: 14px; font-weight: 600; }
+
+    .toggle-switch {
+      width: 40px; height: 22px; border-radius: 11px;
+      background: var(--border); position: relative; transition: background 0.2s;
+    }
+    .toggle-switch.on { background: var(--green); }
+    .toggle-knob {
+      position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: white; transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle-switch.on .toggle-knob { transform: translateX(18px); }
+
+    /* Submit btn */
+    .btn-submit {
+      width: 100%; padding: 14px;
+      background: var(--accent); color: #000; border: none;
+      border-radius: var(--radius-sm);
+      font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800;
+      cursor: pointer; transition: all 0.15s; margin-top: 6px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-submit:active { transform: scale(0.97); opacity: 0.88; }
+    .btn-submit:hover { background: #f7d060; }
+
+    /* STATS */
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 9px; margin-bottom: 18px;
+    }
+
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 15px;
+    }
+    .stat-card.accent {
+      background: var(--accent-dim); border-color: rgba(244, 196, 48, 0.28);
+    }
+
+    .stat-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.6px;
+      text-transform: uppercase; color: var(--text-2); margin-bottom: 7px;
+    }
+    .stat-value {
+      font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: var(--text);
+    }
+    .stat-card.accent .stat-value { color: var(--accent); }
+    .stat-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center; padding: 60px 20px; color: var(--text-3);
+    }
+    .empty-icon { font-size: 42px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 700; color: var(--text-2); margin-bottom: 6px; }
+    .empty-text { font-size: 13px; line-height: 1.65; }
+
+    /* CONFIRM */
+    .confirm-overlay {
+      position: fixed; inset: 0; z-index: 700;
+      background: rgba(0,0,0,0.82);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .confirm-overlay.open { opacity: 1; pointer-events: all; }
+
+    .confirm-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+      max-width: 320px; width: 100%;
+      transform: scale(0.88); transition: transform 0.22s;
+    }
+    .confirm-overlay.open .confirm-box { transform: scale(1); }
+
+    .confirm-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+    .confirm-text { font-size: 13px; color: var(--text-2); line-height: 1.55; margin-bottom: 20px; }
+    .confirm-actions { display: flex; gap: 8px; }
+
+    .btn-confirm {
+      flex: 1; padding: 11px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; -webkit-tap-highlight-color: transparent;
+    }
+    .btn-confirm.cancel  { background: var(--surface-2); color: var(--text-2); }
+    .btn-confirm.danger  { background: var(--red-dim); color: var(--red); border-color: rgba(248,113,113,0.3); }
+    .btn-confirm:active  { transform: scale(0.95); }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: calc(var(--nav-height) + var(--safe-bottom) + 14px);
+      left: 50%; transform: translateX(-50%) translateY(16px);
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 9px 18px;
+      font-size: 13px; font-weight: 700; color: var(--text);
+      z-index: 600; opacity: 0; transition: all 0.25s;
+      white-space: nowrap; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .hidden { display: none !important; }
+
+    /* Subtle past gig dimming */
+    .gig-card.past .gig-date-day,
+    .gig-card.past .gig-artist { opacity: 0.55; }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left" onclick="goHome()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
+    <div class="logo-mark"><img src="logo.png" alt="Logo"></div>
+    <span class="app-title">GigTrack</span>
+  </div>
+  <div class="header-actions">
+    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">
+      
+    </button>
+  </div>
+</header>
+
+<!-- DATA ACTIONS -->
+<div class="data-actions">
+  <button class="btn-data" onclick="exportData()" data-i18n="exportData">⬇ Dışa Aktar</button>
+  <button class="btn-data" onclick="document.getElementById('importFile').click()">⬆ İçe Aktar</button>
+  <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+</div>
+
+<!-- TAB: İşlerim -->
+<div id="tab-gigs" class="tab-content">
+  <div class="filter-bar" id="filterBar"></div>
+  <div class="content" id="gigsList"></div>
+</div>
+
+<!-- TAB: Ödenmemiş -->
+<div id="tab-unpaid" class="tab-content hidden">
+  <div class="content" id="unpaidList"></div>
+</div>
+
+<!-- TAB: Ödenmiş -->
+<div id="tab-paid" class="tab-content hidden">
+  <div class="content" id="paidList"></div>
+</div>
+
+<!-- TAB: Analiz -->
+<div id="tab-analysis" class="tab-content hidden">
+  <div class="content">
+    <div class="stats-grid" id="statsGrid"></div>
+    <div id="analysisList"></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')">
+    <span class="nav-icon">📋</span>
+    <span data-i18n="tabGigs">İşlerim</span>
+  </div>
+  <div class="nav-item" id="nav-unpaid" onclick="switchTab('unpaid')">
+    <span class="nav-icon">⏳</span>
+    <span data-i18n="tabUnpaid">Ödenmemiş</span>
+    <span class="nav-badge hidden" id="unpaidBadge"></span>
+  </div>
+  <div class="nav-item" id="nav-paid" onclick="switchTab('paid')">
+    <span class="nav-icon">✅</span>
+    <span data-i18n="tabPaid">Ödenmiş</span>
+  </div>
+  <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')">
+    <span class="nav-icon">📊</span>
+    <span data-i18n="tabAnalysis">Analiz</span>
+  </div>
+</nav>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle" data-i18n="modalTitle">Yeni İş</h2>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="form">
+      <div class="quick-fill-list hidden" id="quickFillList"></div>
+      <input type="hidden" id="editingId">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblVenue">Mekan</label>
+          <input type="text" class="form-input" id="fVenue" placeholder="Mekan Adı" data-i18n="plcVenue" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblArtist">Sanatçı</label>
+          <input type="text" class="form-input" id="fArtist" placeholder="Sahne adı" data-i18n="plcArtist" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblDate">Tarih</label>
+          <input type="date" class="form-input" id="fDate" onclick="this.showPicker()">
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblTime">Saat (opsiyonel)</label>
+          <input type="time" class="form-input" id="fTime" onclick="this.showPicker()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" data-i18n="lblFee">Ücret</label>
+        <div class="fee-row">
+          <input type="text" class="form-input fee-input" id="fFee" placeholder="1500 · ? · TBD · ~2000" data-i18n="plcFee" autocomplete="off">
+          <select class="form-select fee-currency" id="fCurrency">
+            <option value="TRY">₺ TRY</option>
+            <option value="EUR">€ EUR</option>
+            <option value="USD">$ USD</option>
+            <option value="GBP">£ GBP</option>
+          </select>
+        </div>
+        <div class="form-hint"><span data-i18n="hintFee">Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür.</span></div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
+          <select class="form-select" id="fRepeat" onchange="toggleRepeatUntil()">
+            <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
+            <option value="weekly" data-i18n="optRepeatWeekly">Her hafta</option>
+            <option value="biweekly" data-i18n="optRepeatBiweekly">2 haftada bir</option>
+            <option value="monthly" data-i18n="optRepeatMonthly">Her ay</option>
+          </select>
+        </div>
+        <div class="form-group" id="repeatUntilGroup" style="display:none">
+          <label class="form-label" data-i18n="lblUntil">Son tarih</label>
+          <input type="date" class="form-input" id="fRepeatUntil" onclick="this.showPicker()">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" data-i18n="lblNotes">Notlar (opsiyonel)</label>
+        <textarea class="form-textarea form-input" id="fNotes" placeholder="Eklemek istediğin notlar..." data-i18n="plcNotes"></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="paid-toggle" onclick="togglePaid()">
+          <span class="paid-toggle-label" data-i18n="lblPaid">Ödendi mi?</span>
+          <div class="toggle-switch" id="paidToggle">
+            <div class="toggle-knob"></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="submitBtn" onclick="saveGig()" data-i18n="btnSave">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM DIALOG -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle" data-i18n="confirmTitle">Emin misin?</div>
+    <div class="confirm-text"  id="confirmText" data-i18n="confirmText">Bu işlemi geri alamazsın.</div>
+    <div class="confirm-actions">
+      <button class="btn-confirm cancel" onclick="closeConfirm()" data-i18n="btnCancel">İptal</button>
+      <button class="btn-confirm danger"  id="confirmOkBtn" data-i18n="btnDelete">Sil</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== i18n =====
+const userLang = (navigator.language || navigator.userLanguage || "en").substring(0,2) === "tr" ? "tr" : "en";
+const T = {
+  en: {
+    addGigBtn: "<span style=\"font-size:16px;line-height:1\">＋</span> Add Gig", exportData: "⬇ Export", importData: "⬆ Import",
+    tabGigs: "Gigs", tabUnpaid: "Unpaid", tabPaid: "Paid", tabAnalysis: "Analysis",
+    modalTitle: "New Gig",
+    lblVenue: "Venue", plcVenue: "Venue Name",
+    lblArtist: "Artist", plcArtist: "Artist/Band Name",
+    lblDate: "Date", lblTime: "Time (opt)",
+    lblFee: "Fee", plcFee: "1500 · ? · TBD · ~2000",
+    hintFee: "Enter number, text, or ?. Only numeric values will show up in Analysis.",
+    lblRepeat: "Repeat", optRepeatNone: "No repeat",
+    optRepeatWeekly: "Weekly", optRepeatBiweekly: "Bi-weekly", optRepeatMonthly: "Monthly",
+    lblUntil: "Until", lblNotes: "Notes (opt)", plcNotes: "Any notes...",
+    lblPaid: "Paid?", btnSave: "Save",
+    confirmTitle: "Are you sure?", confirmText: "This action cannot be undone.",
+    btnCancel: "Cancel", btnDelete: "Delete",
+    all: "All", noGigs: "No gigs yet",
+    noGigsAdd: "Add your first gig using<br>the button on the top right.",
+    noUnpaid: "All settled", noUnpaidYet: "Looks like all payments are done.",
+    noPaid: "No paid gigs", noPaidYet: "No payments received yet.",
+    monthsFull: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+    monthsShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    unpaidWait: "○ Pending", paidDone: "✓ Paid",
+    gigEdit: "✏️ Edit", gigCalendar: "📅 Cal", gigDelete: "🗑 Delete",
+    sumMonthly: "Monthly Earnings", sumYearly: "Yearly Totals",
+    toastPaid: "✓ Marked as paid", toastUnpaid: "○ Marked as unpaid",
+    toastClear: "✓ Name cleared from {count} gigs",
+    valNoVenue: "No venue", valNoArtist: "No artist",
+    filterClearTitle: "Clear Name",
+    filterClearText: "Are you sure you want to remove '{val}' from your list and all related gigs? (Gigs won't be deleted, only this name will be cleared)",
+    chipFeeNone: "No fee"
+  },
+  tr: {
+    addGigBtn: "<span style=\"font-size:16px;line-height:1\">＋</span> İş Ekle", exportData: "⬇ Dışa Aktar", importData: "⬆ İçe Aktar",
+    tabGigs: "İşlerim", tabUnpaid: "Ödenmemiş", tabPaid: "Ödenmiş", tabAnalysis: "Analiz",
+    modalTitle: "Yeni İş",
+    lblVenue: "Mekan", plcVenue: "Mekan Adı",
+    lblArtist: "Sanatçı", plcArtist: "Sahne adı",
+    lblDate: "Tarih", lblTime: "Saat (opsiyonel)",
+    lblFee: "Ücret", plcFee: "1500 · ? · TBD · ~2000",
+    hintFee: "Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür.",
+    lblRepeat: "Tekrar", optRepeatNone: "Tekrar yok",
+    optRepeatWeekly: "Her hafta", optRepeatBiweekly: "2 haftada bir", optRepeatMonthly: "Her ay",
+    lblUntil: "Son tarih", lblNotes: "Notlar (opsiyonel)", plcNotes: "Eklemek istediğin notlar...",
+    lblPaid: "Ödendi mi?", btnSave: "Kaydet",
+    confirmTitle: "Emin misin?", confirmText: "Bu işlemi geri alamazsın.",
+    btnCancel: "İptal", btnDelete: "Sil",
+    all: "Tümü", noGigs: "Henüz iş yok",
+    noGigsAdd: "Sağ üstteki \"İş Ekle\" butonuyla<br>ilk işini ekle.",
+    noUnpaid: "Bekleyen alacak yok", noUnpaidYet: "Tüm ödemeler tamamlanmış görünüyor.",
+    noPaid: "Ödenmiş iş yok", noPaidYet: "Henüz ödemesi alınan bir iş yok.",
+    monthsFull: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
+    monthsShort: ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'],
+    days: ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'],
+    unpaidWait: "○ Bekliyor", paidDone: "✓ Ödendi",
+    gigEdit: "${T.gigEdit}", gigCalendar: "${T.gigCalendar}", gigDelete: "${T.gigDelete}",
+    sumMonthly: "Aylık Kazançlar", sumYearly: "Yıllık Toplamlar",
+    toastPaid: "✓ Ödendi olarak işaretlendi", toastUnpaid: "○ Ödenmemiş olarak işaretlendi",
+    toastClear: "✓ İsmi {count} kayıttan temizlendi",
+    valNoVenue: "Mekan yok", valNoArtist: "Sanatçı yok",
+    filterClearTitle: "İsmi Temizle",
+    filterClearText: "'{val}' isimli {lbl} listenden ve ilgili tüm iş kayıtlarından silmek istediğine emin misin? (İşler silinmez, sadece bu isim temizlenir)",
+    chipFeeNone: "Ücret yok"
+  }
+}[userLang];
+
+function localizeDOM() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (!T[k]) return;
+    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      if (el.hasAttribute('placeholder')) el.placeholder = T[k];
+      else el.value = T[k];
+    } else {
+      el.innerHTML = T[k];
+    }
+  });
+}
+
+// ===== STATE =====
+let gigs = [];
+let hiddenTemplates = [];
+let activeTab = 'gigs';
+let filterArtist = null;
+let filterVenue  = null;
+let paidState    = false;
+let editingId    = null;
+let confirmCallback = null;
+
+const MONTHS = T.monthsShort;
+const MONTHS_FULL = T.monthsFull;
+const DAYS = T.days;
+const SYM         = { TRY:'₺', EUR:'€', USD:'$', GBP:'£' };
+
+// ===== STORAGE =====
+function load() {
+  localizeDOM();
+  try { gigs = JSON.parse(localStorage.getItem('gigtrack_v3') || '[]'); } catch { gigs = []; }
+  try { hiddenTemplates = JSON.parse(localStorage.getItem('gigtrack_hidden_tpl') || '[]'); } catch { hiddenTemplates = []; }
+  render();
+}
+function save() {
+  localStorage.setItem('gigtrack_v3', JSON.stringify(gigs));
+  localStorage.setItem('gigtrack_hidden_tpl', JSON.stringify(hiddenTemplates));
+}
+
+// ===== UTILS =====
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+function addDays(d, n) {
+  const dt = new Date(d + 'T12:00:00');
+  dt.setDate(dt.getDate() + n);
+  return dt.toISOString().slice(0,10);
+}
+function addMonths(d, n) {
+  const dt = new Date(d + 'T12:00:00');
+  dt.setMonth(dt.getMonth() + n);
+  return dt.toISOString().slice(0,10);
+}
+
+function formatDate(d) {
+  const dt = new Date(d + 'T12:00:00');
+  return {
+    day: dt.getDate(),
+    month: MONTHS[dt.getMonth()],
+    year: dt.getFullYear(),
+    monthFull: MONTHS_FULL[dt.getMonth()],
+    dayName: DAYS[dt.getDay()]
+  };
+}
+
+function monthKey(d) {
+  const dt = new Date(d + 'T12:00:00');
+  return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}`;
+}
+
+function today() { return new Date().toISOString().slice(0,10); }
+
+function isGigVisible(gig) {
+  if (!gig.parentId) return true;
+  return gig.date <= addDays(today(), 7);
+}
+
+function parseFee(s) {
+  if (!s) return null;
+  const m = String(s).replace(/,/g,'.').match(/(\d+\.?\d*)/);
+  return m ? parseFloat(m[1]) : null;
+}
+
+function sorted(arr) { return [...arr].sort((a,b) => a.date.localeCompare(b.date)); }
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== REPEAT GENERATION =====
+function generateRepeats(base) {
+  const list = [{ ...base, parentId: null }];
+  if (base.repeat === 'none' || !base.repeatUntil) return list;
+  let cur = base.date;
+  while (true) {
+    let next;
+    if (base.repeat === 'weekly')   next = addDays(cur, 7);
+    else if (base.repeat === 'biweekly') next = addDays(cur, 14);
+    else if (base.repeat === 'monthly')  next = addMonths(cur, 1);
+    else break;
+    if (next > base.repeatUntil) break;
+    list.push({ ...base, id: uid(), date: next, parentId: base.id, repeat: 'none', repeatUntil: null });
+    cur = next;
+  }
+  return list;
+}
+
+// ===== TABS =====
+function goHome() {
+  setFilter('all');
+  if (activeTab !== 'gigs') switchTab('gigs');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.remove('hidden');
+  document.getElementById('nav-' + tab).classList.add('active');
+  activeTab = tab;
+  render();
+}
+
+// ===== FILTERS =====
+function setFilter(type, value) {
+  if (type === 'artist') {
+    filterArtist = filterArtist === value ? null : value;
+    filterVenue  = null;
+  } else if (type === 'venue') {
+    filterVenue  = filterVenue === value ? null : value;
+    filterArtist = null;
+  } else {
+    filterArtist = filterVenue = null;
+  }
+  renderGigs();
+  renderFilterBar();
+}
+
+function renderFilterBar() {
+  const artists = [...new Set(gigs.map(g => g.artist).filter(Boolean))].sort();
+  const venues  = [...new Set(gigs.map(g => g.venue).filter(Boolean))].sort();
+  const bar = document.getElementById('filterBar');
+  const active = filterArtist || filterVenue;
+  bar.innerHTML =
+    `<div class="filter-chip ${!active?'active':''}" onclick="setFilter('all')">${T.all}</div>` +
+    artists.map(a => `<div class="filter-chip ${filterArtist===a?'active':''}" onclick="setFilter('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">
+      ${escHtml(a)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">×</span>
+    </div>`).join('') +
+    venues.map(v => `<div class="filter-chip ${filterVenue===v?'active':''}" onclick="setFilter('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">
+      📍 ${escHtml(v)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">×</span>
+    </div>`).join('');
+}
+
+function deleteTag(type, value) {
+  const lbl = type === 'artist' ? 'sanatçısını' : 'mekanını';
+  showConfirm(T.filterClearTitle, T.filterClearText.replace('{val}', value).replace('{lbl}', lbl), () => {
+    let count = 0;
+    gigs.forEach(g => {
+      if (type === 'artist' && g.artist === value) { g.artist = ''; count++; }
+      if (type === 'venue'  && g.venue  === value) { g.venue  = ''; count++; }
+    });
+    if (filterArtist === value) filterArtist = null;
+    if (filterVenue === value) filterVenue = null;
+    save(); render();
+    showToast(T.toastClear.replace('{count}', count));
+  });
+}
+
+// ===== GIG CARD =====
+function gigCard(gig) {
+  const df  = formatDate(gig.date);
+  const sym = SYM[gig.currency] || '';
+  const feeDisplay = gig.fee ? `${sym}${escHtml(gig.fee)}` : '—';
+  const isPast = gig.date < today();
+  const isRepeat = gig.parentId || (gig.repeat && gig.repeat !== 'none');
+
+  return `
+<div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}">
+  <div class="gig-main">
+    <div class="gig-date-block">
+      <div class="gig-date-day">${df.day}</div>
+      <div class="gig-date-month">${df.month}</div>
+      <div class="gig-date-day-name">${df.dayName}</div>
+    </div>
+    <div class="gig-info">
+      <div class="gig-venue"  onclick="setFilter('venue', ${JSON.stringify(gig.venue || '').replace(/"/g, '&quot;')})">
+        <span>📍</span>${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;font-weight:500;">${T.valNoVenue}</span>`}
+      </div>
+      <div class="gig-artist" onclick="setFilter('artist', ${JSON.stringify(gig.artist || '').replace(/"/g, '&quot;')})">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
+      <div class="gig-meta">
+        ${gig.time ? `<span class="gig-time">⏰ ${gig.time}</span>` : ''}
+        <span class="gig-time">${df.year}</span>
+      </div>
+    </div>
+    <div class="gig-fee-block">
+      <div class="gig-fee">${feeDisplay}</div>
+      <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="togglePaidStatus('${gig.id}')">
+        ${gig.paid ? T.paidDone : T.unpaidWait}
+      </button>
+    </div>
+  </div>
+  ${gig.notes ? `<div class="gig-notes">${escHtml(gig.notes)}</div>` : ''}
+  <div class="gig-actions">
+    <button class="gig-action-btn" onclick="editGig('${gig.id}')">✏️ Düzenle</button>
+    <button class="gig-action-btn" onclick="downloadICS('${gig.id}')">📅 Takvim</button>
+    <button class="gig-action-btn danger" onclick="confirmDelete('${gig.id}')">🗑 Sil</button>
+  </div>
+</div>`;
+}
+
+function groupByMonth(arr) {
+  const groups = {};
+  arr.forEach(g => {
+    const k = monthKey(g.date);
+    if (!groups[k]) groups[k] = [];
+    groups[k].push(g);
+  });
+  return groups;
+}
+
+function renderGroups(arr) {
+  if (!arr.length) return '';
+  const groups = groupByMonth(arr);
+  return Object.keys(groups).sort().map(k => {
+    const [y, m] = k.split('-');
+    return `<div class="section-label">${MONTHS_FULL[+m-1]} ${y}</div>` +
+           groups[k].map(g => gigCard(g)).join('');
+  }).join('');
+}
+
+// ===== RENDER TABS =====
+function renderGigs() {
+  let list = sorted(gigs.filter(isGigVisible));
+  if (filterArtist) list = list.filter(g => g.artist === filterArtist);
+  if (filterVenue)  list = list.filter(g => g.venue  === filterVenue);
+
+  const el = document.getElementById('gigsList');
+  el.innerHTML = list.length
+    ? renderGroups(list)
+    : `<div class="empty-state"><div class="empty-icon">🎵</div><div class="empty-title">${T.noGigs}</div><div class="empty-text">${T.noGigsAdd}</div></div>`;
+}
+
+function renderUnpaid() {
+  const unpaid = sorted(gigs.filter(g => !g.paid && isGigVisible(g)));
+  const badge  = document.getElementById('unpaidBadge');
+  badge.textContent = unpaid.length;
+  badge.classList.toggle('hidden', unpaid.length === 0);
+
+  const el = document.getElementById('unpaidList');
+  el.innerHTML = unpaid.length
+    ? renderGroups(unpaid)
+    : `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">${T.noUnpaid}</div><div class="empty-text">${T.noUnpaidYet}</div></div>`;
+}
+
+function renderPaid() {
+  const paidGigs = sorted(gigs.filter(g => g.paid && isGigVisible(g)));
+
+  const el = document.getElementById('paidList');
+  el.innerHTML = paidGigs.length
+    ? renderGroups(paidGigs)
+    : `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">${T.noPaid}</div><div class="empty-text">${T.noPaidYet}</div></div>`;
+}
+
+function renderAnalysis() {
+  const currentYear = new Date().getFullYear();
+  // We sum items based on currency for accurate grouping
+  const thisYearPaid = gigs.filter(g => g.paid && g.date.startsWith(currentYear.toString()));
+  
+  const yearlyTotals = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+  const monthlyTotals = {}; // { 1: {TRY: 0, USD: 0}, ... }
+  for(let i=1; i<=12; i++) {
+    monthlyTotals[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+  }
+  
+  let hasEarnings = false;
+
+  thisYearPaid.forEach(g => {
+    const val = parseFee(g.fee);
+    if (val !== null) {
+      const c = g.currency || 'TRY';
+      yearlyTotals[c] = (yearlyTotals[c] || 0) + val;
+      
+      const month = parseInt(g.date.split('-')[1], 10);
+      monthlyTotals[month][c] = (monthlyTotals[month][c] || 0) + val;
+      hasEarnings = true;
+    }
+  });
+
+  // build stats card
+  let statsHtml = '';
+  Object.keys(yearlyTotals).forEach(c => {
+    if (yearlyTotals[c] > 0) {
+      statsHtml += `
+      <div class="stat-card accent" ${Object.keys(yearlyTotals).filter(k => yearlyTotals[k] > 0).length === 1 ? 'style="grid-column: span 2;"' : ''}>
+        <div class="stat-label">${currentYear} Toplam (${c})</div>
+        <div class="stat-value">${SYM[c] || ''}${yearlyTotals[c].toLocaleString('tr')}</div>
+        <div class="stat-sub">${thisYearPaid.filter(g => g.currency === c && parseFee(g.fee) !== null).length} iş</div>
+      </div>`;
+    }
+  });
+
+  if (!hasEarnings) {
+     statsHtml = `
+      <div class="stat-card accent" style="grid-column: span 2;">
+        <div class="stat-label">${currentYear} Yılı Toplam Kazancı</div>
+        <div class="stat-value">₺0</div>
+        <div class="stat-sub">0 iş</div>
+      </div>`;
+  }
+
+  document.getElementById('statsGrid').innerHTML = statsHtml;
+
+  const el = document.getElementById('analysisList');
+  if (!hasEarnings) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Kayıt Bulunamadı</div><div class="empty-text">${currentYear} yılına ait ödenmiş ve ücreti girilmiş işin yok.</div></div>`;
+    return;
+  }
+
+  let listHtml = '<div class="section-label">${T.sumMonthly}</div>';
+  for (let i=12; i>=1; i--) {
+    let monthHtml = '';
+    Object.keys(monthlyTotals[i]).forEach(c => {
+      if (monthlyTotals[i][c] > 0) {
+        monthHtml += `
+          <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: var(--accent); margin-bottom: 2px;">
+             ${SYM[c] || ''}${monthlyTotals[i][c].toLocaleString('tr')}
+          </div>
+        `;
+      }
+    });
+
+    if (monthHtml !== '') {
+      listHtml += `
+        <div class="gig-card" style="padding: 15px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--accent)">
+           <div style="font-weight: 700; font-size: 15px;">${MONTHS_FULL[i-1]}</div>
+           <div style="text-align: right;">${monthHtml}</div>
+        </div>
+      `;
+    }
+  }
+  el.innerHTML = listHtml;
+}
+
+function render() {
+  renderFilterBar();
+  renderGigs();
+  renderUnpaid();
+  renderPaid();
+  renderAnalysis();
+}
+
+// ===== TOGGLE PAID =====
+function togglePaidStatus(id) {
+  const gig = gigs.find(g => g.id === id);
+  if (!gig) return;
+  gig.paid = !gig.paid;
+  save(); render();
+  showToast(gig.paid ? T.toastPaid : T.toastUnpaid);
+}
+
+// ===== MODAL =====
+function fillTemplate(artist, venue, fee, currency, repeat) {
+  document.getElementById('fArtist').value = artist;
+  document.getElementById('fVenue').value = venue;
+  document.getElementById('fFee').value = fee;
+  document.getElementById('fCurrency').value = currency || 'TRY';
+  document.getElementById('fRepeat').value = repeat || 'none';
+  toggleRepeatUntil();
+}
+
+function openAddModal() {
+  editingId = null;
+  document.getElementById('modalTitle').textContent = T.modalTitle;
+  document.getElementById('submitBtn').textContent  = T.btnSave;
+  document.getElementById('fArtist').value  = '';
+  document.getElementById('fVenue').value   = '';
+  document.getElementById('fDate').value    = today();
+  document.getElementById('fTime').value    = '';
+  document.getElementById('fFee').value     = '';
+  document.getElementById('fCurrency').value = 'TRY';
+  document.getElementById('fRepeat').value   = 'none';
+  document.getElementById('fRepeatUntil').value = '';
+  document.getElementById('fNotes').value   = '';
+  paidState = false;
+  updatePaidUI(); toggleRepeatUntil();
+
+  populateTemplates();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function hideTemplate(k) {
+  hiddenTemplates.push(k);
+  save();
+  populateTemplates();
+}
+
+function populateTemplates() {
+  const templates = new Map();
+  sorted(gigs).reverse().forEach(g => {
+    if (!g.venue && !g.artist) return;
+    const k = (g.venue||'') + '|' + (g.artist||'');
+    if (hiddenTemplates.includes(k)) return;
+    if (!templates.has(k)) {
+      templates.set(k, {
+        k: k, venue: g.venue || '', artist: g.artist || '',
+        fee: g.fee || '', currency: g.currency || 'TRY', repeat: g.repeat || 'none'
+      });
+    }
+  });
+
+  const qfl = document.getElementById('quickFillList');
+  if (templates.size > 0) {
+    qfl.classList.remove('hidden');
+    const enc = s => JSON.stringify(s || '').replace(/'/g, '&apos;').replace(/"/g, '&quot;');
+    qfl.innerHTML = Array.from(templates.values()).slice(0, 10).map(t => {
+      const title = t.venue && t.artist ? `${t.venue} · ${t.artist}` : (t.venue || t.artist);
+      const feeTxt = t.fee ? `${SYM[t.currency]||''}${t.fee}` : T.chipFeeNone;
+      return `<div class="quick-fill-chip" onclick='fillTemplate(${enc(t.artist)}, ${enc(t.venue)}, ${enc(t.fee)}, "${t.currency}", "${t.repeat}")'>
+        <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+          <span class="quick-fill-title">${escHtml(title)}</span>
+          <span class="filter-chip-delete" onclick="event.stopPropagation(); hideTemplate(${enc(t.k)})">×</span>
+        </div>
+        <span class="quick-fill-sub">${escHtml(feeTxt)}${t.repeat !== 'none' ? ' ↻' : ''}</span>
+      </div>`;
+    }).join('');
+  } else {
+    qfl.classList.add('hidden');
+  }
+}
+
+function editGig(id) {
+  const gig = gigs.find(g => g.id === id);
+  if (!gig) return;
+  editingId = id;
+  document.getElementById('modalTitle').textContent = 'İşi Düzenle';
+  document.getElementById('submitBtn').textContent  = 'Güncelle';
+  document.getElementById('fArtist').value  = gig.artist || '';
+  document.getElementById('fVenue').value   = gig.venue  || '';
+  document.getElementById('fDate').value    = gig.date   || '';
+  document.getElementById('fTime').value    = gig.time   || '';
+  document.getElementById('fFee').value     = gig.fee    || '';
+  document.getElementById('fCurrency').value = gig.currency || 'TRY';
+  document.getElementById('fRepeat').value   = gig.repeat || 'none';
+  document.getElementById('fRepeatUntil').value = gig.repeatUntil || '';
+  document.getElementById('fNotes').value   = gig.notes  || '';
+  paidState = !!gig.paid;
+  updatePaidUI(); toggleRepeatUntil();
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+function togglePaid() { paidState = !paidState; updatePaidUI(); }
+function updatePaidUI() { document.getElementById('paidToggle').classList.toggle('on', paidState); }
+
+function toggleRepeatUntil() {
+  const r = document.getElementById('fRepeat').value;
+  document.getElementById('repeatUntilGroup').style.display = r === 'none' ? 'none' : 'block';
+}
+
+// ===== SAVE =====
+function saveGig() {
+  const date = document.getElementById('fDate').value;
+  if (!date) { showToast('⚠️ Tarih seçmelisin'); return; }
+
+  const data = {
+    artist:      document.getElementById('fArtist').value.trim(),
+    venue:       document.getElementById('fVenue').value.trim(),
+    date,
+    time:        document.getElementById('fTime').value,
+    fee:         document.getElementById('fFee').value.trim(),
+    currency:    document.getElementById('fCurrency').value,
+    repeat:      document.getElementById('fRepeat').value,
+    repeatUntil: document.getElementById('fRepeatUntil').value,
+    notes:       document.getElementById('fNotes').value.trim(),
+    paid:        paidState
+  };
+
+  if (editingId) {
+    const idx = gigs.findIndex(g => g.id === editingId);
+    if (idx !== -1) gigs[idx] = { ...gigs[idx], ...data };
+    showToast('✓ İş güncellendi');
+  } else {
+    const base = { id: uid(), parentId: null, ...data };
+    const list = generateRepeats(base);
+    gigs.push(...list);
+    showToast(list.length > 1 ? `✓ ${list.length} iş oluşturuldu` : '✓ İş eklendi');
+  }
+
+  save(); render(); closeModal();
+}
+
+// ===== DELETE =====
+function confirmDelete(id) {
+  const gig = gigs.find(g => g.id === id);
+  if (!gig) return;
+  const children = gigs.filter(g => g.parentId === id).length;
+  let text = `"${gig.artist || 'Bu iş'}" · ${gig.date} tarihli kaydı silmek istediğinden emin misin?`;
+  if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var; sadece bu kayıt silinecek.)`;
+  showConfirm('İşi Sil', text, () => {
+    gigs = gigs.filter(g => g.id !== id);
+    save(); render(); showToast('🗑 İş silindi');
+  });
+}
+
+// ===== ICS CALENDAR =====
+function downloadICS(id) {
+  const gig = gigs.find(g => g.id === id);
+  if (!gig) return;
+  const ds  = gig.date.replace(/-/g,'');
+  const sym = SYM[gig.currency] || '';
+  let dtstart, dtend;
+
+  if (gig.time) {
+    const ts   = gig.time.replace(':','') + '00';
+    const endH = String(parseInt(gig.time.slice(0,2)) + 3).padStart(2,'0');
+    const endM = gig.time.slice(3,5);
+    dtstart = `${ds}T${ts}`;
+    dtend   = `${ds}T${endH}${endM}00`;
+  } else {
+    // all-day
+    const next = addDays(gig.date, 1).replace(/-/g,'');
+    dtstart = `${ds}`;
+    dtend   = next;
+  }
+
+  const isAllDay = !gig.time;
+  const lines = [
+    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//GigTrack//TR',
+    'BEGIN:VEVENT',
+    `UID:${gig.id}@gigtrack`,
+    isAllDay ? `DTSTART;VALUE=DATE:${dtstart}` : `DTSTART:${dtstart}`,
+    isAllDay ? `DTEND;VALUE=DATE:${dtend}`   : `DTEND:${dtend}`,
+    `SUMMARY:${(gig.artist||'Gig') + (gig.venue ? ' @ ' + gig.venue : '')}`,
+    `DESCRIPTION:Ücret: ${sym}${gig.fee||'—'}${gig.notes ? '\\nNot: ' + gig.notes : ''}`,
+    `LOCATION:${gig.venue||''}`,
+    'END:VEVENT','END:VCALENDAR'
+  ];
+
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `gig-${gig.date}.ics` });
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('📅 .ics dosyası indirildi — takvim uygulamanla aç');
+}
+
+// ===== EXPORT / IMPORT =====
+function exportData() {
+  const blob = new Blob([JSON.stringify({ version:3, gigs, exported: new Date().toISOString() }, null, 2)], { type:'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `gigtrack-${today()}.json` });
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('⬇ Veriler dışa aktarıldı');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data     = JSON.parse(ev.target.result);
+      const imported = data.gigs || data;
+      if (!Array.isArray(imported)) throw new Error();
+      showConfirm('Verileri İçe Aktar',
+        `${imported.length} iş içe aktarılacak. Zaten kayıtlı olanlar atlanır.`,
+        () => {
+          const existing = new Set(gigs.map(g => g.id));
+          const newOnes  = imported.filter(g => !existing.has(g.id));
+          gigs.push(...newOnes);
+          save(); render();
+          showToast(`✓ ${newOnes.length} yeni iş eklendi`);
+        });
+    } catch { showToast('⚠️ Dosya okunamadı'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ===== CONFIRM =====
+function showConfirm(title, text, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent  = text;
+  document.getElementById('confirmOkBtn').textContent = title.toLowerCase().includes('sil') ? 'Evet, Sil' : 'Devam Et';
+  confirmCallback = cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm() {
+  document.getElementById('confirmOverlay').classList.remove('open');
+  confirmCallback = null;
+}
+document.getElementById('confirmOkBtn').onclick = () => { if(confirmCallback) confirmCallback(); closeConfirm(); };
+document.getElementById('confirmOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('confirmOverlay')) closeConfirm();
+});
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ===== INIT =====
+load();
+
+// ===== PWA SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('SW registered!', reg);
+    }).catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
