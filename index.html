@@ -472,6 +472,20 @@
     .stat-card.accent .stat-value { color: var(--accent); }
     .stat-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
 
+    /* UNPAID SUMMARY */
+    .unpaid-summary {
+      position: sticky; top: 75px; z-index: 90;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 18px;
+      font-size: 13px; font-weight: 700; color: var(--accent);
+      display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .unpaid-summary:empty { display: none; margin: 0; padding: 0; border: none; }
+    .unpaid-sum-item { display: flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 14px; }
+
     /* EMPTY STATE */
     .empty-state {
       text-align: center; padding: 60px 20px; color: var(--text-3);
@@ -565,6 +579,7 @@
 
 <!-- TAB: Ödenmemiş -->
 <div id="tab-unpaid" class="tab-content hidden">
+  <div class="unpaid-summary" id="unpaidSummary"></div>
   <div class="content" id="unpaidList"></div>
 </div>
 
@@ -817,7 +832,8 @@ const T = {
     lblAutoFuel: "Auto Fuel Calculation", lblDistance: "Distance (KM)", plcDistance: "e.g. 50",
     lblFuelRate: "Fuel Price/L", plcFuelRate: "e.g. 43.5",
     lblFuelCons: "Consumption (L/100km) - Default: 7", plcFuelCons: "7",
-    calcTitle: "Calculator"
+    calcTitle: "Calculator",
+    totalUnpaid: "Total Unpaid:"
   },
   tr: {
     addGigBtn: "<span style=\"font-size:16px;line-height:1\">＋</span> İş Ekle", exportData: "⬇ Dışa Aktar", importData: "⬆ İçe Aktar",
@@ -855,7 +871,8 @@ const T = {
     lblAutoFuel: "Otomatik Yakıt Hesaplama", lblDistance: "Gidilen Mesafe (KM)", plcDistance: "Örn. 50",
     lblFuelRate: "Litre Fiyatı (TL)", plcFuelRate: "Örn. 43.5",
     lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
-    calcTitle: "Hesap Makinesi"
+    calcTitle: "Hesap Makinesi",
+    totalUnpaid: "Toplam Bekleyen:"
   }
 }[userLang];
 
@@ -1112,6 +1129,30 @@ function renderUnpaid() {
   badge.textContent = unpaid.length;
   badge.classList.toggle('hidden', unpaid.length === 0);
 
+  const unpSummary = document.getElementById('unpaidSummary');
+  if (unpaid.length > 0) {
+    const sums = {};
+    unpaid.forEach(g => {
+      let feeVal = parseFee(g.fee);
+      let expVal = parseFloat(g.expenseAmount) || 0;
+      if (feeVal !== null) {
+        const net = feeVal - expVal;
+        const c = g.currency || 'TRY';
+        sums[c] = (sums[c] || 0) + net;
+      }
+    });
+
+    let sumHtml = '';
+    Object.keys(sums).forEach(c => {
+      if (sums[c] !== 0) {
+        sumHtml += `<div class="unpaid-sum-item"><span style="color:var(--text-3); font-size:11px; font-family:'Syne',sans-serif;">${c}</span> <span>${SYM[c] || ''}${sums[c].toLocaleString('tr')}</span></div>`;
+      }
+    });
+    unpSummary.innerHTML = sumHtml ? `<div style="color:var(--text-2); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">${T.totalUnpaid}</div> ${sumHtml}` : '';
+  } else {
+    unpSummary.innerHTML = '';
+  }
+
   const el = document.getElementById('unpaidList');
   el.innerHTML = unpaid.length
     ? renderGroups(unpaid)
@@ -1248,7 +1289,7 @@ function render() {
 
 // ===== TOGGLE PAID =====
 function togglePaidStatus(id) {
-  const gig = gigs.find(g => g.id === id);
+  const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
   gig.paid = !gig.paid;
   save(); render();
@@ -1330,7 +1371,7 @@ function populateTemplates() {
 }
 
 function editGig(id) {
-  const gig = gigs.find(g => g.id === id);
+  const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
   editingId = id;
   document.getElementById('modalTitle').textContent = 'İşi Düzenle';
@@ -1419,9 +1460,9 @@ function saveGig() {
 
 // ===== DELETE =====
 function confirmDelete(id) {
-  const gig = gigs.find(g => g.id === id);
+  const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
-  const children = gigs.filter(g => g.parentId === id).length;
+  const children = gigs.filter(g => String(g.parentId) === String(id)).length;
   let text = `"${gig.artist || 'Bu iş'}" · ${gig.date} tarihli kaydı silmek istediğinden emin misin?`;
   if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var; sadece bu kayıt silinecek.)`;
   showConfirm('İşi Sil', text, () => {
@@ -1432,7 +1473,7 @@ function confirmDelete(id) {
 
 // ===== ICS CALENDAR =====
 function downloadICS(id) {
-  const gig = gigs.find(g => g.id === id);
+  const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
   const ds  = gig.date.replace(/-/g,'');
   const sym = SYM[gig.currency] || '';
@@ -1547,17 +1588,17 @@ function handleCalcOverlayClick(e) {
 }
 function calcInput(k) {
   if (k === 'C') { calcExp = ''; }
+  else if (k === '⌫') { 
+    calcExp = calcExp.slice(0, -1); 
+  }
   else if (k === '=') {
     try { 
       let safeExp = calcExp.replace(/×/g, '*').replace(/÷/g, '/');
+      // Akıllı yüzde işlemi (Örn: 100+10% => 100 + (100 * 10 / 100))
+      safeExp = safeExp.replace(/([\d.]+)\s*([\+\-])\s*([\d.]+)%/, (m, a, op, b) => `${a} ${op} (${a} * ${b} / 100)`);
+      safeExp = safeExp.replace(/%/g, '/100'); // Kalan standart yüzdeler
       calcExp = eval(safeExp).toString(); 
     } catch { calcExp = 'Error'; }
-  }
-  else if (k === '()') {
-     let open = (calcExp.match(/\(/g) || []).length;
-     let closed = (calcExp.match(/\)/g) || []).length;
-     if (open > closed && !calcExp.endsWith('(')) calcExp += ')';
-     else calcExp += '(';
   }
   else if (k === '*' || k === '/') {
      calcExp += k === '*' ? '×' : '÷';
