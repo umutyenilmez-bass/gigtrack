@@ -1416,6 +1416,7 @@ let calendarDate = new Date();
 let selectedCalDay = null;
 let openCalendarGigId = null;
 let gigCalViewDate = {};
+let gigCalYearPicker = {};
 
 function calendarMonth(dir) {
   calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + dir, 1);
@@ -1659,8 +1660,22 @@ function gigCalYear(gigId, gigDate, dir) {
   render();
 }
 
+function toggleGigCalYearPicker(gigId) {
+  gigCalYearPicker[gigId] = !gigCalYearPicker[gigId];
+  render();
+}
+
+function gigCalSetYear(gigId, gigDate, year) {
+  const cur = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
+  gigCalViewDate[gigId] = new Date(year, cur.getMonth(), 1);
+  gigCalYearPicker[gigId] = false;
+  render();
+}
+
+
 function gigCalToday(gigId) {
   gigCalViewDate[gigId] = new Date();
+  gigCalYearPicker[gigId] = false;
   render();
 }
 
@@ -1672,6 +1687,7 @@ function gigInlineCalendar(gigId, gigDate) {
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const dayNames = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'];
+  const showYearPicker = gigCalYearPicker[gigId];
 
   let cells = '';
   for (let i = 0; i < firstDay; i++) cells += '<div></div>';
@@ -1687,6 +1703,23 @@ function gigInlineCalendar(gigId, gigDate) {
     ">${d}</div>`;
   }
 
+  // Yıl seçici
+  let yearPickerHtml = '';
+  if (showYearPicker) {
+    const currentY = new Date().getFullYear();
+    const years = [];
+    for (let y = currentY - 3; y <= currentY + 5; y++) years.push(y);
+    yearPickerHtml = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:10px 0;">
+      ${years.map(y => `<div onclick="gigCalSetYear('${gigId}','${gigDate}',${y})" style="
+        text-align:center;padding:8px 4px;border-radius:8px;cursor:pointer;font-size:13px;
+        background:${y===year?'var(--accent)':'var(--surface)'};
+        color:${y===year?'#000':'var(--text-2)'};
+        font-weight:${y===year?'700':'400'};
+        border:1px solid ${y===year?'var(--accent)':'var(--border)'};
+      ">${y}</div>`).join('')}
+    </div>`;
+  }
+
   return `
   <div style="border-top:1px solid var(--border);background:var(--surface-2);padding:14px 12px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:6px;">
@@ -1694,19 +1727,23 @@ function gigInlineCalendar(gigId, gigDate) {
         <button class="btn-data" style="padding:5px 8px;font-size:12px;" onclick="gigCalYear('${gigId}','${gigDate}',-1)">«</button>
         <button class="btn-data" style="padding:5px 8px;font-size:14px;" onclick="gigCalMonth('${gigId}','${gigDate}',-1)">‹</button>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <span style="font-size:13px;font-weight:700;">${MONTHS_FULL[month]} ${year}</span>
-        <button class="btn-data" style="padding:3px 8px;font-size:10px;letter-spacing:0.5px;" onclick="gigCalToday('${gigId}')">Bugün</button>
+      <div style="text-align:center;cursor:pointer;" onclick="toggleGigCalYearPicker('${gigId}')">
+        <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1.2;">${MONTHS_FULL[month]}</div>
+        <div style="font-size:11px;font-weight:400;color:var(--text-3);margin-top:2px;letter-spacing:0.05em;">${year} ${showYearPicker ? '▲' : '▼'}</div>
       </div>
       <div style="display:flex;gap:4px;">
         <button class="btn-data" style="padding:5px 8px;font-size:14px;" onclick="gigCalMonth('${gigId}','${gigDate}',1)">›</button>
         <button class="btn-data" style="padding:5px 8px;font-size:12px;" onclick="gigCalYear('${gigId}','${gigDate}',1)">»</button>
       </div>
     </div>
+    ${showYearPicker ? yearPickerHtml : `
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
       ${dayNames.map(d=>`<div style="text-align:center;font-size:9px;color:var(--text-3);padding:2px 0;font-weight:700;">${d}</div>`).join('')}
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">${cells}</div>
+    <div style="text-align:center;margin-top:10px;">
+      <button class="btn-data" style="padding:4px 12px;font-size:11px;" onclick="gigCalToday('${gigId}')">Bugün</button>
+    </div>`}
   </div>`;
 }
 
