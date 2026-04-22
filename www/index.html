@@ -610,6 +610,11 @@
   </div>
 </div>
 
+<!-- TAB: Takvim -->
+<div id="tab-calendar" class="tab-content hidden">
+  <div class="content" id="calendarView"></div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')">
@@ -623,6 +628,9 @@
   </div>
   <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')">
     <span data-i18n="tabAnalysis">Analiz</span>
+  </div>
+  <div class="nav-item" id="nav-calendar" onclick="switchTab('calendar')">
+    <span>📅 Takvim</span>
   </div>
 </nav>
 
@@ -759,7 +767,7 @@
       <div style="background: var(--bg); padding: 15px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 15px; text-align: right; font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; color: var(--text); min-height: 64px; overflow-x: auto; white-space: nowrap;" id="calcDisplay">0</div>
       <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
         <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('C')">C</button>
-        <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('()')">( )</button>
+        <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('⌫')">⌫</button>
         <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('%')">%</button>
         <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('/')">÷</button>
         
@@ -1312,12 +1320,107 @@ function renderAnalysis() {
   el.innerHTML = listHtml;
 }
 
+function renderCalendar() {
+  const el = document.getElementById('calendarView');
+  if (!el) return;
+
+  const now = calendarDate || new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  // O aydaki gig tarihleri
+  const gigDates = {};
+  gigs.forEach(g => {
+    const d = new Date(g.date + 'T12:00:00');
+    if (d.getFullYear() === year && d.getMonth() === month) {
+      const key = g.date;
+      if (!gigDates[key]) gigDates[key] = [];
+      gigDates[key].push(g);
+    }
+  });
+
+  const firstDay = new Date(year, month, 1).getDay(); // 0=Paz
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayStr = today();
+
+  const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+
+  let html = `
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+      <button class="btn-data" style="width:40px; height:40px; font-size:18px;" onclick="calendarMonth(-1)">←</button>
+      <div style="font-size:17px; font-weight:800;">${MONTHS_FULL[month]} ${year}</div>
+      <button class="btn-data" style="width:40px; height:40px; font-size:18px;" onclick="calendarMonth(1)">→</button>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:8px;">
+      ${dayNames.map(d => `<div style="text-align:center; font-size:10px; font-weight:700; color:var(--text-3); padding:4px 0;">${d}</div>`).join('')}
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:4px;">
+  `;
+
+  // Boş hücreler
+  for (let i = 0; i < firstDay; i++) {
+    html += `<div></div>`;
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const hasGigs = gigDates[dateStr];
+    const isToday = dateStr === todayStr;
+
+    const dotHtml = hasGigs
+      ? `<div style="display:flex; justify-content:center; gap:2px; margin-top:3px;">${hasGigs.slice(0,3).map(g => `<div style="width:5px; height:5px; border-radius:50%; background:${g.paid ? 'var(--paid-text)' : 'var(--accent)'};"></div>`).join('')}</div>`
+      : '';
+
+    html += `
+      <div onclick="calendarDayClick('${dateStr}')" style="
+        text-align:center; padding:8px 2px; border-radius:10px; cursor:${hasGigs ? 'pointer' : 'default'};
+        background:${isToday ? 'var(--accent)' : hasGigs ? 'var(--surface-2)' : 'transparent'};
+        color:${isToday ? '#000' : hasGigs ? 'var(--text)' : 'var(--text-3)'};
+        font-weight:${isToday || hasGigs ? '700' : '400'};
+        font-size:14px;
+        border: ${hasGigs && !isToday ? '1px solid var(--border)' : 'none'};
+        transition: all 0.15s;
+      ">
+        ${d}
+        ${dotHtml}
+      </div>`;
+  }
+
+  html += `</div>`;
+
+  // Seçili günün gigleri
+  if (selectedCalDay && gigDates[selectedCalDay]) {
+    const dayGigs = gigDates[selectedCalDay];
+    html += `<div style="margin-top:20px;"><div class="section-label">${selectedCalDay}</div>`;
+    html += dayGigs.map(g => gigCard(g)).join('');
+    html += `</div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+let calendarDate = new Date();
+let selectedCalDay = null;
+
+function calendarMonth(dir) {
+  calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + dir, 1);
+  selectedCalDay = null;
+  renderCalendar();
+}
+
+function calendarDayClick(dateStr) {
+  selectedCalDay = selectedCalDay === dateStr ? null : dateStr;
+  renderCalendar();
+}
+
+
 function render() {
   renderFilterBar();
   renderGigs();
   renderUnpaid();
   renderPaid();
   renderAnalysis();
+  renderCalendar();
 }
 
 // ===== TOGGLE PAID =====
@@ -1621,20 +1724,32 @@ function calcInput(k) {
   else if (k === '⌫') { 
     calcExp = calcExp.slice(0, -1); 
   }
+  else if (k === '%') {
+    // Sayıdan sonra % gelince /100 ekle
+    calcExp += '%';
+  }
   else if (k === '=') {
     try { 
-      let safeExp = calcExp.replace(/×/g, '*').replace(/÷/g, '/');
-      // Akıllı yüzde işlemi (Örn: 100+10% => 100 + (100 * 10 / 100))
-      safeExp = safeExp.replace(/([\d.]+)\s*([\+\-])\s*([\d.]+)%/, (m, a, op, b) => `${a} ${op} (${a} * ${b} / 100)`);
-      safeExp = safeExp.replace(/%/g, '/100'); // Kalan standart yüzdeler
-      calcExp = eval(safeExp).toString(); 
-    } catch { calcExp = 'Error'; }
+      let safeExp = calcExp
+        .replace(/×/g, '*')
+        .replace(/÷/g, '/');
+      // Örn: 100+%10 veya 100+10% gibi göreceli yüzde hesabı
+      safeExp = safeExp.replace(/(\d+\.?\d*)([+\-*\/])(\d+\.?\d*)%/g, (m, a, op, b) => {
+        if (op === '+' || op === '-') return `${a}${op}(${a}*${b}/100)`;
+        return `${a}${op}(${b}/100)`;
+      });
+      // Kalan % işaretleri
+      safeExp = safeExp.replace(/(\d+\.?\d*)%/g, '($1/100)');
+      const result = Function('"use strict"; return (' + safeExp + ')')();
+      // Ondalık hassasiyeti temizle
+      calcExp = parseFloat(result.toFixed(10)).toString();
+    } catch { calcExp = 'Hata'; }
   }
   else if (k === '*' || k === '/') {
      calcExp += k === '*' ? '×' : '÷';
   }
   else {
-    if (calcExp === '0' || calcExp === 'Error') calcExp = '';
+    if (calcExp === '0' || calcExp === 'Hata') calcExp = '';
     calcExp += k;
   }
   document.getElementById('calcDisplay').innerText = calcExp || '0';
