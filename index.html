@@ -579,8 +579,8 @@
 
 <!-- DATA ACTIONS -->
 <div class="data-actions">
-  <button class="btn-data" onclick="exportData()" data-i18n="exportData">⬇ Dışa Aktar</button>
-  <button class="btn-data" onclick="document.getElementById('importFile').click()">⬇ İçe Aktar</button>
+  <button class="btn-data" onclick="document.getElementById('importFile').click()" data-i18n="importData">⬇ İçe Aktar</button>
+  <button class="btn-data" onclick="exportData()" data-i18n="exportData">⬆ Dışa Aktar</button>
   <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
 </div>
 
