@@ -571,6 +571,9 @@
     <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center; box-shadow: none;" onclick="openCalcModal()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="10.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
     </button>
+    <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center; box-shadow: none;" onclick="switchTab('calendar')">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+    </button>
     <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">
       
     </button>
@@ -628,9 +631,6 @@
   </div>
   <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')">
     <span data-i18n="tabAnalysis">Analiz</span>
-  </div>
-  <div class="nav-item" id="nav-calendar" onclick="switchTab('calendar')">
-    <span>📅 Takvim</span>
   </div>
 </nav>
 
@@ -1103,7 +1103,7 @@ function gigCard(gig) {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
       ${T.gigEdit}
     </button>
-    <button class="gig-action-btn" onclick="openCalendarDate('${gig.id}')">
+    <button class="gig-action-btn" onclick="toggleGigCalendar('${gig.id}', '${gig.date}')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
       ${T.gigCalendar}
     </button>
@@ -1112,6 +1112,7 @@ function gigCard(gig) {
       ${T.gigDelete}
     </button>
   </div>
+  ${openCalendarGigId === gig.id ? gigInlineCalendar(gig.id, gig.date) : ''}
 </div>`;
 }
 
@@ -1401,6 +1402,8 @@ function renderCalendar() {
 
 let calendarDate = new Date();
 let selectedCalDay = null;
+let openCalendarGigId = null;
+let gigCalViewDate = {};
 
 function calendarMonth(dir) {
   calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + dir, 1);
@@ -1616,11 +1619,83 @@ function confirmDelete(id) {
 function openCalendarDate(id) {
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
-  // Dahili takvime git, o ayı ve günü seç
   calendarDate = new Date(gig.date + 'T12:00:00');
   selectedCalDay = gig.date;
   switchTab('calendar');
   renderCalendar();
+}
+
+function toggleGigCalendar(gigId, gigDate) {
+  if (openCalendarGigId === gigId) {
+    openCalendarGigId = null;
+  } else {
+    openCalendarGigId = gigId;
+    gigCalViewDate[gigId] = new Date(gigDate + 'T12:00:00');
+  }
+  render();
+}
+
+function gigCalMonth(gigId, gigDate, dir) {
+  const cur = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
+  gigCalViewDate[gigId] = new Date(cur.getFullYear(), cur.getMonth() + dir, 1);
+  render();
+}
+
+function gigCalYear(gigId, gigDate, dir) {
+  const cur = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
+  gigCalViewDate[gigId] = new Date(cur.getFullYear() + dir, cur.getMonth(), 1);
+  render();
+}
+
+function gigCalToday(gigId) {
+  gigCalViewDate[gigId] = new Date();
+  render();
+}
+
+function gigInlineCalendar(gigId, gigDate) {
+  const viewDate = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const todayStr = today();
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const dayNames = ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'];
+
+  let cells = '';
+  for (let i = 0; i < firstDay; i++) cells += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isGig = ds === gigDate;
+    const isTod = ds === todayStr;
+    cells += `<div style="text-align:center;padding:6px 2px;border-radius:8px;font-size:13px;
+      background:${isGig?'var(--accent)':isTod?'rgba(255,255,255,0.08)':'transparent'};
+      color:${isGig?'#000':isTod?'var(--text)':'var(--text-3)'};
+      font-weight:${isGig||isTod?'700':'400'};
+      outline:${isTod&&!isGig?'1px solid var(--border)':'none'};
+    ">${d}</div>`;
+  }
+
+  return `
+  <div style="border-top:1px solid var(--border);background:var(--surface-2);padding:14px 12px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:6px;">
+      <div style="display:flex;gap:4px;">
+        <button class="btn-data" style="padding:5px 8px;font-size:12px;" onclick="gigCalYear('${gigId}','${gigDate}',-1)">«</button>
+        <button class="btn-data" style="padding:5px 8px;font-size:14px;" onclick="gigCalMonth('${gigId}','${gigDate}',-1)">‹</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:13px;font-weight:700;">${MONTHS_FULL[month]} ${year}</span>
+        <button class="btn-data" style="padding:3px 8px;font-size:10px;letter-spacing:0.5px;" onclick="gigCalToday('${gigId}')">Bugün</button>
+      </div>
+      <div style="display:flex;gap:4px;">
+        <button class="btn-data" style="padding:5px 8px;font-size:14px;" onclick="gigCalMonth('${gigId}','${gigDate}',1)">›</button>
+        <button class="btn-data" style="padding:5px 8px;font-size:12px;" onclick="gigCalYear('${gigId}','${gigDate}',1)">»</button>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px;">
+      ${dayNames.map(d=>`<div style="text-align:center;font-size:9px;color:var(--text-3);padding:2px 0;font-weight:700;">${d}</div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">${cells}</div>
+  </div>`;
 }
 
 
