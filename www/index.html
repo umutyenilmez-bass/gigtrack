@@ -1095,7 +1095,7 @@ function gigCard(gig) {
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
       ${T.gigEdit}
     </button>
-    <button class="gig-action-btn" onclick="downloadICS('${gig.id}')">
+    <button class="gig-action-btn" onclick="openCalendarDate('${gig.id}')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
       ${T.gigCalendar}
     </button>
@@ -1509,45 +1509,33 @@ function confirmDelete(id) {
   });
 }
 
-// ===== ICS CALENDAR =====
-function downloadICS(id) {
+// ===== OPEN CALENDAR =====
+function openCalendarDate(id) {
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
-  const ds  = gig.date.replace(/-/g,'');
-  const sym = SYM[gig.currency] || '';
-  let dtstart, dtend;
 
-  if (gig.time) {
-    const ts   = gig.time.replace(':','') + '00';
-    const endH = String(parseInt(gig.time.slice(0,2)) + 3).padStart(2,'0');
-    const endM = gig.time.slice(3,5);
-    dtstart = `${ds}T${ts}`;
-    dtend   = `${ds}T${endH}${endM}00`;
+  const [year, month, day] = gig.date.split('-');
+  const epochMs = new Date(gig.date + 'T12:00:00').getTime();
+  const ua = navigator.userAgent.toLowerCase();
+
+  if (/android/.test(ua)) {
+    // Android: Google Calendar'a git
+    window.location.href = `intent://calendar/time/${epochMs}#Intent;scheme=content;authority=com.android.calendar;end`;
+    setTimeout(() => {
+      window.open(`https://calendar.google.com/calendar/r/day/${year}/${parseInt(month)}/${parseInt(day)}`, '_blank');
+    }, 500);
+  } else if (/iphone|ipad|ipod/.test(ua)) {
+    // iOS: native takvim
+    window.location.href = `calshow://${Math.floor(epochMs / 1000)}`;
+    setTimeout(() => {
+      window.open(`https://calendar.google.com/calendar/r/day/${year}/${parseInt(month)}/${parseInt(day)}`, '_blank');
+    }, 500);
   } else {
-    // all-day
-    const next = addDays(gig.date, 1).replace(/-/g,'');
-    dtstart = `${ds}`;
-    dtend   = next;
+    // Masaüstü: Google Calendar
+    window.open(`https://calendar.google.com/calendar/r/day/${year}/${parseInt(month)}/${parseInt(day)}`, '_blank');
   }
-
-  const isAllDay = !gig.time;
-  const lines = [
-    'BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//GigTrack//TR',
-    'BEGIN:VEVENT',
-    `UID:${gig.id}@gigtrack`,
-    isAllDay ? `DTSTART;VALUE=DATE:${dtstart}` : `DTSTART:${dtstart}`,
-    isAllDay ? `DTEND;VALUE=DATE:${dtend}`   : `DTEND:${dtend}`,
-    `SUMMARY:${(gig.artist||'Gig') + (gig.venue ? ' @ ' + gig.venue : '')}`,
-    `DESCRIPTION:Ücret: ${sym}${gig.fee||'—'}${gig.notes ? '\\nNot: ' + gig.notes : ''}`,
-    `LOCATION:${gig.venue||''}`,
-    'END:VEVENT','END:VCALENDAR'
-  ];
-
-  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `gig-${gig.date}.ics` });
-  a.click(); URL.revokeObjectURL(a.href);
-  showToast('📅 .ics dosyası indirildi — takvim uygulamanla aç');
 }
+
 
 // ===== EXPORT / IMPORT =====
 function exportData() {
