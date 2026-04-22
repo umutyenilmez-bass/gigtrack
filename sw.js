@@ -1,4 +1,4 @@
-const CACHE_NAME = 'gigtrack-v4';
+const CACHE_NAME = 'gigtrack-v5';
 const urlsToCache = [
   './index.html',
   './logo.png',
