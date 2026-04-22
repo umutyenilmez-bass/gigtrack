@@ -1822,10 +1822,28 @@ function gigInlineCalendar(gigId, gigDate) {
 
 // ===== EXPORT / IMPORT =====
 function exportData() {
-  const blob = new Blob([JSON.stringify({ version:3, gigs, exported: new Date().toISOString() }, null, 2)], { type:'application/json' });
-  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `gigtrack-${today()}.json` });
+  const fileName = `gigtrack-backup.json`;
+  const jsonStr = JSON.stringify({ version:3, gigs, exported: new Date().toISOString() }, null, 2);
+
+  // Navigator.share destekliyorsa (mobil)
+  if (navigator.share && navigator.canShare) {
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const file = new File([blob], fileName, { type: 'application/json' });
+    if (navigator.canShare({ files: [file] })) {
+      navigator.share({
+        title: 'GigTrack Yedek',
+        text: 'GigTrack verilerim',
+        files: [file]
+      }).catch(() => {});
+      return;
+    }
+  }
+
+  // Fallback: direkt indir
+  const blob = new Blob([jsonStr], { type:'application/json' });
+  const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: fileName });
   a.click(); URL.revokeObjectURL(a.href);
-  showToast('⬇ Veriler dışa aktarıldı');
+  showToast('⬆ Veriler dışa aktarıldı');
 }
 
 function importData(e) {
