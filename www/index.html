@@ -88,7 +88,7 @@
       transform: scale(1.15);
     }
 
-    .app-title { font-size: 18px; font-family: 'FrizQuadrata', serif; font-weight: 400; letter-spacing: 0.08em; color: #D4CFC7; text-transform: uppercase; }
+    .app-title { font-size: 18px; font-family: 'FrizQuadrata', serif; font-weight: 400; letter-spacing: 0.08em; color: #D4CFC7; display: flex; align-items: baseline; }
 
     .header-actions { display: flex; align-items: center; gap: 8px; }
 
@@ -577,7 +577,7 @@
 <header class="header">
   <div class="header-left" onclick="goHome()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
     <div class="logo-mark"><img src="logo.png" alt="Logo"></div>
-    <span class="app-title">GigTrack</span>
+    <span class="app-title"><span>GIG</span><span style="margin-left:0.35em;">TRACK</span></span>
   </div>
   <div class="header-actions">
     <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center; box-shadow: none;" onclick="openCalcModal()">
