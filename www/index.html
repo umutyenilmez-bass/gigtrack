@@ -10,6 +10,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'FrizQuadrata';
+      src: url('friz-quadrata-regular.ttf') format('truetype');
+      font-weight: 400;
+    }
+    @font-face {
+      font-family: 'FrizQuadrata';
+      src: url('friz-quadrata-bold-italic.ttf') format('truetype');
+      font-weight: 700;
+      font-style: italic;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -76,7 +88,7 @@
       transform: scale(1.15);
     }
 
-    .app-title { font-size: 17px; font-family: 'Cinzel', serif; font-weight: 400; letter-spacing: 0.06em; color: #D4CFC7; }
+    .app-title { font-size: 18px; font-family: 'FrizQuadrata', serif; font-weight: 400; letter-spacing: 0.03em; color: #D4CFC7; }
 
     .header-actions { display: flex; align-items: center; gap: 8px; }
 
