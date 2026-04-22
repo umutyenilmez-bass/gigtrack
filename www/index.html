@@ -1824,23 +1824,24 @@ function gigInlineCalendar(gigId, gigDate) {
 function exportData() {
   const fileName = `gigtrack-backup.json`;
   const jsonStr = JSON.stringify({ version:3, gigs, exported: new Date().toISOString() }, null, 2);
+  const blob = new Blob([jsonStr], { type: 'application/json' });
 
-  // Navigator.share destekliyorsa (mobil)
-  if (navigator.share && navigator.canShare) {
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+  if (navigator.share) {
     const file = new File([blob], fileName, { type: 'application/json' });
-    if (navigator.canShare({ files: [file] })) {
-      navigator.share({
-        title: 'GigTrack Yedek',
-        text: 'GigTrack verilerim',
-        files: [file]
-      }).catch(() => {});
-      return;
-    }
+    navigator.share({ files: [file], title: 'GigTrack Yedek' })
+      .then(() => showToast('⬆ Paylaşıldı'))
+      .catch(() => {
+        // Dosya paylaşımı çalışmadıysa URL paylaş
+        const url = URL.createObjectURL(blob);
+        navigator.share({ title: 'GigTrack Yedek', url })
+          .catch(() => { triggerDownload(blob, fileName); });
+      });
+  } else {
+    triggerDownload(blob, fileName);
   }
+}
 
-  // Fallback: direkt indir
-  const blob = new Blob([jsonStr], { type:'application/json' });
+function triggerDownload(blob, fileName) {
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: fileName });
   a.click(); URL.revokeObjectURL(a.href);
   showToast('⬆ Veriler dışa aktarıldı');
