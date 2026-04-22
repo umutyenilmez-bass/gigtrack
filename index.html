@@ -1616,27 +1616,11 @@ function confirmDelete(id) {
 function openCalendarDate(id) {
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
-
-  const [year, month, day] = gig.date.split('-');
-  const epochMs = new Date(gig.date + 'T12:00:00').getTime();
-  const ua = navigator.userAgent.toLowerCase();
-
-  if (/android/.test(ua)) {
-    // Android: Google Calendar'a git
-    window.location.href = `intent://calendar/time/${epochMs}#Intent;scheme=content;authority=com.android.calendar;end`;
-    setTimeout(() => {
-      window.open(`https://calendar.google.com/calendar/r/day/${year}/${parseInt(month)}/${parseInt(day)}`, '_blank');
-    }, 500);
-  } else if (/iphone|ipad|ipod/.test(ua)) {
-    // iOS: native takvim
-    window.location.href = `calshow://${Math.floor(epochMs / 1000)}`;
-    setTimeout(() => {
-      window.open(`https://calendar.google.com/calendar/r/day/${year}/${parseInt(month)}/${parseInt(day)}`, '_blank');
-    }, 500);
-  } else {
-    // Masaüstü: Google Calendar
-    window.open(`https://calendar.google.com/calendar/r/day/${year}/${parseInt(month)}/${parseInt(day)}`, '_blank');
-  }
+  // Dahili takvime git, o ayı ve günü seç
+  calendarDate = new Date(gig.date + 'T12:00:00');
+  selectedCalDay = gig.date;
+  switchTab('calendar');
+  renderCalendar();
 }
 
 
