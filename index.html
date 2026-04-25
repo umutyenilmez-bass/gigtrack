@@ -625,9 +625,16 @@
   </div>
 </div>
 
-<!-- TAB: Takvim -->
-<div id="tab-calendar" class="tab-content hidden" onclick="handleCalendarBgClick(event)">
-  <div class="content" id="calendarView"></div>
+<!-- CALENDAR MODAL -->
+<div class="modal-overlay" id="calendarModalOverlay" onclick="handleCalendarOverlayClick(event)" style="z-index: 900;">
+  <div class="modal" id="calendarModalBox" style="padding-bottom: 20px;">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2 class="modal-title" data-i18n="tabCalendar">Takvim</h2>
+      <button class="btn-close" onclick="closeCalendarModal()">✕</button>
+    </div>
+    <div class="content" id="calendarView"></div>
+  </div>
 </div>
 
 <!-- BOTTOM NAV -->
@@ -1022,10 +1029,16 @@ function goHome() {
 }
 
 function switchTab(tab) {
+  if (tab === 'calendar') {
+    openCalendarModal();
+    return;
+  }
   document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('tab-' + tab).classList.remove('hidden');
-  document.getElementById('nav-' + tab).classList.add('active');
+  const target = document.getElementById('tab-' + tab);
+  if (target) target.classList.remove('hidden');
+  const navTarget = document.getElementById('nav-' + tab);
+  if (navTarget) navTarget.classList.add('active');
   activeTab = tab;
   document.body.setAttribute('data-tab', tab);
   render();
@@ -1533,18 +1546,24 @@ function calendarDayClick(dateStr) {
 }
 
 function toggleCalendarTab() {
-  if (activeTab === 'calendar') {
-    switchTab('gigs');
-  } else {
-    switchTab('calendar');
-  }
+  const overlay = document.getElementById('calendarModalOverlay');
+  if (overlay.classList.contains('open')) closeCalendarModal();
+  else openCalendarModal();
 }
 
-function handleCalendarBgClick(e) {
-  // Takvim sayfasındayken boşluğa tıklanırsa ana sayfaya dön
-  if (activeTab === 'calendar') {
-    goHome();
-  }
+function openCalendarModal() {
+  document.getElementById('calendarModalOverlay').classList.add('open');
+  history.pushState({ modal: 'calendar' }, '', '#calendar');
+  renderCalendar();
+}
+
+function closeCalendarModal() {
+  document.getElementById('calendarModalOverlay').classList.remove('open');
+  if (window.location.hash === '#calendar') history.back();
+}
+
+function handleCalendarOverlayClick(e) {
+  if (e.target === document.getElementById('calendarModalOverlay')) closeCalendarModal();
 }
 
 
@@ -2021,13 +2040,16 @@ window.addEventListener('popstate', () => {
   const hash = window.location.hash;
   if (hash !== '#calc') {
     const cmo = document.getElementById('calcModalOverlay');
-    if (cmo.classList.contains('open')) {
+    if (cmo && cmo.classList.contains('open')) {
       document.getElementById('calcModalBox').style.opacity = '0';
       document.getElementById('calcModalBox').style.transform = 'translateY(-20px) scale(0.95)';
       setTimeout(() => { cmo.classList.remove('open'); }, 250);
     }
   }
-  if (hash !== '#modal' && hash !== '#calc') {
+  if (hash !== '#calendar') {
+    document.getElementById('calendarModalOverlay').classList.remove('open');
+  }
+  if (hash !== '#modal' && hash !== '#calc' && hash !== '#calendar') {
     document.getElementById('modalOverlay').classList.remove('open');
   }
   if (hash !== '#confirm') {
