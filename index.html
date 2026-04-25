@@ -1121,8 +1121,8 @@ function gigCard(gig) {
 
   // EXPANDED
   return `
-<div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}">
-  <div class="gig-main" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
+<div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
+  <div class="gig-main">
     <div class="gig-date-block">
       <div class="gig-date-day">${df.day}</div>
       <div class="gig-date-month">${df.month}</div>
@@ -1146,8 +1146,8 @@ function gigCard(gig) {
       </button>
     </div>
   </div>
-  ${gig.notes ? `<div class="gig-notes">${escHtml(gig.notes)}</div>` : ''}
-  <div class="gig-actions">
+  ${gig.notes ? `<div class="gig-notes" onclick="event.stopPropagation()">${escHtml(gig.notes)}</div>` : ''}
+  <div class="gig-actions" onclick="event.stopPropagation()">
     <button class="gig-action-btn" onclick="editGig('${gig.id}')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
       ${T.gigEdit}
