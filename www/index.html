@@ -1076,15 +1076,51 @@ function deleteTag(type, value) {
 }
 
 // ===== GIG CARD =====
+const expandedCards = new Set();
+
+function toggleCard(id) {
+  if (expandedCards.has(id)) expandedCards.delete(id);
+  else expandedCards.add(id);
+  const gig = gigs.find(g => String(g.id) === String(id));
+  if (!gig) return;
+  const cardEl = document.getElementById('card-' + id);
+  if (cardEl) cardEl.outerHTML = gigCard(gig);
+}
+
 function gigCard(gig) {
   const df  = formatDate(gig.date);
   const sym = SYM[gig.currency] || '';
   const feeDisplay = gig.fee ? `${sym}${escHtml(gig.fee)}` : '—';
   const isPast = gig.date < today();
-  const isRepeat = gig.parentId || (gig.repeat && gig.repeat !== 'none');
+  const isExpanded = expandedCards.has(gig.id);
 
+  // COLLAPSED
+  if (!isExpanded) {
+    const feeColor = gig.paid ? '#2d7a63' : '#fff';
+    return `
+<div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
+  <div style="display:flex;align-items:center;padding:11px 16px;gap:14px;">
+    <div style="flex-shrink:0;text-align:center;min-width:36px;">
+      <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;line-height:1;color:var(--text);">${df.day}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-2);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">${df.month}</div>
+    </div>
+    <div style="width:1px;height:32px;background:var(--border);flex-shrink:0;"></div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;">${T.valNoVenue}</span>`}</div>
+      ${gig.artist ? `<div style="font-size:11px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(gig.artist)}</div>` : ''}
+    </div>
+    <div style="flex-shrink:0;text-align:right;">
+      <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:${feeColor};">${feeDisplay}</div>
+      ${gig.time ? `<div style="font-size:10px;color:var(--text-3);margin-top:2px;">${gig.time}</div>` : ''}
+    </div>
+    <div style="color:var(--text-3);font-size:16px;flex-shrink:0;">›</div>
+  </div>
+</div>`;
+  }
+
+  // EXPANDED
   return `
-<div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}">
+<div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div class="gig-main">
     <div class="gig-date-block">
       <div class="gig-date-day">${df.day}</div>
@@ -1092,25 +1128,25 @@ function gigCard(gig) {
       <div class="gig-date-day-name">${df.dayName}</div>
     </div>
     <div class="gig-info">
-      <div class="gig-venue"  onclick="setFilter('venue', ${JSON.stringify(gig.venue || '').replace(/"/g, '&quot;')})">
+      <div class="gig-venue">
         ${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;font-weight:500;">${T.valNoVenue}</span>`}
       </div>
-      <div class="gig-artist" onclick="setFilter('artist', ${JSON.stringify(gig.artist || '').replace(/"/g, '&quot;')})">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
+      <div class="gig-artist">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
       <div class="gig-meta">
         ${gig.time ? `<span class="gig-time">${gig.time}</span>` : ''}
         <span class="gig-time">${df.year}</span>
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee">${feeDisplay}</div>
+      <div class="gig-fee" style="color:${gig.paid?'var(--paid-text)':'#fff'}">${feeDisplay}</div>
       ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
-      <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="togglePaidStatus('${gig.id}')">
+      <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
       </button>
     </div>
   </div>
-  ${gig.notes ? `<div class="gig-notes">${escHtml(gig.notes)}</div>` : ''}
-  <div class="gig-actions">
+  ${gig.notes ? `<div class="gig-notes" onclick="event.stopPropagation()">${escHtml(gig.notes)}</div>` : ''}
+  <div class="gig-actions" onclick="event.stopPropagation()">
     <button class="gig-action-btn" onclick="editGig('${gig.id}')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
       ${T.gigEdit}
