@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GigTrack</string>
+    <string name="title_activity_main">GigTrack</string>
+    <string name="package_name">com.gigtrack</string>
+    <string name="custom_url_scheme">com.gigtrack</string>
+</resources>

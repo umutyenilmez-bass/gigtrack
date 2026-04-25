@@ -64,7 +64,6 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    /* HEADER */
     .header {
       position: sticky; top: 0; z-index: 100;
       background: rgba(8,8,8,0.94);
@@ -83,10 +82,7 @@
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0; overflow: hidden;
     }
-    .logo-mark img {
-      width: 100%; height: 100%; object-fit: cover;
-      transform: scale(1.15);
-    }
+    .logo-mark img { width: 100%; height: 100%; object-fit: cover; transform: scale(1.15); }
 
     .app-title { font-size: 18px; font-family: 'FrizQuadrata', serif; font-weight: 400; letter-spacing: 0.08em; color: #D4CFC7; display: flex; align-items: baseline; }
 
@@ -102,13 +98,8 @@
       box-shadow: 0 4px 12px var(--accent-glow);
     }
     .btn-add:active { transform: scale(0.96); opacity: 0.9; }
-    .btn-add:hover { transform: scale(1.02); box-shadow: 0 6px 16px rgba(255, 179, 0, 0.35); }
 
-    /* DATA ACTIONS */
-    .data-actions {
-      display: flex; gap: 8px; padding: 10px 18px;
-      border-bottom: 1px solid var(--border);
-    }
+    .data-actions { display: flex; gap: 8px; padding: 10px 18px; border-bottom: 1px solid var(--border); }
 
     .btn-data {
       flex: 1; padding: 8px;
@@ -120,10 +111,8 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;
       transition: all 0.15s; -webkit-tap-highlight-color: transparent;
     }
-    .btn-data:hover { color: var(--text); border-color: #3a3a3a; }
     .btn-data:active { transform: scale(0.96); }
 
-    /* FILTER BAR */
     .filter-bar {
       padding: 10px 18px; display: flex; align-items: center; gap: 7px;
       overflow-x: auto; scrollbar-width: none;
@@ -139,25 +128,19 @@
       cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
       -webkit-tap-highlight-color: transparent;
     }
-    .filter-chip:hover { border-color: rgba(255,255,255,0.15); }
-    .filter-chip.active {
-      background: rgba(255, 179, 0, 0.15); border-color: var(--accent); color: var(--accent);
-    }
+    .filter-chip.active { background: rgba(255, 179, 0, 0.15); border-color: var(--accent); color: var(--accent); }
     .filter-chip:active { transform: scale(0.96); }
 
     .filter-chip-delete {
       margin-left: 12px; margin-right: -4px; color: var(--text-3); font-weight: 800; font-size: 14px;
       padding: 2px 6px; border-radius: 20px; display: inline-block;
     }
-    .filter-chip-delete:hover { color: var(--red); background: rgba(248,113,113,0.15); }
 
-    /* CONTENT */
     .content {
       padding: 14px 18px;
       padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 14px);
     }
 
-    /* SECTION LABEL */
     .section-label {
       font-family: 'DM Mono', monospace;
       font-size: 10px; font-weight: 500;
@@ -169,18 +152,14 @@
     .section-label:first-child { margin-top: 0; }
     .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-    /* GIG CARD */
     .gig-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      margin-bottom: 16px; overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      margin-bottom: 10px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
       transition: all 0.2s ease;
     }
-    .gig-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-    .gig-card.paid   { border-left: none; }
-    .gig-card.unpaid { border-left: none; }
     .gig-card:active { transform: scale(0.98); }
 
     .gig-main {
@@ -190,71 +169,33 @@
     }
 
     .gig-date-block { text-align: center; }
-
-    .gig-date-day {
-      font-family: 'DM Mono', monospace;
-      font-size: 28px; font-weight: 500; line-height: 1; color: var(--text);
-    }
-    .gig-date-month {
-      font-family: 'DM Mono', monospace;
-      font-size: 10px; color: var(--text-2);
-      text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
-    }
-    .gig-date-day-name {
-      font-family: 'DM Mono', monospace;
-      font-size: 9px; color: var(--text-3); font-weight: 700;
-      text-transform: uppercase; letter-spacing: 1px; margin-top: 2px;
-    }
+    .gig-date-day { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; line-height: 1; color: var(--text); }
+    .gig-date-month { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-2); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+    .gig-date-day-name { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
 
     .gig-info { min-width: 0; display: flex; flex-direction: column; }
 
     .gig-venue {
       font-family: 'Inter', sans-serif;
       font-size: 16px; font-weight: 700; color: #FFF;
-      cursor: pointer; transition: color 0.1s;
       display: flex; align-items: center; gap: 4px;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      order: 1;
     }
-    .gig-venue:hover { color: var(--accent); }
-    
+
     .gig-artist {
-      font-size: 13px; font-weight: 500; color: var(--text-2); /* Daha arka planda sanatçı adı */
-      cursor: pointer; transition: color 0.1s;
+      font-size: 13px; font-weight: 500; color: var(--text-2);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       margin-top: 2px;
-      order: 2;
-    }
-    .gig-artist:hover { color: var(--text); }
-
-    .gig-meta {
-      display: flex; align-items: center; gap: 5px;
-      margin-top: 6px; flex-wrap: wrap;
-      order: 3;
     }
 
-    .gig-time {
-      font-family: 'DM Mono', monospace;
-      font-size: 11px; color: var(--text-3);
-      display: flex; align-items: center; gap: 3px;
-    }
+    .gig-meta { display: flex; align-items: center; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
 
-    .gig-repeat-badge {
-      font-family: 'DM Mono', monospace; font-size: 10px;
-      padding: 2px 6px; border-radius: 4px;
-      background: var(--accent-dim); color: var(--accent);
-      border: 1px solid rgba(244, 196, 48, 0.2);
-    }
+    .gig-time { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 3px; }
 
     .gig-fee-block { text-align: right; flex-shrink: 0; min-width: 0; }
 
-    .gig-fee {
-      font-family: 'DM Mono', monospace;
-      font-size: 16px; font-weight: 700; color: #FFF;
-      word-break: break-all; max-width: 90px;
-    }
+    .gig-fee { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 700; color: #FFF; word-break: break-all; max-width: 90px; }
 
-    /* Hızlı Ödeme Durumu Değiştirme Butonu */
     .status-badge {
       display: inline-flex; align-items: center; gap: 4px;
       font-size: 11px; font-weight: 600;
@@ -262,23 +203,18 @@
       cursor: pointer; transition: all 0.15s;
       letter-spacing: 0.3px; margin-top: 8px; border: none;
       -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       font-family: 'Inter', sans-serif;
     }
     .status-badge.paid   { background: var(--paid-bg); color: var(--paid-text); border: 1px solid rgba(255,255,255,0.06); }
     .status-badge.unpaid { background: transparent; color: var(--text-2); border: 1px solid rgba(255,255,255,0.1); }
     .status-badge:active { transform: scale(0.95); }
-    
-    .status-badge.paid:hover { opacity: 0.9; }
-    .status-badge.unpaid:hover { background: rgba(255,255,255,0.03); color: var(--text); }
 
     .gig-notes {
-      padding: 0 14px 11px; font-size: 12px;
+      padding: 9px 14px 11px; font-size: 12px;
       color: var(--text-2); font-style: italic; line-height: 1.55;
-      border-top: 1px solid var(--border); padding-top: 9px; margin-top: 0;
+      border-top: 1px solid var(--border);
     }
 
-    /* GIG ACTIONS */
     .gig-actions {
       display: flex; border-top: 1px solid rgba(255,255,255,0.05);
       background: #1e1e20;
@@ -294,11 +230,9 @@
       -webkit-tap-highlight-color: transparent;
     }
     .gig-action-btn:not(:last-child) { border-right: 1px solid rgba(255,255,255,0.03); }
-    .gig-action-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
     .gig-action-btn:active { transform: scale(0.96); }
     .gig-action-btn.danger:hover { color: #FF453A; }
 
-    /* BOTTOM NAV */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
       background: rgba(15,15,16,0.95);
@@ -318,7 +252,7 @@
       font-family: 'Inter', sans-serif;
       font-size: 12.5px; font-weight: 500; position: relative;
     }
-    .nav-item.active { color: var(--accent); font-weight: 600; text-shadow: 0 0 12px rgba(255, 179, 0, 0.25); }
+    .nav-item.active { color: var(--accent); font-weight: 600; }
     .nav-item.active::before {
       content: ''; position: absolute; top: 0; left: 30%; right: 30%;
       height: 3px; background: var(--accent);
@@ -326,18 +260,7 @@
       border-radius: 0 0 3px 3px;
     }
     .nav-item:active { transform: scale(0.96); }
-    .nav-icon { font-size: 21px; line-height: 1; }
 
-    .nav-badge {
-      position: absolute; top: 7px; right: calc(50% - 18px);
-      background: var(--red); color: white;
-      font-size: 9px; font-weight: 800;
-      min-width: 16px; height: 16px;
-      border-radius: 8px; padding: 0 3px;
-      display: flex; align-items: center; justify-content: center;
-    }
-
-    /* MODAL */
     .modal-overlay {
       position: fixed; inset: 0; z-index: 500;
       background: rgba(0,0,0,0.75);
@@ -359,16 +282,9 @@
     }
     .modal-overlay.open .modal { transform: translateY(0); }
 
-    .modal-handle {
-      width: 36px; height: 4px;
-      background: var(--border); border-radius: 2px;
-      margin: 12px auto 0;
-    }
+    .modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 12px auto 0; }
 
-    .modal-header {
-      padding: 16px 20px 0;
-      display: flex; align-items: center; justify-content: space-between;
-    }
+    .modal-header { padding: 16px 20px 0; display: flex; align-items: center; justify-content: space-between; }
 
     .modal-title { font-size: 20px; font-weight: 800; }
 
@@ -379,16 +295,11 @@
       cursor: pointer; font-size: 14px; transition: all 0.15s;
       -webkit-tap-highlight-color: transparent;
     }
-    .btn-close:hover { color: var(--text); }
     .btn-close:active { transform: scale(0.9); }
 
-    /* FORM */
     .form { padding: 18px 20px calc(46px + var(--safe-bottom)); }
 
-    .quick-fill-list {
-      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none;
-      margin-bottom: 16px; padding-bottom: 5px;
-    }
+    .quick-fill-list { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-bottom: 16px; padding-bottom: 5px; }
     .quick-fill-list::-webkit-scrollbar { display: none; }
     .quick-fill-chip {
       flex-shrink: 0; padding: 7px 12px; border-radius: var(--radius-sm);
@@ -397,19 +308,12 @@
       -webkit-tap-highlight-color: transparent; transition: all 0.15s;
     }
     .quick-fill-chip:active { transform: scale(0.96); }
-    .quick-fill-chip:hover { border-color: var(--accent); }
     .quick-fill-title { font-size: 13px; font-weight: 700; color: var(--text); }
     .quick-fill-sub { font-size: 10px; font-weight: 500; color: var(--text-3); font-family: 'DM Mono', monospace; }
 
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
     .form-group { margin-bottom: 13px; }
-
-    .form-label {
-      font-size: 10px; font-weight: 700;
-      letter-spacing: 1px; text-transform: uppercase;
-      color: var(--text-2); margin-bottom: 6px; display: block;
-    }
+    .form-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); margin-bottom: 6px; display: block; }
 
     .form-input, .form-select, .form-textarea {
       width: 100%;
@@ -430,16 +334,13 @@
       padding-right: 34px;
     }
     .form-select option { background: #1a1a1a; }
-
     .form-textarea { resize: vertical; min-height: 76px; line-height: 1.5; }
-
     .form-hint { font-size: 11px; color: var(--text-3); margin-top: 4px; }
 
     .fee-row { display: flex; gap: 8px; }
     .fee-input { flex: 1; }
     .fee-currency { width: 88px; flex-shrink: 0; }
 
-    /* Paid toggle */
     .paid-toggle {
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 13px;
@@ -448,21 +349,11 @@
       -webkit-tap-highlight-color: transparent;
     }
     .paid-toggle-label { font-size: 14px; font-weight: 600; }
-
-    .toggle-switch {
-      width: 40px; height: 22px; border-radius: 11px;
-      background: var(--border); position: relative; transition: background 0.2s;
-    }
-    .toggle-switch.on { background: var(--green); }
-    .toggle-knob {
-      position: absolute; top: 3px; left: 3px;
-      width: 16px; height: 16px; border-radius: 50%;
-      background: white; transition: transform 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
+    .toggle-switch { width: 40px; height: 22px; border-radius: 11px; background: var(--border); position: relative; transition: background 0.2s; }
+    .toggle-switch.on { background: #2d7a63; }
+    .toggle-knob { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform 0.2s; }
     .toggle-switch.on .toggle-knob { transform: translateX(18px); }
 
-    /* Submit btn */
     .btn-submit {
       width: 100%; padding: 14px;
       background: var(--accent); color: #000; border: none;
@@ -472,33 +363,15 @@
       -webkit-tap-highlight-color: transparent;
     }
     .btn-submit:active { transform: scale(0.97); opacity: 0.88; }
-    .btn-submit:hover { background: #f7d060; }
 
-    /* STATS */
-    .stats-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 9px; margin-bottom: 18px;
-    }
-
-    .stat-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 15px;
-    }
-    .stat-card.accent {
-      background: var(--accent-dim); border-color: rgba(244, 196, 48, 0.28);
-    }
-
-    .stat-label {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.6px;
-      text-transform: uppercase; color: var(--text-2); margin-bottom: 7px;
-    }
-    .stat-value {
-      font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: #D4D4D8;
-    }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 18px; }
+    .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px; }
+    .stat-card.accent { background: var(--accent-dim); border-color: rgba(244, 196, 48, 0.28); }
+    .stat-label { font-size: 10px; font-weight: 700; letter-spacing: 0.6px; text-transform: uppercase; color: var(--text-2); margin-bottom: 7px; }
+    .stat-value { font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: #D4D4D8; }
     .stat-card.accent .stat-value { color: var(--accent); }
     .stat-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
 
-    /* UNPAID SUMMARY */
     .unpaid-summary {
       position: sticky; top: var(--header-height); z-index: 90;
       background: rgba(8,8,8,0.92);
@@ -507,20 +380,15 @@
       padding: 10px 18px;
       font-size: 13px; font-weight: 700; color: var(--accent);
       display: flex; gap: 15px; flex-wrap: wrap; align-items: center; justify-content: center;
-      transition: all 0.2s;
     }
     .unpaid-summary:empty { display: none; margin: 0; padding: 0; border: none; }
     .unpaid-sum-item { display: flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 14px; color: #D4D4D8; }
 
-    /* EMPTY STATE */
-    .empty-state {
-      text-align: center; padding: 60px 20px; color: var(--text-3);
-    }
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--text-3); }
     .empty-icon { font-size: 42px; margin-bottom: 12px; }
     .empty-title { font-size: 16px; font-weight: 700; color: var(--text-2); margin-bottom: 6px; }
     .empty-text { font-size: 13px; line-height: 1.65; }
 
-    /* CONFIRM */
     .confirm-overlay {
       position: fixed; inset: 0; z-index: 700;
       background: rgba(0,0,0,0.82);
@@ -528,7 +396,6 @@
       opacity: 0; pointer-events: none; transition: opacity 0.2s;
     }
     .confirm-overlay.open { opacity: 1; pointer-events: all; }
-
     .confirm-box {
       background: var(--surface); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 22px;
@@ -536,11 +403,9 @@
       transform: scale(0.88); transition: transform 0.22s;
     }
     .confirm-overlay.open .confirm-box { transform: scale(1); }
-
     .confirm-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
     .confirm-text { font-size: 13px; color: var(--text-2); line-height: 1.55; margin-bottom: 20px; }
     .confirm-actions { display: flex; gap: 8px; }
-
     .btn-confirm {
       flex: 1; padding: 11px; border-radius: var(--radius-sm);
       border: 1px solid var(--border);
@@ -551,7 +416,6 @@
     .btn-confirm.danger  { background: var(--red-dim); color: var(--red); border-color: rgba(248,113,113,0.3); }
     .btn-confirm:active  { transform: scale(0.95); }
 
-    /* TOAST */
     .toast {
       position: fixed;
       bottom: calc(var(--nav-height) + var(--safe-bottom) + 14px);
@@ -566,14 +430,12 @@
 
     .hidden { display: none !important; }
 
-    /* Subtle past gig dimming */
     .gig-card.past .gig-date-day,
     .gig-card.past .gig-artist { opacity: 0.55; }
   </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="header">
   <div class="header-left" onclick="goHome()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
     <div class="logo-mark"><img src="logo.png" alt="Logo"></div>
@@ -586,13 +448,10 @@
     <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center; box-shadow: none;" onclick="switchTab('calendar')">
       <svg width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="16" height="16" rx="2"/><line x1="1" y1="8" x2="17" y2="8"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="13" y1="1" x2="13" y2="5"/><line x1="5" y1="12" x2="5" y2="12.01"/><line x1="9" y1="12" x2="9" y2="12.01"/><line x1="13" y1="12" x2="13" y2="12.01"/></svg>
     </button>
-    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">
-      
-    </button>
+    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">İş Ekle</button>
   </div>
 </header>
 
-<!-- DATA ACTIONS -->
 <div class="data-actions">
   <button class="btn-data" onclick="document.getElementById('importFile').click()" data-i18n="importData">⬇ İçe Aktar</button>
   <button class="btn-data" onclick="exportData()" data-i18n="exportData">⬆ Dışa Aktar</button>
@@ -601,23 +460,19 @@
 
 <div class="filter-bar" id="filterBar"></div>
 
-<!-- TAB: İşlerim -->
 <div id="tab-gigs" class="tab-content">
   <div class="content" id="gigsList"></div>
 </div>
 
-<!-- TAB: Ödenmemiş -->
 <div id="tab-unpaid" class="tab-content hidden">
   <div class="unpaid-summary" id="unpaidSummary"></div>
   <div class="content" id="unpaidList"></div>
 </div>
 
-<!-- TAB: Ödenmiş -->
 <div id="tab-paid" class="tab-content hidden">
   <div class="content" id="paidList"></div>
 </div>
 
-<!-- TAB: Analiz -->
 <div id="tab-analysis" class="tab-content hidden">
   <div class="content">
     <div class="stats-grid" id="statsGrid"></div>
@@ -625,12 +480,10 @@
   </div>
 </div>
 
-<!-- TAB: Takvim -->
 <div id="tab-calendar" class="tab-content hidden">
   <div class="content" id="calendarView"></div>
 </div>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')">
     <span data-i18n="tabGigs">İşlerim</span>
@@ -646,7 +499,6 @@
   </div>
 </nav>
 
-<!-- ADD / EDIT MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
   <div class="modal" id="modalBox">
     <div class="modal-handle"></div>
@@ -662,33 +514,30 @@
     <div class="form">
       <div class="quick-fill-list hidden" id="quickFillList"></div>
       <input type="hidden" id="editingId">
-
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" data-i18n="lblVenue">Mekan</label>
-          <input type="text" class="form-input" id="fVenue" placeholder="Mekan Adı" data-i18n="plcVenue" autocomplete="off">
+          <input type="text" class="form-input" id="fVenue" placeholder="Mekan Adı" autocomplete="off">
         </div>
         <div class="form-group">
           <label class="form-label" data-i18n="lblArtist">Sanatçı</label>
-          <input type="text" class="form-input" id="fArtist" placeholder="Sahne adı" data-i18n="plcArtist" autocomplete="off">
+          <input type="text" class="form-input" id="fArtist" placeholder="Sahne adı" autocomplete="off">
         </div>
       </div>
-
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" data-i18n="lblDate">Tarih</label>
+          <label class="form-label">Tarih</label>
           <input type="date" class="form-input" id="fDate" onclick="this.showPicker()">
         </div>
         <div class="form-group">
-          <label class="form-label" data-i18n="lblTime">Saat (opsiyonel)</label>
+          <label class="form-label">Saat (opsiyonel)</label>
           <input type="time" class="form-input" id="fTime" onclick="this.showPicker()">
         </div>
       </div>
-
       <div class="form-group">
-        <label class="form-label" data-i18n="lblFee">Ücret</label>
+        <label class="form-label">Ücret</label>
         <div class="fee-row">
-          <input type="text" class="form-input fee-input" id="fFee" placeholder="1500 · ? · TBD · ~2000" data-i18n="plcFee" autocomplete="off">
+          <input type="text" class="form-input fee-input" id="fFee" placeholder="1500 · ? · TBD · ~2000" autocomplete="off">
           <select class="form-select fee-currency" id="fCurrency">
             <option value="TRY">₺ TRY</option>
             <option value="EUR">€ EUR</option>
@@ -696,83 +545,70 @@
             <option value="GBP">£ GBP</option>
           </select>
         </div>
-        <div class="form-hint"><span data-i18n="hintFee">Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür.</span></div>
+        <div class="form-hint">Sayı, soru işareti veya metin girebilirsiniz.</div>
       </div>
-
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" data-i18n="lblExpenseName">Masraf Adı (opsiyonel)</label>
-          <input type="text" class="form-input" id="fExpenseName" placeholder="örn. Taksi" data-i18n="plcExpenseName" autocomplete="off">
+          <label class="form-label">Masraf Adı (opsiyonel)</label>
+          <input type="text" class="form-input" id="fExpenseName" placeholder="örn. Taksi" autocomplete="off">
         </div>
         <div class="form-group">
-          <label class="form-label" data-i18n="lblExpenseAmount">Masraf Tutarı</label>
-          <input type="number" class="form-input" id="fExpenseAmount" placeholder="Tutar" data-i18n="plcExpenseAmount" autocomplete="off" step="any">
+          <label class="form-label">Masraf Tutarı</label>
+          <input type="number" class="form-input" id="fExpenseAmount" placeholder="Tutar" autocomplete="off" step="any">
         </div>
       </div>
-
       <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 13px;">
-        <div style="font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;" data-i18n="lblAutoFuel">
-          Otomatik Yakıt Hesaplama
-        </div>
+        <div style="font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 8px;">Otomatik Yakıt Hesaplama</div>
         <div class="form-row">
           <div class="form-group" style="margin-bottom: 6px;">
-            <label class="form-label" data-i18n="lblDistance">Gidilen Mesafe (KM)</label>
-            <input type="number" class="form-input" id="fDistance" placeholder="Örn. 50" data-i18n="plcDistance" oninput="calculateFuel()">
+            <label class="form-label">Gidilen Mesafe (KM)</label>
+            <input type="number" class="form-input" id="fDistance" placeholder="Örn. 50" oninput="calculateFuel()">
           </div>
           <div class="form-group" style="margin-bottom: 6px;">
-            <label class="form-label" data-i18n="lblFuelRate">Litre Fiyatı (TL)</label>
-            <input type="number" class="form-input" id="fFuelRate" placeholder="Örn. 43.5" data-i18n="plcFuelRate" step="any" oninput="calculateFuel()">
+            <label class="form-label">Litre Fiyatı (TL)</label>
+            <input type="number" class="form-input" id="fFuelRate" placeholder="Örn. 43.5" step="any" oninput="calculateFuel()">
           </div>
         </div>
         <div class="form-group" style="margin-bottom: 0;">
-          <label class="form-label" data-i18n="lblFuelCons">Tüketim (L/100km) - Varsayılan: 7</label>
-          <input type="number" class="form-input" id="fFuelCons" value="7" placeholder="7" data-i18n="plcFuelCons" step="any" oninput="calculateFuel()">
+          <label class="form-label">Tüketim (L/100km) - Varsayılan: 7</label>
+          <input type="number" class="form-input" id="fFuelCons" value="7" placeholder="7" step="any" oninput="calculateFuel()">
         </div>
       </div>
-
       <div class="form-row">
         <div class="form-group">
-          <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
+          <label class="form-label">Tekrar</label>
           <select class="form-select" id="fRepeat" onchange="toggleRepeatUntil()">
-            <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
-            <option value="weekly" data-i18n="optRepeatWeekly">Her hafta</option>
-            <option value="biweekly" data-i18n="optRepeatBiweekly">2 haftada bir</option>
-            <option value="monthly" data-i18n="optRepeatMonthly">Her ay</option>
+            <option value="none">Tekrar yok</option>
+            <option value="weekly">Her hafta</option>
+            <option value="biweekly">2 haftada bir</option>
+            <option value="monthly">Her ay</option>
           </select>
         </div>
         <div class="form-group" id="repeatUntilGroup" style="display:none">
-          <label class="form-label" data-i18n="lblUntil">Son tarih</label>
+          <label class="form-label">Son tarih</label>
           <input type="date" class="form-input" id="fRepeatUntil" onclick="this.showPicker()">
         </div>
       </div>
-
       <div class="form-group">
-        <label class="form-label" data-i18n="lblNotes">Notlar (opsiyonel)</label>
-        <textarea class="form-textarea form-input" id="fNotes" placeholder="Eklemek istediğin notlar..." data-i18n="plcNotes"></textarea>
+        <label class="form-label">Notlar (opsiyonel)</label>
+        <textarea class="form-textarea form-input" id="fNotes" placeholder="Eklemek istediğin notlar..."></textarea>
       </div>
-
       <div class="form-group">
         <div class="paid-toggle" onclick="togglePaid()">
-          <span class="paid-toggle-label" data-i18n="lblPaid">Ödendi mi?</span>
-          <div class="toggle-switch" id="paidToggle">
-            <div class="toggle-knob"></div>
-          </div>
+          <span class="paid-toggle-label">Ödendi mi?</span>
+          <div class="toggle-switch" id="paidToggle"><div class="toggle-knob"></div></div>
         </div>
       </div>
-
-      <button class="btn-submit" id="submitBtn" onclick="saveGig()" data-i18n="btnSave">Kaydet</button>
+      <button class="btn-submit" id="submitBtn" onclick="saveGig()">Kaydet</button>
     </div>
   </div>
 </div>
 
-</div>
-
-<!-- CALC MODAL -->
 <div class="modal-overlay" id="calcModalOverlay" onclick="handleCalcOverlayClick(event)" style="z-index: 1000;">
   <div class="modal" id="calcModalBox" style="max-width: 380px; margin: auto; bottom: auto; top: 10vh; transform: translateY(-20px) scale(0.95); opacity: 0; transition: all 0.25s; border-radius: 22px; border-bottom: 1px solid var(--border);">
     <div class="modal-handle" style="display:none;"></div>
     <div class="modal-header">
-      <h2 class="modal-title" data-i18n="calcTitle">Hesap Makinesi</h2>
+      <h2 class="modal-title">Hesap Makinesi</h2>
       <button class="btn-close" onclick="closeCalcModal()">✕</button>
     </div>
     <div class="form" style="padding: 15px 20px 20px;">
@@ -782,23 +618,19 @@
         <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('⌫')">⌫</button>
         <button class="btn-data" style="font-size: 18px; padding: 14px 0; font-weight:700;" onclick="calcInput('%')">%</button>
         <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('/')">÷</button>
-        
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('7')">7</button>
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('8')">8</button>
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('9')">9</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('7')">7</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('8')">8</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('9')">9</button>
         <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('*')">×</button>
-        
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('4')">4</button>
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('5')">5</button>
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('6')">6</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('4')">4</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('5')">5</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('6')">6</button>
         <button class="btn-data" style="font-size: 24px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('-')">-</button>
-        
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('1')">1</button>
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('2')">2</button>
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600;" onclick="calcInput('3')">3</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('1')">1</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('2')">2</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0;" onclick="calcInput('3')">3</button>
         <button class="btn-data" style="font-size: 22px; padding: 14px 0; font-weight:700; color: var(--accent);" onclick="calcInput('+')">+</button>
-        
-        <button class="btn-data" style="font-size: 20px; padding: 14px 0; font-weight:600; grid-column: span 2;" onclick="calcInput('0')">0</button>
+        <button class="btn-data" style="font-size: 20px; padding: 14px 0; grid-column: span 2;" onclick="calcInput('0')">0</button>
         <button class="btn-data" style="font-size: 22px; padding: 14px 0; font-weight:700;" onclick="calcInput('.')">.</button>
         <button class="btn-submit" style="font-size: 22px; padding: 14px 0; margin-top: 0;" onclick="calcInput('=')">=</button>
       </div>
@@ -806,102 +638,69 @@
   </div>
 </div>
 
-<!-- CONFIRM DIALOG -->
 <div class="confirm-overlay" id="confirmOverlay">
   <div class="confirm-box">
-    <div class="confirm-title" id="confirmTitle" data-i18n="confirmTitle">Emin misin?</div>
-    <div class="confirm-text"  id="confirmText" data-i18n="confirmText">Bu işlemi geri alamazsın.</div>
+    <div class="confirm-title" id="confirmTitle">Emin misin?</div>
+    <div class="confirm-text" id="confirmText">Bu işlemi geri alamazsın.</div>
     <div class="confirm-actions">
-      <button class="btn-confirm cancel" onclick="closeConfirm()" data-i18n="btnCancel">İptal</button>
-      <button class="btn-confirm danger"  id="confirmOkBtn" data-i18n="btnDelete">Sil</button>
+      <button class="btn-confirm cancel" onclick="closeConfirm()">İptal</button>
+      <button class="btn-confirm danger" id="confirmOkBtn">Sil</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ===== i18n =====
 const userLang = (navigator.language || navigator.userLanguage || "en").substring(0,2) === "tr" ? "tr" : "en";
 const T = {
   en: {
-    addGigBtn: "Add Gig", exportData: "⬆ Export", importData: "⬇ Import",
-    tabGigs: "Gigs", tabUnpaid: "Unpaid", tabPaid: "Paid", tabAnalysis: "Analysis",
-    modalTitle: "New Gig",
-    lblVenue: "Venue", plcVenue: "Venue Name",
-    lblArtist: "Artist", plcArtist: "Artist/Band Name",
-    lblDate: "Date", lblTime: "Time (opt)",
-    lblFee: "Fee", plcFee: "1500 · ? · TBD · ~2000",
-    hintFee: "Enter number, text, or ?. Only numeric values will show up in Analysis.",
-    lblRepeat: "Repeat", optRepeatNone: "No repeat",
-    optRepeatWeekly: "Weekly", optRepeatBiweekly: "Bi-weekly", optRepeatMonthly: "Monthly",
-    lblUntil: "Until", lblNotes: "Notes (opt)", plcNotes: "Any notes...",
-    lblPaid: "Paid?", btnSave: "Save",
-    confirmTitle: "Are you sure?", confirmText: "This action cannot be undone.",
-    btnCancel: "Cancel", btnDelete: "Delete",
-    all: "All", noGigs: "No gigs yet",
-    noGigsAdd: "Add your first gig using<br>the button on the top right.",
-    noUnpaid: "All settled", noUnpaidYet: "Looks like all payments are done.",
-    noPaid: "No paid gigs", noPaidYet: "No payments received yet.",
-    monthsFull: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-    monthsShort: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-    days: ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
-    unpaidWait: "Pending", paidDone: "Paid",
-    gigEdit: "Edit", gigCalendar: "Cal", gigDelete: "Delete",
-    sumMonthly: "Monthly Earnings", sumYearly: "Yearly Totals",
-    toastPaid: "Marked as paid", toastUnpaid: "Marked as unpaid",
-    toastClear: "Name cleared from {count} gigs",
-    valNoVenue: "No venue", valNoArtist: "No artist",
-    filterClearTitle: "Clear Name",
-    filterClearText: "Are you sure you want to remove '{val}' from your list and all related gigs? (Gigs won't be deleted, only this name will be cleared)",
-    chipFeeNone: "No fee",
-    lblExpenseName: "Expense Name (opt)", lblExpenseAmount: "Expense Amount",
-    plcExpenseName: "e.g. Taxi", plcExpenseAmount: "Amount",
-    lblAutoFuel: "Auto Fuel Calculation", lblDistance: "Distance (KM)", plcDistance: "e.g. 50",
-    lblFuelRate: "Fuel Price/L", plcFuelRate: "e.g. 43.5",
-    lblFuelCons: "Consumption (L/100km) - Default: 7", plcFuelCons: "7",
-    calcTitle: "Calculator",
-    totalUnpaid: "Total Unpaid:"
+    addGigBtn:"Add Gig",exportData:"⬆ Export",importData:"⬇ Import",
+    tabGigs:"Gigs",tabUnpaid:"Unpaid",tabPaid:"Paid",tabAnalysis:"Analysis",
+    modalTitle:"New Gig",lblVenue:"Venue",plcVenue:"Venue Name",lblArtist:"Artist",plcArtist:"Artist/Band Name",
+    lblDate:"Date",lblTime:"Time (opt)",lblFee:"Fee",plcFee:"1500 · ? · TBD · ~2000",
+    hintFee:"Enter number, text, or ?.",lblRepeat:"Repeat",optRepeatNone:"No repeat",
+    optRepeatWeekly:"Weekly",optRepeatBiweekly:"Bi-weekly",optRepeatMonthly:"Monthly",
+    lblUntil:"Until",lblNotes:"Notes (opt)",plcNotes:"Any notes...",lblPaid:"Paid?",btnSave:"Save",
+    confirmTitle:"Are you sure?",confirmText:"This action cannot be undone.",btnCancel:"Cancel",btnDelete:"Delete",
+    all:"All",noGigs:"No gigs yet",noGigsAdd:"Add your first gig using<br>the button on the top right.",
+    noUnpaid:"All settled",noUnpaidYet:"Looks like all payments are done.",
+    noPaid:"No paid gigs",noPaidYet:"No payments received yet.",
+    monthsFull:['January','February','March','April','May','June','July','August','September','October','November','December'],
+    monthsShort:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    days:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],
+    unpaidWait:"Pending",paidDone:"Paid",gigEdit:"Edit",gigCalendar:"Cal",gigDelete:"Delete",
+    sumMonthly:"Monthly Earnings",toastPaid:"Marked as paid",toastUnpaid:"Marked as unpaid",
+    toastClear:"Name cleared from {count} gigs",valNoVenue:"No venue",valNoArtist:"No artist",
+    filterClearTitle:"Clear Name",filterClearText:"Are you sure you want to remove '{val}' from your list and all related gigs?",
+    chipFeeNone:"No fee",lblExpenseName:"Expense Name (opt)",lblExpenseAmount:"Expense Amount",
+    plcExpenseName:"e.g. Taxi",plcExpenseAmount:"Amount",lblAutoFuel:"Auto Fuel Calculation",
+    lblDistance:"Distance (KM)",plcDistance:"e.g. 50",lblFuelRate:"Fuel Price/L",plcFuelRate:"e.g. 43.5",
+    lblFuelCons:"Consumption (L/100km) - Default: 7",plcFuelCons:"7",calcTitle:"Calculator",totalUnpaid:"Total Unpaid:"
   },
   tr: {
-    addGigBtn: "İş Ekle", exportData: "⬆ Dışa Aktar", importData: "⬇ İçe Aktar",
-    tabGigs: "İşlerim", tabUnpaid: "Ödenmemiş", tabPaid: "Ödenmiş", tabAnalysis: "Analiz",
-    modalTitle: "Yeni İş",
-    lblVenue: "Mekan", plcVenue: "Mekan Adı",
-    lblArtist: "Sanatçı", plcArtist: "Sahne adı",
-    lblDate: "Tarih", lblTime: "Saat (opsiyonel)",
-    lblFee: "Ücret", plcFee: "1500 · ? · TBD · ~2000",
-    hintFee: "Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür.",
-    lblRepeat: "Tekrar", optRepeatNone: "Tekrar yok",
-    optRepeatWeekly: "Her hafta", optRepeatBiweekly: "2 haftada bir", optRepeatMonthly: "Her ay",
-    lblUntil: "Son tarih", lblNotes: "Notlar (opsiyonel)", plcNotes: "Eklemek istediğin notlar...",
-    lblPaid: "Ödendi mi?", btnSave: "Kaydet",
-    confirmTitle: "Emin misin?", confirmText: "Bu işlemi geri alamazsın.",
-    btnCancel: "İptal", btnDelete: "Sil",
-    all: "Tümü", noGigs: "Henüz iş yok",
-    noGigsAdd: "Sağ üstteki \"İş Ekle\" butonuyla<br>ilk işini ekle.",
-    noUnpaid: "Bekleyen alacak yok", noUnpaidYet: "Tüm ödemeler tamamlanmış görünüyor.",
-    noPaid: "Ödenmiş iş yok", noPaidYet: "Henüz ödemesi alınan bir iş yok.",
-    monthsFull: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
-    monthsShort: ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'],
-    days: ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'],
-    unpaidWait: "Bekliyor", paidDone: "Ödendi",
-    gigEdit: "Düzenle", gigCalendar: "Takvim", gigDelete: "Sil",
-    sumMonthly: "Aylık Kazançlar", sumYearly: "Yıllık Toplamlar",
-    toastPaid: "Ödendi olarak işaretlendi", toastUnpaid: "Ödenmemiş olarak işaretlendi",
-    toastClear: "İsmi {count} kayıttan temizlendi",
-    valNoVenue: "Mekan yok", valNoArtist: "Sanatçı yok",
-    filterClearTitle: "İsmi Temizle",
-    filterClearText: "'{val}' isimli {lbl} listenden ve ilgili tüm iş kayıtlarından silmek istediğine emin misin? (İşler silinmez, sadece bu isim temizlenir)",
-    chipFeeNone: "Ücret yok",
-    lblExpenseName: "Masraf Adı (opsiyonel)", lblExpenseAmount: "Masraf Tutarı",
-    plcExpenseName: "örn. Taksi", plcExpenseAmount: "Tutar",
-    lblAutoFuel: "Otomatik Yakıt Hesaplama", lblDistance: "Gidilen Mesafe (KM)", plcDistance: "Örn. 50",
-    lblFuelRate: "Litre Fiyatı (TL)", plcFuelRate: "Örn. 43.5",
-    lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
-    calcTitle: "Hesap Makinesi",
-    totalUnpaid: "Toplam Bekleyen:"
+    addGigBtn:"İş Ekle",exportData:"⬆ Dışa Aktar",importData:"⬇ İçe Aktar",
+    tabGigs:"İşlerim",tabUnpaid:"Ödenmemiş",tabPaid:"Ödenmiş",tabAnalysis:"Analiz",
+    modalTitle:"Yeni İş",lblVenue:"Mekan",plcVenue:"Mekan Adı",lblArtist:"Sanatçı",plcArtist:"Sahne adı",
+    lblDate:"Tarih",lblTime:"Saat (opsiyonel)",lblFee:"Ücret",plcFee:"1500 · ? · TBD · ~2000",
+    hintFee:"Sayı, soru işareti veya metin girebilirsiniz.",lblRepeat:"Tekrar",optRepeatNone:"Tekrar yok",
+    optRepeatWeekly:"Her hafta",optRepeatBiweekly:"2 haftada bir",optRepeatMonthly:"Her ay",
+    lblUntil:"Son tarih",lblNotes:"Notlar (opsiyonel)",plcNotes:"Eklemek istediğin notlar...",lblPaid:"Ödendi mi?",btnSave:"Kaydet",
+    confirmTitle:"Emin misin?",confirmText:"Bu işlemi geri alamazsın.",btnCancel:"İptal",btnDelete:"Sil",
+    all:"Tümü",noGigs:"Henüz iş yok",noGigsAdd:"Sağ üstteki \"İş Ekle\" butonuyla<br>ilk işini ekle.",
+    noUnpaid:"Bekleyen alacak yok",noUnpaidYet:"Tüm ödemeler tamamlanmış görünüyor.",
+    noPaid:"Ödenmiş iş yok",noPaidYet:"Henüz ödemesi alınan bir iş yok.",
+    monthsFull:['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
+    monthsShort:['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'],
+    days:['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'],
+    unpaidWait:"Bekliyor",paidDone:"Ödendi",gigEdit:"Düzenle",gigCalendar:"Takvim",gigDelete:"Sil",
+    sumMonthly:"Aylık Kazançlar",toastPaid:"Ödendi olarak işaretlendi",toastUnpaid:"Ödenmemiş olarak işaretlendi",
+    toastClear:"İsmi {count} kayıttan temizlendi",valNoVenue:"Mekan yok",valNoArtist:"Sanatçı yok",
+    filterClearTitle:"İsmi Temizle",filterClearText:"'{val}' isimli {lbl} listenden ve ilgili tüm iş kayıtlarından silmek istediğine emin misin?",
+    chipFeeNone:"Ücret yok",lblExpenseName:"Masraf Adı (opsiyonel)",lblExpenseAmount:"Masraf Tutarı",
+    plcExpenseName:"örn. Taksi",plcExpenseAmount:"Tutar",lblAutoFuel:"Otomatik Yakıt Hesaplama",
+    lblDistance:"Gidilen Mesafe (KM)",plcDistance:"Örn. 50",lblFuelRate:"Litre Fiyatı (TL)",plcFuelRate:"Örn. 43.5",
+    lblFuelCons:"Tüketim (L/100km) - Varsayılan: 7",plcFuelCons:"7",calcTitle:"Hesap Makinesi",totalUnpaid:"Toplam Bekleyen:"
   }
 }[userLang];
 
@@ -912,28 +711,17 @@ function localizeDOM() {
     if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
       if (el.hasAttribute('placeholder')) el.placeholder = T[k];
       else el.value = T[k];
-    } else {
-      el.innerHTML = T[k];
-    }
+    } else { el.innerHTML = T[k]; }
   });
 }
 
-// ===== STATE =====
-let gigs = [];
-let hiddenTemplates = [];
-let activeTab = 'gigs';
-let filterArtist = null;
-let filterVenue  = null;
-let paidState    = false;
-let editingId    = null;
-let confirmCallback = null;
+let gigs = [], hiddenTemplates = [], activeTab = 'gigs';
+let filterArtist = null, filterVenue = null, paidState = false;
+let editingId = null, confirmCallback = null;
 
-const MONTHS = T.monthsShort;
-const MONTHS_FULL = T.monthsFull;
-const DAYS = T.days;
-const SYM         = { TRY:'₺', EUR:'€', USD:'$', GBP:'£' };
+const MONTHS = T.monthsShort, MONTHS_FULL = T.monthsFull, DAYS = T.days;
+const SYM = { TRY:'₺', EUR:'€', USD:'$', GBP:'£' };
 
-// ===== STORAGE =====
 function load() {
   localizeDOM();
   try { gigs = JSON.parse(localStorage.getItem('gigtrack_v3') || '[]'); } catch { gigs = []; }
@@ -945,29 +733,20 @@ function save() {
   localStorage.setItem('gigtrack_hidden_tpl', JSON.stringify(hiddenTemplates));
 }
 
-// ===== UTILS =====
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
 function addDays(d, n) {
-  const dt = new Date(d + 'T12:00:00');
-  dt.setDate(dt.getDate() + n);
+  const dt = new Date(d + 'T12:00:00'); dt.setDate(dt.getDate() + n);
   return dt.toISOString().slice(0,10);
 }
 function addMonths(d, n) {
-  const dt = new Date(d + 'T12:00:00');
-  dt.setMonth(dt.getMonth() + n);
+  const dt = new Date(d + 'T12:00:00'); dt.setMonth(dt.getMonth() + n);
   return dt.toISOString().slice(0,10);
 }
 
 function formatDate(d) {
   const dt = new Date(d + 'T12:00:00');
-  return {
-    day: dt.getDate(),
-    month: MONTHS[dt.getMonth()],
-    year: dt.getFullYear(),
-    monthFull: MONTHS_FULL[dt.getMonth()],
-    dayName: DAYS[dt.getDay()]
-  };
+  return { day: dt.getDate(), month: MONTHS[dt.getMonth()], year: dt.getFullYear(), monthFull: MONTHS_FULL[dt.getMonth()], dayName: DAYS[dt.getDay()] };
 }
 
 function monthKey(d) {
@@ -991,21 +770,18 @@ function parseFee(s) {
 function sorted(arr) { return [...arr].sort((a,b) => a.date.localeCompare(b.date)); }
 
 function escHtml(s) {
-  return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ===== REPEAT GENERATION =====
 function generateRepeats(base) {
   const list = [{ ...base, parentId: null }];
   if (base.repeat === 'none' || !base.repeatUntil) return list;
   let cur = base.date;
   while (true) {
     let next;
-    if (base.repeat === 'weekly')   next = addDays(cur, 7);
+    if (base.repeat === 'weekly') next = addDays(cur, 7);
     else if (base.repeat === 'biweekly') next = addDays(cur, 14);
-    else if (base.repeat === 'monthly')  next = addMonths(cur, 1);
+    else if (base.repeat === 'monthly') next = addMonths(cur, 1);
     else break;
     if (next > base.repeatUntil) break;
     list.push({ ...base, id: uid(), date: next, parentId: base.id, repeat: 'none', repeatUntil: null });
@@ -1014,7 +790,6 @@ function generateRepeats(base) {
   return list;
 }
 
-// ===== TABS =====
 function goHome() {
   setFilter('all');
   if (activeTab !== 'gigs') switchTab('gigs');
@@ -1031,17 +806,10 @@ function switchTab(tab) {
   render();
 }
 
-// ===== FILTERS =====
 function setFilter(type, value) {
-  if (type === 'artist') {
-    filterArtist = filterArtist === value ? null : value;
-    filterVenue  = null;
-  } else if (type === 'venue') {
-    filterVenue  = filterVenue === value ? null : value;
-    filterArtist = null;
-  } else {
-    filterArtist = filterVenue = null;
-  }
+  if (type === 'artist') { filterArtist = filterArtist === value ? null : value; filterVenue = null; }
+  else if (type === 'venue') { filterVenue = filterVenue === value ? null : value; filterArtist = null; }
+  else { filterArtist = filterVenue = null; }
   render();
 }
 
@@ -1052,11 +820,11 @@ function renderFilterBar() {
   const active = filterArtist || filterVenue;
   bar.innerHTML =
     `<div class="filter-chip ${!active?'active':''}" onclick="setFilter('all')">${T.all}</div>` +
-    artists.map(a => `<div class="filter-chip ${filterArtist===a?'active':''}" onclick="setFilter('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">
-      ${escHtml(a)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">×</span>
+    artists.map(a => `<div class="filter-chip ${filterArtist===a?'active':''}" onclick="setFilter('artist', ${JSON.stringify(a).replace(/"/g,'&quot;')})">
+      ${escHtml(a)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('artist', ${JSON.stringify(a).replace(/"/g,'&quot;')})">×</span>
     </div>`).join('') +
-    venues.map(v => `<div class="filter-chip ${filterVenue===v?'active':''}" onclick="setFilter('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">
-      ${escHtml(v)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">×</span>
+    venues.map(v => `<div class="filter-chip ${filterVenue===v?'active':''}" onclick="setFilter('venue', ${JSON.stringify(v).replace(/"/g,'&quot;')})">
+      ${escHtml(v)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('venue', ${JSON.stringify(v).replace(/"/g,'&quot;')})">×</span>
     </div>`).join('');
 }
 
@@ -1098,7 +866,6 @@ function gigCard(gig) {
   const isPast = gig.date < today();
   const isExpanded = expandedCards.has(gig.id);
 
-  // COLLAPSED
   if (!isExpanded) {
     const feeColor = gig.paid ? '#2d7a63' : '#fff';
     return `
@@ -1122,7 +889,6 @@ function gigCard(gig) {
 </div>`;
   }
 
-  // EXPANDED
   return `
 <div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div class="gig-main">
@@ -1132,9 +898,7 @@ function gigCard(gig) {
       <div class="gig-date-day-name">${df.dayName}</div>
     </div>
     <div class="gig-info">
-      <div class="gig-venue">
-        ${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;font-weight:500;">${T.valNoVenue}</span>`}
-      </div>
+      <div class="gig-venue">${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;font-weight:500;">${T.valNoVenue}</span>`}</div>
       <div class="gig-artist">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
       <div class="gig-meta">
         ${gig.time ? `<span class="gig-time">${gig.time}</span>` : ''}
@@ -1142,8 +906,8 @@ function gigCard(gig) {
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee" style="color:${gig.paid?'var(--paid-text)':'#fff'}">${feeDisplay}</div>
-      ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
+      <div class="gig-fee" style="color:${gig.paid?'#2d7a63':'#fff'}">${feeDisplay}</div>
+      ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:#f87171; text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
       <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
       </button>
@@ -1183,29 +947,22 @@ function renderGroups(arr) {
   const groups = groupByMonth(arr);
   return Object.keys(groups).sort().map(k => {
     const [y, m] = k.split('-');
-    return `<div class="section-label">${MONTHS_FULL[+m-1]} ${y}</div>` +
-           groups[k].map(g => gigCard(g)).join('');
+    return `<div class="section-label">${MONTHS_FULL[+m-1]} ${y}</div>` + groups[k].map(g => gigCard(g)).join('');
   }).join('');
 }
 
-// ===== RENDER TABS =====
 function renderGigs() {
   let list = sorted(gigs.filter(isGigVisible));
   if (filterArtist) list = list.filter(g => g.artist === filterArtist);
   if (filterVenue)  list = list.filter(g => g.venue  === filterVenue);
-
   const el = document.getElementById('gigsList');
-  el.innerHTML = list.length
-    ? renderGroups(list)
-    : `<div class="empty-state"><div class="empty-icon">🎵</div><div class="empty-title">${T.noGigs}</div><div class="empty-text">${T.noGigsAdd}</div></div>`;
+  el.innerHTML = list.length ? renderGroups(list) : `<div class="empty-state"><div class="empty-icon">🎵</div><div class="empty-title">${T.noGigs}</div><div class="empty-text">${T.noGigsAdd}</div></div>`;
 }
 
 function renderUnpaid() {
   let unpaid = sorted(gigs.filter(g => !g.paid && isGigVisible(g)));
   if (filterArtist) unpaid = unpaid.filter(g => g.artist === filterArtist);
   if (filterVenue)  unpaid = unpaid.filter(g => g.venue  === filterVenue);
-  
-  /* Badge kaldırıldı */
 
   const unpSummary = document.getElementById('unpaidSummary');
   if (unpaid.length > 0) {
@@ -1219,75 +976,47 @@ function renderUnpaid() {
         sums[c] = (sums[c] || 0) + net;
       }
     });
-
     let sumHtml = '';
     Object.keys(sums).forEach(c => {
-      if (sums[c] !== 0) {
-        sumHtml += `<div class="unpaid-sum-item"><span style="color:var(--text-3); font-size:11px; font-family:'Syne',sans-serif;">${c}</span> <span>${SYM[c] || ''}${sums[c].toLocaleString('tr')}</span></div>`;
-      }
+      if (sums[c] !== 0) sumHtml += `<div class="unpaid-sum-item"><span style="color:var(--text-3);font-size:11px;">${c}</span> <span>${SYM[c]||''}${sums[c].toLocaleString('tr')}</span></div>`;
     });
-    unpSummary.innerHTML = sumHtml ? `<div style="color:var(--text-2); font-size:11px; text-transform:uppercase; letter-spacing:0.5px;">${T.totalUnpaid}</div> ${sumHtml}` : '';
-  } else {
-    unpSummary.innerHTML = '';
-  }
+    unpSummary.innerHTML = sumHtml ? `<div style="color:var(--text-2);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;">${T.totalUnpaid}</div> ${sumHtml}` : '';
+  } else { unpSummary.innerHTML = ''; }
 
   const el = document.getElementById('unpaidList');
-  el.innerHTML = unpaid.length
-    ? renderGroups(unpaid)
-    : `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">${T.noUnpaid}</div><div class="empty-text">${T.noUnpaidYet}</div></div>`;
+  el.innerHTML = unpaid.length ? renderGroups(unpaid) : `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">${T.noUnpaid}</div><div class="empty-text">${T.noUnpaidYet}</div></div>`;
 }
 
 function renderPaid() {
   let paidGigs = sorted(gigs.filter(g => g.paid && isGigVisible(g)));
   if (filterArtist) paidGigs = paidGigs.filter(g => g.artist === filterArtist);
   if (filterVenue)  paidGigs = paidGigs.filter(g => g.venue  === filterVenue);
-
   const el = document.getElementById('paidList');
-  el.innerHTML = paidGigs.length
-    ? renderGroups(paidGigs)
-    : `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">${T.noPaid}</div><div class="empty-text">${T.noPaidYet}</div></div>`;
+  el.innerHTML = paidGigs.length ? renderGroups(paidGigs) : `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">${T.noPaid}</div><div class="empty-text">${T.noPaidYet}</div></div>`;
 }
 
 function renderAnalysis() {
   const currentYear = new Date().getFullYear();
-  
   let thisYearPaid = gigs.filter(g => g.paid && g.date.startsWith(currentYear.toString()));
   if (filterArtist) thisYearPaid = thisYearPaid.filter(g => g.artist === filterArtist);
   if (filterVenue)  thisYearPaid = thisYearPaid.filter(g => g.venue  === filterVenue);
-  
-  const yearlyGross = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-  const yearlyExp = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-  const yearlyNet = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-  
-  const monthlyGross = {};
-  const monthlyExp = {};
-  const monthlyNet = {};
-  const monthlyGigs = {};
-  for(let i=1; i<=12; i++) {
-    monthlyGross[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-    monthlyExp[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-    monthlyNet[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
-    monthlyGigs[i] = [];
-  }
-  
-  let hasEarningsOrExpenses = false;
 
+  const yearlyGross = {TRY:0,EUR:0,USD:0,GBP:0}, yearlyExp = {TRY:0,EUR:0,USD:0,GBP:0}, yearlyNet = {TRY:0,EUR:0,USD:0,GBP:0};
+  const monthlyGross = {}, monthlyExp = {}, monthlyNet = {}, monthlyGigs = {};
+  for(let i=1;i<=12;i++){monthlyGross[i]={TRY:0,EUR:0,USD:0,GBP:0};monthlyExp[i]={TRY:0,EUR:0,USD:0,GBP:0};monthlyNet[i]={TRY:0,EUR:0,USD:0,GBP:0};monthlyGigs[i]=[];}
+
+  let hasEarningsOrExpenses = false;
   thisYearPaid.forEach(g => {
     let feeVal = parseFee(g.fee);
     let expVal = parseFloat(g.expenseAmount);
     if (isNaN(expVal)) expVal = 0;
-    
     if (feeVal !== null || expVal > 0) {
       if (feeVal === null) feeVal = 0;
       const netVal = feeVal - expVal;
       const c = g.currency || 'TRY';
-      yearlyGross[c] += feeVal;
-      yearlyExp[c] += expVal;
-      yearlyNet[c] += netVal;
+      yearlyGross[c] += feeVal; yearlyExp[c] += expVal; yearlyNet[c] += netVal;
       const month = parseInt(g.date.split('-')[1], 10);
-      monthlyGross[month][c] += feeVal;
-      monthlyExp[month][c] += expVal;
-      monthlyNet[month][c] += netVal;
+      monthlyGross[month][c] += feeVal; monthlyExp[month][c] += expVal; monthlyNet[month][c] += netVal;
       monthlyGigs[month].push(g);
       hasEarningsOrExpenses = true;
     }
@@ -1295,34 +1024,24 @@ function renderAnalysis() {
 
   let statsHtml = '';
   Object.keys(yearlyNet).forEach(c => {
-    const gigCount = thisYearPaid.filter(g => g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
+    const gigCount = thisYearPaid.filter(g => g.currency === c && (parseFee(g.fee) !== null || parseFloat(g.expenseAmount) > 0)).length;
     if (yearlyGross[c] !== 0 || yearlyExp[c] !== 0 || gigCount > 0) {
-      statsHtml += `
-      <div class="stat-card accent" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
-           <div>
-             <div class="stat-label" style="margin-bottom: 2px;">${currentYear} Yılı Net Kazanç (${c})</div>
-             <div class="stat-value">${SYM[c] || ''}${yearlyNet[c].toLocaleString('tr')}</div>
-           </div>
-           <div class="stat-sub" style="margin: 0;">${gigCount} iş</div>
+      statsHtml += `<div class="stat-card accent" style="grid-column:span 2;display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;">
+          <div><div class="stat-label" style="margin-bottom:2px;">${currentYear} Yılı Net Kazanç (${c})</div><div class="stat-value">${SYM[c]||''}${yearlyNet[c].toLocaleString('tr')}</div></div>
+          <div class="stat-sub" style="margin:0;">${gigCount} iş</div>
         </div>
-        <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 13px;">
-          <div style="color: var(--text-2);">+Brüt: ${SYM[c] || ''}${yearlyGross[c].toLocaleString('tr')}</div>
-          <div style="color: var(--red);">-Masraf: ${SYM[c] || ''}${yearlyExp[c].toLocaleString('tr')}</div>
+        <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:13px;">
+          <div style="color:var(--text-2);">+Brüt: ${SYM[c]||''}${yearlyGross[c].toLocaleString('tr')}</div>
+          <div style="color:#f87171;">-Masraf: ${SYM[c]||''}${yearlyExp[c].toLocaleString('tr')}</div>
         </div>
       </div>`;
     }
   });
 
   if (!hasEarningsOrExpenses) {
-     statsHtml = `
-      <div class="stat-card accent" style="grid-column: span 2;">
-        <div class="stat-label">${currentYear} Yılı Toplam Kazancı</div>
-        <div class="stat-value">₺0</div>
-        <div class="stat-sub">0 iş</div>
-      </div>`;
+    statsHtml = `<div class="stat-card accent" style="grid-column:span 2;"><div class="stat-label">${currentYear} Yılı Toplam Kazancı</div><div class="stat-value">₺0</div><div class="stat-sub">0 iş</div></div>`;
   }
-
   document.getElementById('statsGrid').innerHTML = statsHtml;
 
   const el = document.getElementById('analysisList');
@@ -1331,43 +1050,33 @@ function renderAnalysis() {
     return;
   }
 
-  let listHtml = '<div class="section-label">${T.sumMonthly}</div>';
+  let listHtml = '';
   for (let i=12; i>=1; i--) {
     let monthHtml = '';
     Object.keys(monthlyNet[i]).forEach(c => {
       if (monthlyGross[i][c] !== 0 || monthlyExp[i][c] !== 0) {
         let isNeg = monthlyNet[i][c] < 0;
-        monthHtml += `
-          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 8px;">
-            <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: var(--text-2);">
-               ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}
-            </div>
-            ${monthlyExp[i][c] > 0 ? `<div style="font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); margin-top:2px;">Brüt: ${SYM[c]||''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:var(--red)">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>` : ''}
-          </div>
-        `;
+        monthHtml += `<div style="display:flex;flex-direction:column;align-items:flex-end;margin-bottom:8px;">
+          <div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:600;color:var(--text-2);">${isNeg?'-':''}${SYM[c]||''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}</div>
+          ${monthlyExp[i][c]>0?`<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-3);margin-top:2px;">Brüt: ${SYM[c]||''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:#f87171">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>`:''}
+        </div>`;
       }
     });
-
     if (monthHtml !== '') {
       const gList = monthlyGigs[i].map(g => {
         const feeStr = g.fee ? (SYM[g.currency]||'') + g.fee : T.chipFeeNone;
-        return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid var(--border); margin-top:4px;">
-          <span style="color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-right: 12px;">${g.venue||T.valNoVenue} · ${g.artist||T.valNoArtist}</span>
-          <span style="font-family:'DM Mono',monospace; ${g.paid ? 'color:var(--green)' : 'color:var(--red)'}; flex-shrink:0;">${feeStr}</span>
+        return `<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-top:1px solid var(--border);margin-top:4px;">
+          <span style="color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:12px;">${g.venue||T.valNoVenue} · ${g.artist||T.valNoArtist}</span>
+          <span style="font-family:'DM Mono',monospace;color:#2d7a63;flex-shrink:0;">${feeStr}</span>
         </div>`;
       }).join('');
-
-      listHtml += `
-        <div class="gig-card" style="padding: 15px; border-left: 3px solid var(--accent); cursor: pointer;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
-           <div style="display: flex; justify-content: space-between; align-items: center;">
-             <div style="font-weight: 700; font-size: 15px; color: var(--text-2);">${MONTHS_FULL[i-1]}</div>
-             <div style="text-align: right;">${monthHtml}</div>
-           </div>
-           <div id="m-details-${i}" class="hidden" style="margin-top: 12px; padding-top: 4px;">
-             ${gList}
-           </div>
+      listHtml += `<div class="gig-card" style="padding:15px;border-left:3px solid var(--accent);cursor:pointer;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:15px;color:var(--text-2);">${MONTHS_FULL[i-1]}</div>
+          <div style="text-align:right;">${monthHtml}</div>
         </div>
-      `;
+        <div id="m-details-${i}" class="hidden" style="margin-top:12px;padding-top:4px;">${gList}</div>
+      </div>`;
     }
   }
   el.innerHTML = listHtml;
@@ -1376,12 +1085,9 @@ function renderAnalysis() {
 function renderCalendar() {
   const el = document.getElementById('calendarView');
   if (!el) return;
-
   const now = calendarDate || new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
+  const year = now.getFullYear(), month = now.getMonth();
   const showYearPicker = calendarYearPicker;
-
   const gigDates = {};
   gigs.forEach(g => {
     const d = new Date(g.date + 'T12:00:00');
@@ -1390,43 +1096,25 @@ function renderCalendar() {
       gigDates[g.date].push(g);
     }
   });
-
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const todayStr = today();
-  const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+  const dayNames = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
 
-  // Yıl seçici - kaydırmalı
   let yearPickerHtml = '';
   if (showYearPicker) {
     const currentY = new Date().getFullYear();
     const years = [];
     for (let y = currentY - 10; y <= currentY + 10; y++) years.push(y);
-    yearPickerHtml = `
-    <div style="position:relative;height:220px;overflow:hidden;margin:8px 0;">
+    yearPickerHtml = `<div style="position:relative;height:220px;overflow:hidden;margin:8px 0;">
       <div style="position:absolute;top:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,var(--bg),transparent);z-index:1;pointer-events:none;"></div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to top,var(--bg),transparent);z-index:1;pointer-events:none;"></div>
       <div style="position:absolute;top:50%;left:10%;right:10%;height:52px;transform:translateY(-50%);border-top:2px solid var(--accent);border-bottom:2px solid var(--accent);border-radius:8px;opacity:0.35;pointer-events:none;z-index:2;"></div>
       <div id="mainYearScroll" style="height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;padding:84px 0;">
-        ${years.map(y => `<div data-year="${y}" style="
-          height:52px;display:flex;align-items:center;justify-content:center;
-          scroll-snap-align:center;font-size:${y===year?'28px':'18px'};
-          font-weight:${y===year?'700':'400'};
-          color:${y===year?'var(--accent)':'var(--text-3)'};
-          transition:all 0.2s;cursor:pointer;
-          font-family:'DM Mono',monospace;letter-spacing:0.05em;
-        " onclick="calSetYear(${y})">${y}</div>`).join('')}
+        ${years.map(y=>`<div data-year="${y}" style="height:52px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;font-size:${y===year?'28px':'18px'};font-weight:${y===year?'700':'400'};color:${y===year?'var(--accent)':'var(--text-3)'};cursor:pointer;font-family:'DM Mono',monospace;" onclick="calSetYear(${y})">${y}</div>`).join('')}
       </div>
     </div>
-    <script>
-      (function(){
-        const el = document.getElementById('mainYearScroll');
-        if(el){
-          const target = el.querySelector('[data-year="${year}"]');
-          if(target) el.scrollTop = target.offsetTop - el.offsetTop - 84;
-        }
-      })();
-    <\/script>`;
+    <script>(function(){const el=document.getElementById('mainYearScroll');if(el){const t=el.querySelector('[data-year="${year}"]');if(t)el.scrollTop=t.offsetTop-el.offsetTop-84;}})();<\/script>`;
   }
 
   let cells = '';
@@ -1434,108 +1122,50 @@ function renderCalendar() {
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const hasGigs = gigDates[dateStr];
-    const isToday = dateStr === todayStr;
-    const isSelected = dateStr === selectedCalDay;
-
-    const dotHtml = hasGigs
-      ? `<div style="display:flex;justify-content:center;gap:2px;margin-top:3px;">${hasGigs.slice(0,3).map(g=>`<div style="width:5px;height:5px;border-radius:50%;background:${g.paid?'var(--paid-text)':'var(--accent)'};"></div>`).join('')}</div>`
-      : '';
-
-    cells += `<div onclick="calendarDayClick('${dateStr}')" style="
-      text-align:center;padding:8px 2px;border-radius:10px;cursor:${hasGigs?'pointer':'default'};
-      background:${isSelected?'var(--accent)':isToday?'rgba(255,255,255,0.08)':hasGigs?'var(--surface-2)':'transparent'};
-      color:${isSelected?'#000':isToday?'var(--text)':hasGigs?'var(--text)':'var(--text-3)'};
-      font-weight:${isSelected||isToday||hasGigs?'700':'400'};
-      font-size:14px;
-      border:${(isToday&&!isSelected)?'1px solid var(--border)':hasGigs&&!isSelected?'1px solid var(--border)':'none'};
-      transition:all 0.15s;
-    ">${d}${dotHtml}</div>`;
+    const isToday = dateStr === todayStr, isSelected = dateStr === selectedCalDay;
+    const dotHtml = hasGigs ? `<div style="display:flex;justify-content:center;gap:2px;margin-top:3px;">${hasGigs.slice(0,3).map(g=>`<div style="width:5px;height:5px;border-radius:50%;background:${g.paid?'var(--paid-text)':'var(--accent)'}"></div>`).join('')}</div>` : '';
+    cells += `<div onclick="calendarDayClick('${dateStr}')" style="text-align:center;padding:8px 2px;border-radius:10px;cursor:${hasGigs?'pointer':'default'};background:${isSelected?'var(--accent)':isToday?'rgba(255,255,255,0.08)':hasGigs?'var(--surface-2)':'transparent'};color:${isSelected?'#000':isToday?'var(--text)':hasGigs?'var(--text)':'var(--text-3)'};font-weight:${isSelected||isToday||hasGigs?'700':'400'};font-size:14px;border:${(isToday&&!isSelected)||hasGigs&&!isSelected?'1px solid var(--border)':'none'};transition:all 0.15s;">${d}${dotHtml}</div>`;
   }
 
-  let html = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-      <div style="display:flex;gap:4px;">
-        <button class="btn-data" style="width:36px;height:36px;font-size:14px;" onclick="calYear(-1)">«</button>
-        <button class="btn-data" style="width:36px;height:36px;font-size:16px;" onclick="calMonth(-1)">‹</button>
-      </div>
-      <div style="text-align:center;cursor:pointer;" onclick="toggleCalYearPicker()">
-        <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1.2;">${MONTHS_FULL[month]}</div>
-        <div style="font-size:12px;font-weight:400;color:var(--text-3);margin-top:2px;letter-spacing:0.05em;">${year} ${showYearPicker?'▲':'▼'}</div>
-      </div>
-      <div style="display:flex;gap:4px;">
-        <button class="btn-data" style="width:36px;height:36px;font-size:16px;" onclick="calMonth(1)">›</button>
-        <button class="btn-data" style="width:36px;height:36px;font-size:14px;" onclick="calYear(1)">»</button>
-      </div>
+  let html = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <div style="display:flex;gap:4px;">
+      <button class="btn-data" style="width:36px;height:36px;font-size:14px;" onclick="calYear(-1)">«</button>
+      <button class="btn-data" style="width:36px;height:36px;font-size:16px;" onclick="calMonth(-1)">‹</button>
     </div>
-    ${showYearPicker ? yearPickerHtml : `
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
-      ${dayNames.map(d=>`<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text-3);padding:4px 0;">${d}</div>`).join('')}
+    <div style="text-align:center;cursor:pointer;" onclick="toggleCalYearPicker()">
+      <div style="font-size:16px;font-weight:700;color:var(--text);line-height:1.2;">${MONTHS_FULL[month]}</div>
+      <div style="font-size:12px;color:var(--text-3);margin-top:2px;">${year} ${showYearPicker?'▲':'▼'}</div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">${cells}</div>
-    <div style="text-align:center;margin-top:12px;">
-      <button class="btn-data" style="padding:5px 16px;font-size:12px;" onclick="calToday()">Bugün</button>
-    </div>`}
-  `;
+    <div style="display:flex;gap:4px;">
+      <button class="btn-data" style="width:36px;height:36px;font-size:16px;" onclick="calMonth(1)">›</button>
+      <button class="btn-data" style="width:36px;height:36px;font-size:14px;" onclick="calYear(1)">»</button>
+    </div>
+  </div>
+  ${showYearPicker ? yearPickerHtml : `
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:8px;">
+    ${dayNames.map(d=>`<div style="text-align:center;font-size:10px;font-weight:700;color:var(--text-3);padding:4px 0;">${d}</div>`).join('')}
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">${cells}</div>
+  <div style="text-align:center;margin-top:12px;"><button class="btn-data" style="padding:5px 16px;font-size:12px;" onclick="calToday()">Bugün</button></div>`}`;
 
   if (!showYearPicker && selectedCalDay && gigDates[selectedCalDay]) {
-    const dayGigs = gigDates[selectedCalDay];
-    html += `<div style="margin-top:20px;"><div class="section-label">${selectedCalDay}</div>`;
-    html += dayGigs.map(g => gigCard(g)).join('');
-    html += `</div>`;
+    html += `<div style="margin-top:20px;"><div class="section-label">${selectedCalDay}</div>${gigDates[selectedCalDay].map(g => gigCard(g)).join('')}</div>`;
   }
-
   el.innerHTML = html;
 }
 
-let calendarDate = new Date();
-let selectedCalDay = null;
-let calendarYearPicker = false;
-let openCalendarGigId = null;
-let gigCalViewDate = {};
-let gigCalYearPicker = {};
+let calendarDate = new Date(), selectedCalDay = null, calendarYearPicker = false;
+let openCalendarGigId = null, gigCalViewDate = {}, gigCalYearPicker = {};
 
-function calMonth(dir) {
-  calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + dir, 1);
-  selectedCalDay = null;
-  renderCalendar();
-}
-function calYear(dir) {
-  calendarDate = new Date(calendarDate.getFullYear() + dir, calendarDate.getMonth(), 1);
-  selectedCalDay = null;
-  renderCalendar();
-}
-function calToday() {
-  calendarDate = new Date();
-  calendarYearPicker = false;
-  selectedCalDay = null;
-  renderCalendar();
-}
-function toggleCalYearPicker() {
-  calendarYearPicker = !calendarYearPicker;
-  renderCalendar();
-}
-function calSetYear(year) {
-  calendarDate = new Date(year, calendarDate.getMonth(), 1);
-  calendarYearPicker = false;
-  renderCalendar();
-}
+function calMonth(dir) { calendarDate = new Date(calendarDate.getFullYear(), calendarDate.getMonth() + dir, 1); selectedCalDay = null; renderCalendar(); }
+function calYear(dir) { calendarDate = new Date(calendarDate.getFullYear() + dir, calendarDate.getMonth(), 1); selectedCalDay = null; renderCalendar(); }
+function calToday() { calendarDate = new Date(); calendarYearPicker = false; selectedCalDay = null; renderCalendar(); }
+function toggleCalYearPicker() { calendarYearPicker = !calendarYearPicker; renderCalendar(); }
+function calSetYear(year) { calendarDate = new Date(year, calendarDate.getMonth(), 1); calendarYearPicker = false; renderCalendar(); }
+function calendarDayClick(dateStr) { selectedCalDay = selectedCalDay === dateStr ? null : dateStr; renderCalendar(); }
 
-function calendarDayClick(dateStr) {
-  selectedCalDay = selectedCalDay === dateStr ? null : dateStr;
-  renderCalendar();
-}
+function render() { renderFilterBar(); renderGigs(); renderUnpaid(); renderPaid(); renderAnalysis(); renderCalendar(); }
 
-
-function render() {
-  renderFilterBar();
-  renderGigs();
-  renderUnpaid();
-  renderPaid();
-  renderAnalysis();
-  renderCalendar();
-}
-
-// ===== TOGGLE PAID =====
 function togglePaidStatus(id) {
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
@@ -1544,7 +1174,6 @@ function togglePaidStatus(id) {
   showToast(gig.paid ? T.toastPaid : T.toastUnpaid);
 }
 
-// ===== MODAL =====
 function fillTemplate(artist, venue, fee, currency, repeat) {
   document.getElementById('fArtist').value = artist;
   document.getElementById('fVenue').value = venue;
@@ -1557,33 +1186,19 @@ function fillTemplate(artist, venue, fee, currency, repeat) {
 function openAddModal() {
   editingId = null;
   document.getElementById('modalTitle').textContent = T.modalTitle;
-  document.getElementById('submitBtn').textContent  = T.btnSave;
-  document.getElementById('fArtist').value  = '';
-  document.getElementById('fVenue').value   = '';
-  document.getElementById('fDate').value    = today();
-  document.getElementById('fTime').value    = '';
-  document.getElementById('fFee').value     = '';
+  document.getElementById('submitBtn').textContent = T.btnSave;
+  ['fArtist','fVenue','fTime','fFee','fExpenseName','fExpenseAmount','fDistance','fFuelRate','fNotes','fRepeatUntil'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fDate').value = today();
   document.getElementById('fCurrency').value = 'TRY';
-  document.getElementById('fExpenseName').value = '';
-  document.getElementById('fExpenseAmount').value = '';
-  document.getElementById('fDistance').value = '';
-  document.getElementById('fFuelRate').value = '';
-  document.getElementById('fRepeat').value   = 'none';
-  document.getElementById('fRepeatUntil').value = '';
-  document.getElementById('fNotes').value   = '';
-  paidState = false;
-  updatePaidUI(); toggleRepeatUntil();
-
+  document.getElementById('fRepeat').value = 'none';
+  document.getElementById('fFuelCons').value = '7';
+  paidState = false; updatePaidUI(); toggleRepeatUntil();
   populateTemplates();
   document.getElementById('modalOverlay').classList.add('open');
   history.pushState({ modal: 'add' }, '', '#modal');
 }
 
-function hideTemplate(k) {
-  hiddenTemplates.push(k);
-  save();
-  populateTemplates();
-}
+function hideTemplate(k) { hiddenTemplates.push(k); save(); populateTemplates(); }
 
 function populateTemplates() {
   const templates = new Map();
@@ -1591,14 +1206,8 @@ function populateTemplates() {
     if (!g.venue && !g.artist) return;
     const k = (g.venue||'') + '|' + (g.artist||'');
     if (hiddenTemplates.includes(k)) return;
-    if (!templates.has(k)) {
-      templates.set(k, {
-        k: k, venue: g.venue || '', artist: g.artist || '',
-        fee: g.fee || '', currency: g.currency || 'TRY', repeat: g.repeat || 'none'
-      });
-    }
+    if (!templates.has(k)) templates.set(k, { k, venue: g.venue||'', artist: g.artist||'', fee: g.fee||'', currency: g.currency||'TRY', repeat: g.repeat||'none' });
   });
-
   const qfl = document.getElementById('quickFillList');
   if (templates.size > 0) {
     qfl.classList.remove('hidden');
@@ -1607,16 +1216,14 @@ function populateTemplates() {
       const title = t.venue && t.artist ? `${t.venue} · ${t.artist}` : (t.venue || t.artist);
       const feeTxt = t.fee ? `${SYM[t.currency]||''}${t.fee}` : T.chipFeeNone;
       return `<div class="quick-fill-chip" onclick='fillTemplate(${enc(t.artist)}, ${enc(t.venue)}, ${enc(t.fee)}, "${t.currency}", "${t.repeat}")'>
-        <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
+        <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
           <span class="quick-fill-title">${escHtml(title)}</span>
           <span class="filter-chip-delete" onclick="event.stopPropagation(); hideTemplate(${enc(t.k)})">×</span>
         </div>
         <span class="quick-fill-sub">${escHtml(feeTxt)}${t.repeat !== 'none' ? ' ↻' : ''}</span>
       </div>`;
     }).join('');
-  } else {
-    qfl.classList.add('hidden');
-  }
+  } else { qfl.classList.add('hidden'); }
 }
 
 function editGig(id) {
@@ -1624,49 +1231,41 @@ function editGig(id) {
   if (!gig) return;
   editingId = id;
   document.getElementById('modalTitle').textContent = 'İşi Düzenle';
-  document.getElementById('submitBtn').textContent  = 'Güncelle';
-  document.getElementById('fArtist').value  = gig.artist || '';
-  document.getElementById('fVenue').value   = gig.venue  || '';
-  document.getElementById('fDate').value    = gig.date   || '';
-  document.getElementById('fTime').value    = gig.time   || '';
-  document.getElementById('fFee').value     = gig.fee    || '';
+  document.getElementById('submitBtn').textContent = 'Güncelle';
+  document.getElementById('fArtist').value = gig.artist || '';
+  document.getElementById('fVenue').value = gig.venue || '';
+  document.getElementById('fDate').value = gig.date || '';
+  document.getElementById('fTime').value = gig.time || '';
+  document.getElementById('fFee').value = gig.fee || '';
   document.getElementById('fCurrency').value = gig.currency || 'TRY';
   document.getElementById('fExpenseName').value = gig.expenseName || '';
   document.getElementById('fExpenseAmount').value = gig.expenseAmount || '';
   document.getElementById('fDistance').value = '';
   document.getElementById('fFuelRate').value = '';
-  document.getElementById('fRepeat').value   = gig.repeat || 'none';
+  document.getElementById('fRepeat').value = gig.repeat || 'none';
   document.getElementById('fRepeatUntil').value = gig.repeatUntil || '';
-  document.getElementById('fNotes').value   = gig.notes  || '';
-  paidState = !!gig.paid;
-  updatePaidUI(); toggleRepeatUntil();
+  document.getElementById('fNotes').value = gig.notes || '';
+  paidState = !!gig.paid; updatePaidUI(); toggleRepeatUntil();
   document.getElementById('modalOverlay').classList.add('open');
   history.pushState({ modal: 'edit' }, '', '#modal');
 }
 
-function closeModal() { 
-  document.getElementById('modalOverlay').classList.remove('open'); 
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
   if (window.location.hash === '#modal' || window.location.hash === '#calc') history.back();
 }
-
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('modalOverlay')) closeModal();
-}
-
+function handleOverlayClick(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
 function togglePaid() { paidState = !paidState; updatePaidUI(); }
 function updatePaidUI() { document.getElementById('paidToggle').classList.toggle('on', paidState); }
-
 function toggleRepeatUntil() {
-  const r = document.getElementById('fRepeat').value;
-  document.getElementById('repeatUntilGroup').style.display = r === 'none' ? 'none' : 'block';
+  document.getElementById('repeatUntilGroup').style.display = document.getElementById('fRepeat').value === 'none' ? 'none' : 'block';
 }
 
 function calculateFuel() {
   const dist = parseFloat(document.getElementById('fDistance').value);
   const rate = parseFloat(document.getElementById('fFuelRate').value);
   let cons = parseFloat(document.getElementById('fFuelCons').value);
-  if(isNaN(cons) || cons <= 0) cons = 7;
-  
+  if (isNaN(cons) || cons <= 0) cons = 7;
   if (!isNaN(dist) && !isNaN(rate)) {
     const total = (dist / 100) * cons * rate;
     document.getElementById('fExpenseAmount').value = total.toFixed(2);
@@ -1677,26 +1276,22 @@ function calculateFuel() {
   }
 }
 
-// ===== SAVE =====
 function saveGig() {
   const date = document.getElementById('fDate').value;
   if (!date) { showToast('⚠️ Tarih seçmelisin'); return; }
-
   const data = {
-    artist:      document.getElementById('fArtist').value.trim(),
-    venue:       document.getElementById('fVenue').value.trim(),
-    date,
-    time:        document.getElementById('fTime').value,
-    fee:         document.getElementById('fFee').value.trim(),
-    currency:    document.getElementById('fCurrency').value,
+    artist: document.getElementById('fArtist').value.trim(),
+    venue: document.getElementById('fVenue').value.trim(),
+    date, time: document.getElementById('fTime').value,
+    fee: document.getElementById('fFee').value.trim(),
+    currency: document.getElementById('fCurrency').value,
     expenseName: document.getElementById('fExpenseName').value.trim(),
     expenseAmount: document.getElementById('fExpenseAmount').value,
-    repeat:      document.getElementById('fRepeat').value,
+    repeat: document.getElementById('fRepeat').value,
     repeatUntil: document.getElementById('fRepeatUntil').value,
-    notes:       document.getElementById('fNotes').value.trim(),
-    paid:        paidState
+    notes: document.getElementById('fNotes').value.trim(),
+    paid: paidState
   };
-
   if (editingId) {
     const idx = gigs.findIndex(g => g.id === editingId);
     if (idx !== -1) gigs[idx] = { ...gigs[idx], ...data };
@@ -1707,78 +1302,42 @@ function saveGig() {
     gigs.push(...list);
     showToast(list.length > 1 ? `✓ ${list.length} iş oluşturuldu` : '✓ İş eklendi');
   }
-
   save(); render(); closeModal();
 }
 
-// ===== DELETE =====
 function confirmDelete(id) {
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
   const children = gigs.filter(g => String(g.parentId) === String(id)).length;
   let text = `"${gig.artist || 'Bu iş'}" · ${gig.date} tarihli kaydı silmek istediğinden emin misin?`;
-  if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var; sadece bu kayıt silinecek.)`;
-  showConfirm('İşi Sil', text, () => {
-    gigs = gigs.filter(g => g.id !== id);
-    save(); render(); showToast('🗑 İş silindi');
-  });
-}
-
-// ===== OPEN CALENDAR =====
-function openCalendarDate(id) {
-  const gig = gigs.find(g => String(g.id) === String(id));
-  if (!gig) return;
-  calendarDate = new Date(gig.date + 'T12:00:00');
-  selectedCalDay = gig.date;
-  switchTab('calendar');
-  renderCalendar();
+  if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var.)`;
+  showConfirm('İşi Sil', text, () => { gigs = gigs.filter(g => g.id !== id); save(); render(); showToast('🗑 İş silindi'); });
 }
 
 function toggleGigCalendar(gigId, gigDate) {
-  if (openCalendarGigId === gigId) {
-    openCalendarGigId = null;
-  } else {
-    openCalendarGigId = gigId;
-    gigCalViewDate[gigId] = new Date(gigDate + 'T12:00:00');
-  }
+  if (openCalendarGigId === gigId) { openCalendarGigId = null; }
+  else { openCalendarGigId = gigId; gigCalViewDate[gigId] = new Date(gigDate + 'T12:00:00'); }
   render();
 }
 
 function gigCalMonth(gigId, gigDate, dir) {
   const cur = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
-  gigCalViewDate[gigId] = new Date(cur.getFullYear(), cur.getMonth() + dir, 1);
-  render();
+  gigCalViewDate[gigId] = new Date(cur.getFullYear(), cur.getMonth() + dir, 1); render();
 }
-
 function gigCalYear(gigId, gigDate, dir) {
   const cur = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
-  gigCalViewDate[gigId] = new Date(cur.getFullYear() + dir, cur.getMonth(), 1);
-  render();
+  gigCalViewDate[gigId] = new Date(cur.getFullYear() + dir, cur.getMonth(), 1); render();
 }
-
-function toggleGigCalYearPicker(gigId) {
-  gigCalYearPicker[gigId] = !gigCalYearPicker[gigId];
-  render();
-}
-
+function toggleGigCalYearPicker(gigId) { gigCalYearPicker[gigId] = !gigCalYearPicker[gigId]; render(); }
 function gigCalSetYear(gigId, gigDate, year) {
   const cur = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
-  gigCalViewDate[gigId] = new Date(year, cur.getMonth(), 1);
-  gigCalYearPicker[gigId] = false;
-  render();
+  gigCalViewDate[gigId] = new Date(year, cur.getMonth(), 1); gigCalYearPicker[gigId] = false; render();
 }
-
-
-function gigCalToday(gigId) {
-  gigCalViewDate[gigId] = new Date();
-  gigCalYearPicker[gigId] = false;
-  render();
-}
+function gigCalToday(gigId) { gigCalViewDate[gigId] = new Date(); gigCalYearPicker[gigId] = false; render(); }
 
 function gigInlineCalendar(gigId, gigDate) {
   const viewDate = gigCalViewDate[gigId] || new Date(gigDate + 'T12:00:00');
-  const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
+  const year = viewDate.getFullYear(), month = viewDate.getMonth();
   const todayStr = today();
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -1789,59 +1348,35 @@ function gigInlineCalendar(gigId, gigDate) {
   for (let i = 0; i < firstDay; i++) cells += '<div></div>';
   for (let d = 1; d <= daysInMonth; d++) {
     const ds = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isGig = ds === gigDate;
-    const isTod = ds === todayStr;
-    cells += `<div style="text-align:center;padding:6px 2px;border-radius:8px;font-size:13px;
-      background:${isGig?'var(--accent)':isTod?'rgba(255,255,255,0.08)':'transparent'};
-      color:${isGig?'#000':isTod?'var(--text)':'var(--text-3)'};
-      font-weight:${isGig||isTod?'700':'400'};
-      outline:${isTod&&!isGig?'1px solid var(--border)':'none'};
-    ">${d}</div>`;
+    const isGig = ds === gigDate, isTod = ds === todayStr;
+    cells += `<div style="text-align:center;padding:6px 2px;border-radius:8px;font-size:13px;background:${isGig?'var(--accent)':isTod?'rgba(255,255,255,0.08)':'transparent'};color:${isGig?'#000':isTod?'var(--text)':'var(--text-3)'};font-weight:${isGig||isTod?'700':'400'}">${d}</div>`;
   }
 
-  // Yıl seçici - kaydırmalı
   let yearPickerHtml = '';
   if (showYearPicker) {
     const currentY = new Date().getFullYear();
     const years = [];
     for (let y = currentY - 10; y <= currentY + 10; y++) years.push(y);
-    yearPickerHtml = `
-    <div style="position:relative;height:180px;overflow:hidden;margin:8px 0;">
+    yearPickerHtml = `<div style="position:relative;height:180px;overflow:hidden;margin:8px 0;">
       <div style="position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,var(--surface-2),transparent);z-index:1;pointer-events:none;"></div>
       <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,var(--surface-2),transparent);z-index:1;pointer-events:none;"></div>
       <div style="position:absolute;top:50%;left:0;right:0;height:44px;transform:translateY(-50%);border-top:1px solid var(--accent);border-bottom:1px solid var(--accent);opacity:0.4;pointer-events:none;z-index:2;"></div>
-      <div id="yearScroll-${gigId}" onscroll="handleYearScroll('${gigId}','${gigDate}',this)" style="height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;padding:68px 0;">
-        ${years.map(y => `<div data-year="${y}" style="
-          height:44px;display:flex;align-items:center;justify-content:center;
-          scroll-snap-align:center;font-size:${y===year?'22px':'16px'};
-          font-weight:${y===year?'700':'400'};
-          color:${y===year?'var(--accent)':'var(--text-3)'};
-          transition:all 0.2s;cursor:pointer;
-          font-family:'DM Mono',monospace;
-        " onclick="gigCalSetYear('${gigId}','${gigDate}',${y})">${y}</div>`).join('')}
+      <div id="yearScroll-${gigId}" style="height:100%;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none;padding:68px 0;">
+        ${years.map(y=>`<div data-year="${y}" style="height:44px;display:flex;align-items:center;justify-content:center;scroll-snap-align:center;font-size:${y===year?'22px':'16px'};font-weight:${y===year?'700':'400'};color:${y===year?'var(--accent)':'var(--text-3)'};cursor:pointer;font-family:'DM Mono',monospace;" onclick="gigCalSetYear('${gigId}','${gigDate}',${y})">${y}</div>`).join('')}
       </div>
     </div>
-    <script>
-      (function(){
-        const el = document.getElementById('yearScroll-${gigId}');
-        if(el){
-          const target = el.querySelector('[data-year="${year}"]');
-          if(target) el.scrollTop = target.offsetTop - el.offsetTop - 68;
-        }
-      })();
-    <\/script>`;
+    <script>(function(){const el=document.getElementById('yearScroll-${gigId}');if(el){const t=el.querySelector('[data-year="${year}"]');if(t)el.scrollTop=t.offsetTop-el.offsetTop-68;}})();<\/script>`;
   }
 
-  return `
-  <div style="border-top:1px solid var(--border);background:var(--surface-2);padding:14px 12px;">
+  return `<div style="border-top:1px solid var(--border);background:var(--surface-2);padding:14px 12px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:6px;">
       <div style="display:flex;gap:4px;">
         <button class="btn-data" style="padding:5px 8px;font-size:12px;" onclick="gigCalYear('${gigId}','${gigDate}',-1)">«</button>
         <button class="btn-data" style="padding:5px 8px;font-size:14px;" onclick="gigCalMonth('${gigId}','${gigDate}',-1)">‹</button>
       </div>
       <div style="text-align:center;cursor:pointer;" onclick="toggleGigCalYearPicker('${gigId}')">
-        <div style="font-size:15px;font-weight:700;color:var(--text);line-height:1.2;">${MONTHS_FULL[month]}</div>
-        <div style="font-size:11px;font-weight:400;color:var(--text-3);margin-top:2px;letter-spacing:0.05em;">${year} ${showYearPicker ? '▲' : '▼'}</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">${MONTHS_FULL[month]}</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:2px;">${year} ${showYearPicker?'▲':'▼'}</div>
       </div>
       <div style="display:flex;gap:4px;">
         <button class="btn-data" style="padding:5px 8px;font-size:14px;" onclick="gigCalMonth('${gigId}','${gigDate}',1)">›</button>
@@ -1853,32 +1388,23 @@ function gigInlineCalendar(gigId, gigDate) {
       ${dayNames.map(d=>`<div style="text-align:center;font-size:9px;color:var(--text-3);padding:2px 0;font-weight:700;">${d}</div>`).join('')}
     </div>
     <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">${cells}</div>
-    <div style="text-align:center;margin-top:10px;">
-      <button class="btn-data" style="padding:4px 12px;font-size:11px;" onclick="gigCalToday('${gigId}')">Bugün</button>
-    </div>`}
+    <div style="text-align:center;margin-top:10px;"><button class="btn-data" style="padding:4px 12px;font-size:11px;" onclick="gigCalToday('${gigId}')">Bugün</button></div>`}
   </div>`;
 }
 
-
-// ===== EXPORT / IMPORT =====
 function exportData() {
   const fileName = `gigtrack-backup.json`;
   const jsonStr = JSON.stringify({ version:3, gigs, exported: new Date().toISOString() }, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json' });
-
   if (navigator.share) {
     const file = new File([blob], fileName, { type: 'application/json' });
     navigator.share({ files: [file], title: 'GigTrack Yedek' })
       .then(() => showToast('⬆ Paylaşıldı'))
       .catch(() => {
-        // Dosya paylaşımı çalışmadıysa URL paylaş
         const url = URL.createObjectURL(blob);
-        navigator.share({ title: 'GigTrack Yedek', url })
-          .catch(() => { triggerDownload(blob, fileName); });
+        navigator.share({ title: 'GigTrack Yedek', url }).catch(() => { triggerDownload(blob, fileName); });
       });
-  } else {
-    triggerDownload(blob, fileName);
-  }
+  } else { triggerDownload(blob, fileName); }
 }
 
 function triggerDownload(blob, fileName) {
@@ -1893,28 +1419,25 @@ function importData(e) {
   const reader = new FileReader();
   reader.onload = ev => {
     try {
-      const data     = JSON.parse(ev.target.result);
+      const data = JSON.parse(ev.target.result);
       const imported = data.gigs || data;
       if (!Array.isArray(imported)) throw new Error();
-      showConfirm('Verileri İçe Aktar',
-        `${imported.length} iş içe aktarılacak. Zaten kayıtlı olanlar atlanır.`,
-        () => {
-          const existing = new Set(gigs.map(g => g.id));
-          const newOnes  = imported.filter(g => !existing.has(g.id));
-          gigs.push(...newOnes);
-          save(); render();
-          showToast(`✓ ${newOnes.length} yeni iş eklendi`);
-        });
+      showConfirm('Verileri İçe Aktar', `${imported.length} iş içe aktarılacak. Zaten kayıtlı olanlar atlanır.`, () => {
+        const existing = new Set(gigs.map(g => g.id));
+        const newOnes = imported.filter(g => !existing.has(g.id));
+        gigs.push(...newOnes);
+        save(); render();
+        showToast(`✓ ${newOnes.length} yeni iş eklendi`);
+      });
     } catch { showToast('⚠️ Dosya okunamadı'); }
   };
   reader.readAsText(file);
   e.target.value = '';
 }
 
-// ===== CONFIRM =====
 function showConfirm(title, text, cb) {
   document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmText').textContent  = text;
+  document.getElementById('confirmText').textContent = text;
   document.getElementById('confirmOkBtn').textContent = title.toLowerCase().includes('sil') ? 'Evet, Sil' : 'Devam Et';
   confirmCallback = cb;
   document.getElementById('confirmOverlay').classList.add('open');
@@ -1926,25 +1449,21 @@ function closeConfirm() {
   if (window.location.hash === '#confirm') history.back();
 }
 document.getElementById('confirmOkBtn').onclick = () => { if(confirmCallback) confirmCallback(); closeConfirm(); };
-document.getElementById('confirmOverlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('confirmOverlay')) closeConfirm();
-});
+document.getElementById('confirmOverlay').addEventListener('click', e => { if (e.target === document.getElementById('confirmOverlay')) closeConfirm(); });
 
-// ===== TOAST =====
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
 
-// ===== CALCULATOR =====
 let calcExp = '';
 function openCalcModal() {
   calcExp = '';
   document.getElementById('calcDisplay').innerText = '0';
   document.getElementById('calcModalOverlay').classList.add('open');
   history.pushState({ modal: 'calc' }, '', '#calc');
-  setTimeout(() => { 
+  setTimeout(() => {
     document.getElementById('calcModalBox').style.opacity = '1';
     document.getElementById('calcModalBox').style.transform = 'translateY(0) scale(1)';
   }, 10);
@@ -1955,46 +1474,28 @@ function closeCalcModal() {
   setTimeout(() => { document.getElementById('calcModalOverlay').classList.remove('open'); }, 250);
   if (window.location.hash === '#calc') history.back();
 }
-function handleCalcOverlayClick(e) {
-  if (e.target === document.getElementById('calcModalOverlay')) closeCalcModal();
-}
+function handleCalcOverlayClick(e) { if (e.target === document.getElementById('calcModalOverlay')) closeCalcModal(); }
 function calcInput(k) {
   if (k === 'C') { calcExp = ''; }
-  else if (k === '⌫') { 
-    calcExp = calcExp.slice(0, -1); 
-  }
-  else if (k === '%') {
-    // Sayıdan sonra % gelince /100 ekle
-    calcExp += '%';
-  }
+  else if (k === '⌫') { calcExp = calcExp.slice(0, -1); }
+  else if (k === '%') { calcExp += '%'; }
   else if (k === '=') {
-    try { 
-      let safeExp = calcExp
-        .replace(/×/g, '*')
-        .replace(/÷/g, '/');
-      // Örn: 100+%10 veya 100+10% gibi göreceli yüzde hesabı
+    try {
+      let safeExp = calcExp.replace(/×/g, '*').replace(/÷/g, '/');
       safeExp = safeExp.replace(/(\d+\.?\d*)([+\-*\/])(\d+\.?\d*)%/g, (m, a, op, b) => {
         if (op === '+' || op === '-') return `${a}${op}(${a}*${b}/100)`;
         return `${a}${op}(${b}/100)`;
       });
-      // Kalan % işaretleri
       safeExp = safeExp.replace(/(\d+\.?\d*)%/g, '($1/100)');
       const result = Function('"use strict"; return (' + safeExp + ')')();
-      // Ondalık hassasiyeti temizle
       calcExp = parseFloat(result.toFixed(10)).toString();
     } catch { calcExp = 'Hata'; }
   }
-  else if (k === '*' || k === '/') {
-     calcExp += k === '*' ? '×' : '÷';
-  }
-  else {
-    if (calcExp === '0' || calcExp === 'Hata') calcExp = '';
-    calcExp += k;
-  }
+  else if (k === '*' || k === '/') { calcExp += k === '*' ? '×' : '÷'; }
+  else { if (calcExp === '0' || calcExp === 'Hata') calcExp = ''; calcExp += k; }
   document.getElementById('calcDisplay').innerText = calcExp || '0';
 }
 
-// ===== HARDWARE BACK BUTTON =====
 window.addEventListener('popstate', () => {
   const hash = window.location.hash;
   if (hash !== '#calc') {
@@ -2005,23 +1506,15 @@ window.addEventListener('popstate', () => {
       setTimeout(() => { cmo.classList.remove('open'); }, 250);
     }
   }
-  if (hash !== '#modal' && hash !== '#calc') {
-    document.getElementById('modalOverlay').classList.remove('open');
-  }
-  if (hash !== '#confirm') {
-    document.getElementById('confirmOverlay').classList.remove('open');
-  }
+  if (hash !== '#modal' && hash !== '#calc') document.getElementById('modalOverlay').classList.remove('open');
+  if (hash !== '#confirm') document.getElementById('confirmOverlay').classList.remove('open');
 });
 
-// ===== INIT =====
 load();
 
-// ===== PWA SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').then(reg => {
-      console.log('SW registered!', reg);
-    }).catch(err => console.log('SW registration failed:', err));
+    navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err));
   });
 }
 </script>

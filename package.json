@@ -18,7 +18,23 @@
   "author": "Umut",
   "license": "ISC",
   "devDependencies": {
+    "@capacitor/android": "^8.3.0",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.3.0",
     "electron": "^29.1.5",
     "electron-builder": "^24.13.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/umutyenilmez-bass/gigtrack.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/umutyenilmez-bass/gigtrack/issues"
+  },
+  "homepage": "https://github.com/umutyenilmez-bass/gigtrack#readme",
+  "dependencies": {
+    "@capacitor/core": "^8.3.0"
   }
 }

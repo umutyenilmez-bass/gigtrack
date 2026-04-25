@@ -7,7 +7,7 @@ const i18nScript = `// ===== i18n =====
 const userLang = (navigator.language || navigator.userLanguage || "en").substring(0,2) === "tr" ? "tr" : "en";
 const T = {
   en: {
-    addGigBtn: "<span style=\\"font-size:16px;line-height:1\\">＋</span> Add Gig", exportData: "⬇ Export", importData: "⬆ Import",
+    addGigBtn: "<span style=\\"font-size:16px;line-height:1\\">＋</span> Add Gig", exportData: "⬆ Export", importData: "⬇ Import",
     tabGigs: "Gigs", tabUnpaid: "Unpaid", tabPaid: "Paid", tabAnalysis: "Analysis",
     modalTitle: "New Gig",
     lblVenue: "Venue", plcVenue: "Venue Name",

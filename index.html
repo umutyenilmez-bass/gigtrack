@@ -1079,12 +1079,17 @@ function deleteTag(type, value) {
 const expandedCards = new Set();
 
 function toggleCard(id) {
-  if (expandedCards.has(id)) expandedCards.delete(id);
-  else expandedCards.add(id);
-  const gig = gigs.find(g => String(g.id) === String(id));
+  const idStr = String(id);
+  if (expandedCards.has(idStr)) expandedCards.delete(idStr);
+  else expandedCards.add(idStr);
+  
+  const gig = gigs.find(g => String(g.id) === idStr);
   if (!gig) return;
-  const cardEl = document.getElementById('card-' + id);
-  if (cardEl) cardEl.outerHTML = gigCard(gig);
+
+  // Tüm tablardaki ilgili kartları güncelle (İşlerim, Ödenmemiş, Ödenmiş vs.)
+  document.querySelectorAll('[id="card-' + idStr + '"]').forEach(el => {
+    el.outerHTML = gigCard(gig);
+  });
 }
 
 function gigCard(gig) {
@@ -1092,7 +1097,7 @@ function gigCard(gig) {
   const sym = SYM[gig.currency] || '';
   const feeDisplay = gig.fee ? `${sym}${escHtml(gig.fee)}` : '—';
   const isPast = gig.date < today();
-  const isExpanded = expandedCards.has(gig.id);
+  const isExpanded = expandedCards.has(String(gig.id));
 
   // COLLAPSED
   if (!isExpanded) {
