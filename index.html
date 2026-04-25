@@ -639,7 +639,7 @@
 
 <!-- CALENDAR MODAL -->
 <div class="modal-overlay top" id="calendarModalOverlay" onclick="handleCalendarOverlayClick(event)" style="z-index: 900;">
-  <div class="modal" id="calendarModalBox" style="padding-bottom: 20px;">
+  <div class="modal" id="calendarModalBox" style="padding-bottom: 20px;" ontouchstart="handleCalendarTouchStart(event)" ontouchend="handleCalendarTouchEnd(event)">
     <div class="modal-header">
       <h2 class="modal-title" data-i18n="tabCalendar">Takvim</h2>
       <button class="btn-close" onclick="closeCalendarModal()">✕</button>
@@ -1550,6 +1550,18 @@ function calSetYear(year) {
   calendarDate = new Date(year, calendarDate.getMonth(), 1);
   calendarYearPicker = false;
   renderCalendar();
+}
+
+let calTouchStart = 0;
+function handleCalendarTouchStart(e) {
+  calTouchStart = e.changedTouches[0].screenX;
+}
+function handleCalendarTouchEnd(e) {
+  const diff = e.changedTouches[0].screenX - calTouchStart;
+  if (Math.abs(diff) > 50) {
+    if (diff > 0) calMonth(-1);
+    else calMonth(1);
+  }
 }
 
 function calendarDayClick(dateStr) {
