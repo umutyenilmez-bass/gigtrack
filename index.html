@@ -1478,11 +1478,16 @@ function renderCalendar() {
     </div>`}
   `;
 
-  if (!showYearPicker && selectedCalDay && gigDates[selectedCalDay]) {
-    const dayGigs = gigDates[selectedCalDay];
-    html += `<div style="margin-top:20px;"><div class="section-label">${selectedCalDay}</div>`;
-    html += dayGigs.map(g => gigCard(g)).join('');
-    html += `</div>`;
+  if (!showYearPicker && selectedCalDay) {
+    const dayGigs = gigDates[selectedCalDay] || [];
+    const df = formatDate(selectedCalDay);
+    html += `<div style="margin-top:20px;">
+      <div class="section-label">${df.day} ${df.monthFull} ${df.year}</div>
+      <button class="btn-add" style="width:100%; justify-content:center; margin-bottom:12px; padding:12px;" onclick="openAddModal('${selectedCalDay}')">
+        <span style="font-size:16px;line-height:1">＋</span> ${T.addGigBtn}
+      </button>
+      ${dayGigs.map(g => gigCard(g)).join('')}
+    </div>`;
   }
 
   el.innerHTML = html;
@@ -1555,13 +1560,13 @@ function fillTemplate(artist, venue, fee, currency, repeat) {
   toggleRepeatUntil();
 }
 
-function openAddModal() {
+function openAddModal(preDate) {
   editingId = null;
   document.getElementById('modalTitle').textContent = T.modalTitle;
   document.getElementById('submitBtn').textContent  = T.btnSave;
   document.getElementById('fArtist').value  = '';
   document.getElementById('fVenue').value   = '';
-  document.getElementById('fDate').value    = today();
+  document.getElementById('fDate').value    = preDate || today();
   document.getElementById('fTime').value    = '';
   document.getElementById('fFee').value     = '';
   document.getElementById('fCurrency').value = 'TRY';
