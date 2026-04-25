@@ -365,6 +365,18 @@
       margin: 12px auto 0;
     }
 
+    /* TOP MODAL (Takvim için) */
+    .modal-overlay.top { align-items: flex-start; }
+    .modal-overlay.top .modal {
+      border-radius: 0 0 24px 24px;
+      border-top: none; border-bottom: 1px solid var(--border);
+      transform: translateY(-100%);
+    }
+    .modal-overlay.top.open .modal { transform: translateY(0); }
+    .modal-overlay.top .modal-handle { order: 2; margin: 0 auto 12px; }
+    .modal-overlay.top .modal-header { order: 1; }
+    .modal-overlay.top .modal-box-content { display: flex; flex-direction: column; }
+
     .modal-header {
       padding: 16px 20px 0;
       display: flex; align-items: center; justify-content: space-between;
@@ -626,14 +638,14 @@
 </div>
 
 <!-- CALENDAR MODAL -->
-<div class="modal-overlay" id="calendarModalOverlay" onclick="handleCalendarOverlayClick(event)" style="z-index: 900;">
+<div class="modal-overlay top" id="calendarModalOverlay" onclick="handleCalendarOverlayClick(event)" style="z-index: 900;">
   <div class="modal" id="calendarModalBox" style="padding-bottom: 20px;">
-    <div class="modal-handle"></div>
     <div class="modal-header">
       <h2 class="modal-title" data-i18n="tabCalendar">Takvim</h2>
       <button class="btn-close" onclick="closeCalendarModal()">✕</button>
     </div>
     <div class="content" id="calendarView"></div>
+    <div class="modal-handle"></div>
   </div>
 </div>
 
