@@ -1081,7 +1081,11 @@ const expandedCards = new Set();
 function toggleCard(id) {
   if (expandedCards.has(id)) expandedCards.delete(id);
   else expandedCards.add(id);
-  render();
+  const cardEl = document.getElementById('card-' + id);
+  if (cardEl) {
+    const gig = gigs.find(g => String(g.id) === String(id));
+    if (gig) cardEl.outerHTML = gigCard(gig);
+  }
 }
 
 function gigCard(gig) {
