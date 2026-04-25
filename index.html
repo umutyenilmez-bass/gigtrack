@@ -1101,7 +1101,7 @@ function gigCard(gig) {
 
   // COLLAPSED
   if (!isExpanded) {
-    const feeColor = gig.paid ? '#32D74B' : '#fff';
+    const feeColor = gig.paid ? '#2A7C4F' : '#fff';
     return `
 <div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div style="display:flex;align-items:center;padding:11px 16px;gap:14px;">
@@ -1143,7 +1143,7 @@ function gigCard(gig) {
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee" style="color:${gig.paid?'#32D74B':'#fff'}">${feeDisplay}</div>
+      <div class="gig-fee" style="color:${gig.paid?'#2A7C4F':'#fff'}">${feeDisplay}</div>
       ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
       <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
