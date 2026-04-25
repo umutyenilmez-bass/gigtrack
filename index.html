@@ -1129,10 +1129,10 @@ function gigCard(gig) {
       <div class="gig-date-day-name">${df.dayName}</div>
     </div>
     <div class="gig-info">
-      <div class="gig-venue" onclick="event.stopPropagation();setFilter('venue', ${JSON.stringify(gig.venue || '').replace(/"/g, '&quot;')})">
+      <div class="gig-venue">
         ${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;font-weight:500;">${T.valNoVenue}</span>`}
       </div>
-      <div class="gig-artist" onclick="event.stopPropagation();setFilter('artist', ${JSON.stringify(gig.artist || '').replace(/"/g, '&quot;')})">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
+      <div class="gig-artist">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
       <div class="gig-meta">
         ${gig.time ? `<span class="gig-time">${gig.time}</span>` : ''}
         <span class="gig-time">${df.year}</span>
