@@ -1490,7 +1490,8 @@ function renderCalendar() {
     </div>`;
   }
 
-  el.innerHTML = html;
+  // Takvim içeriğini bir kapsayıcı içine alalım ki arka plan tıklamasını ayırt edebilelim
+  el.innerHTML = `<div class="calendar-container" onclick="event.stopPropagation()">${html}</div>`;
 }
 
 let calendarDate = new Date();
@@ -1532,13 +1533,16 @@ function calendarDayClick(dateStr) {
 }
 
 function toggleCalendarTab() {
-  if (activeTab === 'calendar') goHome();
-  else switchTab('calendar');
+  if (activeTab === 'calendar') {
+    switchTab('gigs');
+  } else {
+    switchTab('calendar');
+  }
 }
 
 function handleCalendarBgClick(e) {
-  // Eğer direkt arka plana veya boşluğa tıklandıysa ana sayfaya dön
-  if (e.target.id === 'tab-calendar' || e.target.id === 'calendarView' || e.target.classList.contains('content')) {
+  // Takvim sayfasındayken boşluğa tıklanırsa ana sayfaya dön
+  if (activeTab === 'calendar') {
     goHome();
   }
 }
