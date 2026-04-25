@@ -1083,8 +1083,12 @@ function toggleCard(id) {
   else expandedCards.add(id);
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
-  const cardEl = document.getElementById('card-' + id);
-  if (cardEl) cardEl.outerHTML = gigCard(gig);
+  // Sadece aktif (görünür) sekmedeki kartı güncelle
+  const activeContent = document.querySelector('.tab-content:not(.hidden)');
+  if (activeContent) {
+    const cardEl = activeContent.querySelector('[id="card-' + id + '"]');
+    if (cardEl) cardEl.outerHTML = gigCard(gig);
+  }
 }
 
 function gigCard(gig) {
