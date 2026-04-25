@@ -1101,7 +1101,7 @@ function gigCard(gig) {
 
   // COLLAPSED
   if (!isExpanded) {
-    const feeColor = gig.paid ? '#2d7a63' : '#fff';
+    const feeColor = gig.paid ? '#008000' : '#fff';
     return `
 <div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div style="display:flex;align-items:center;padding:11px 16px;gap:14px;">
