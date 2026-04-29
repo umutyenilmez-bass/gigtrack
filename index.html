@@ -127,27 +127,57 @@
     .btn-data:hover { color: var(--text); border-color: #3a3a3a; }
     .btn-data:active { transform: scale(0.96); }
 
-    /* FILTER BAR */
-    .filter-bar {
-      padding: 10px 18px; display: flex; align-items: center; gap: 7px;
-      overflow-x: auto; scrollbar-width: none;
-      border-bottom: 1px solid var(--border);
+    /* FILTER DROPDOWN */
+    .filter-dropdown-container { width: 100%; position: relative; }
+    .filter-main-btn {
+      width: 100%; padding: 12px 18px; border-radius: 20px;
+      background: var(--surface-2); border: 1px solid var(--border);
+      color: var(--text-2); font-size: 15px; font-weight: 600;
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: all 0.2s;
     }
-    .filter-bar::-webkit-scrollbar { display: none; }
+    .filter-main-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(255,179,0,0.05); }
+    .filter-arrow { transition: transform 0.3s; font-size: 18px; opacity: 0.5; }
+    .filter-arrow.up { transform: rotate(180deg); }
 
-    .filter-chip {
-      flex-shrink: 0; padding: 5px 12px; border-radius: 20px;
-      font-size: 12px; font-weight: 600;
-      border: 1px solid var(--border);
-      background: var(--surface); color: var(--text-2);
-      cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
-      -webkit-tap-highlight-color: transparent;
+    .filter-vertical-list {
+      position: absolute; top: calc(100% + 8px); left: 0; right: 0;
+      background: #1a1a1c; border: 1px solid var(--border);
+      border-radius: 18px; z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      max-height: 400px; display: flex; flex-direction: column;
+      overflow: hidden; animation: slideIn 0.2s ease-out;
     }
-    .filter-chip:hover { border-color: rgba(255,255,255,0.15); }
-    .filter-chip.active {
-      background: var(--accent); border-color: var(--accent); color: #000;
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .filter-list-scroll { overflow-y: auto; padding: 8px; }
+    .filter-group-header {
+      font-size: 10px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 12px 12px 6px;
     }
-    .filter-chip:active { transform: scale(0.96); }
+    .filter-item-row { display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .filter-item {
+      flex: 1; padding: 12px; border-radius: 12px;
+      font-size: 14px; color: var(--text-2); cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-item:hover { background: rgba(255,255,255,0.04); color: #fff; }
+    .filter-item.active { background: rgba(255,179,0,0.1); color: var(--accent); font-weight: 600; }
+    
+    .filter-item-delete {
+      padding: 10px 14px; color: var(--text-3); opacity: 0.4;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-item-delete:hover { color: #ff453a; opacity: 1; transform: scale(1.1); }
+
+    .filter-search-wrapper { padding: 8px; border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .filter-menu-input {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 14px;
+      color: #fff; font-family: inherit; font-size: 14px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .filter-menu-input:focus { border-color: var(--accent); }
 
     .filter-group-label {
       font-size: 10px; font-weight: 700; color: var(--text-3);
@@ -198,6 +228,7 @@
       margin-bottom: 16px; overflow: hidden;
       box-shadow: 0 4px 12px rgba(0,0,0,0.18);
       transition: all 0.2s ease;
+    }
     }
     .gig-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
     .gig-card.paid   { border-left: none; }
@@ -319,13 +350,30 @@
     .gig-action-btn:active { transform: scale(0.96); }
     .gig-action-btn.danger:hover { color: #FF453A; }
 
-    /* BOTTOM NAV */
-    .bottom-nav {
+    /* TAB VIEWPORT & PAGES */
+    .tab-viewport {
+      display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+      scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; -ms-overflow-style: none;
+      width: 100%; flex: 1; min-height: 0;
+    }
+    .tab-viewport::-webkit-scrollbar { display: none; }
+    
+    .tab-page {
+      flex: 0 0 100%; width: 100%; min-width: 100%;
+      scroll-snap-align: start; scroll-snap-stop: always;
+      overflow-y: auto; overflow-x: hidden;
+    }
+
+    body { display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    .header { flex-shrink: 0; }
+    .filter-bar { flex-shrink: 0; }
+    .nav-tabs {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
       background: rgba(15,15,16,0.95);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
       border-top: 1px solid rgba(255,255,255,0.06);
-      display: flex;
+      display: flex; flex-shrink: 0;
       padding-bottom: var(--safe-bottom);
       height: calc(var(--nav-height) + var(--safe-bottom));
     }
@@ -626,6 +674,7 @@
   </div>
 </header>
 
+
 <!-- DATA ACTIONS -->
 <div class="data-actions">
   <button class="btn-data" onclick="document.getElementById('importFile').click()" data-i18n="importData">⬇ İçe Aktar</button>
@@ -635,27 +684,30 @@
 
 <div class="filter-bar" id="filterBar" style="padding-top: 14px; padding-bottom: 14px; min-height: 52px;"></div>
 
-<!-- TAB: İşlerim -->
-<div id="tab-gigs" class="tab-content">
-  <div class="content" id="gigsList"></div>
-</div>
+<!-- TAB VIEWPORT (SWIPEABLE) -->
+<div class="tab-viewport" id="tabViewport">
+  <!-- TAB: İşlerim -->
+  <div id="tab-gigs" class="tab-page">
+    <div class="content" id="gigsList"></div>
+  </div>
 
-<!-- TAB: Ödenmemiş -->
-<div id="tab-unpaid" class="tab-content hidden">
-  <div class="unpaid-summary" id="unpaidSummary"></div>
-  <div class="content" id="unpaidList"></div>
-</div>
+  <!-- TAB: Ödenmemiş -->
+  <div id="tab-unpaid" class="tab-page">
+    <div class="unpaid-summary" id="unpaidSummary"></div>
+    <div class="content" id="unpaidList"></div>
+  </div>
 
-<!-- TAB: Ödenmiş -->
-<div id="tab-paid" class="tab-content hidden">
-  <div class="content" id="paidList"></div>
-</div>
+  <!-- TAB: Ödenmiş -->
+  <div id="tab-paid" class="tab-page">
+    <div class="content" id="paidList"></div>
+  </div>
 
-<!-- TAB: Analiz -->
-<div id="tab-analysis" class="tab-content hidden">
-  <div class="content">
-    <div class="stats-grid" id="statsGrid"></div>
-    <div id="analysisList"></div>
+  <!-- TAB: Analiz -->
+  <div id="tab-analysis" class="tab-page">
+    <div class="content">
+      <div class="stats-grid" id="statsGrid"></div>
+      <div id="analysisList"></div>
+    </div>
   </div>
 </div>
 
@@ -683,20 +735,15 @@
   </div>
 </div>
 
+
+
+
 <!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')">
-    <span data-i18n="tabGigs">İşlerim</span>
-  </div>
-  <div class="nav-item" id="nav-unpaid" onclick="switchTab('unpaid')">
-    <span data-i18n="tabUnpaid">Ödenmemiş</span>
-  </div>
-  <div class="nav-item" id="nav-paid" onclick="switchTab('paid')">
-    <span data-i18n="tabPaid">Ödenmiş</span>
-  </div>
-  <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')">
-    <span data-i18n="tabAnalysis">Analiz</span>
-  </div>
+<nav class="nav-tabs">
+  <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')" data-i18n="tabGigs">Tümü</div>
+  <div class="nav-item" id="nav-unpaid" onclick="switchTab('unpaid')" data-i18n="tabUnpaid">Ödenmemiş</div>
+  <div class="nav-item" id="nav-paid" onclick="switchTab('paid')" data-i18n="tabPaid">Ödenmiş</div>
+  <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')" data-i18n="tabAnalysis">Analiz</div>
 </nav>
 
 <!-- ADD / EDIT MODAL -->
@@ -919,7 +966,7 @@ const T = {
   },
   tr: {
     addGigBtn: "GIG", exportData: "⬆ Dışa Aktar", importData: "⬇ İçe Aktar",
-    tabGigs: "İşlerim", tabUnpaid: "Ödenmemiş", tabPaid: "Ödenmiş", tabAnalysis: "Analiz",
+    tabGigs: "Tümü", tabUnpaid: "Ödenmemiş", tabPaid: "Ödenmiş", tabAnalysis: "Analiz",
     modalTitle: "Yeni İş",
     lblVenue: "Mekan", plcVenue: "Mekan Adı",
     lblArtist: "Sanatçı", plcArtist: "Sahne adı",
@@ -1129,16 +1176,47 @@ function switchTab(tab) {
     openCalendarModal();
     return;
   }
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+  
+  const viewport = document.getElementById('tabViewport');
+  const targetPage = document.getElementById('tab-' + tab);
+  if (viewport && targetPage) {
+    viewport.scrollTo({ left: targetPage.offsetLeft, behavior: 'smooth' });
+  }
+  
+  activeTab = tab;
+  updateNavState(tab);
+}
+
+function updateNavState(tab) {
   document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const target = document.getElementById('tab-' + tab);
-  if (target) target.classList.remove('hidden');
   const navTarget = document.getElementById('nav-' + tab);
   if (navTarget) navTarget.classList.add('active');
-  activeTab = tab;
   document.body.setAttribute('data-tab', tab);
-  render();
+  render(); // Gerekli verileri güncelle
 }
+
+// Swipe Senkronizasyonu
+function initSwipeSync() {
+  const viewport = document.getElementById('tabViewport');
+  const tabs = ['gigs', 'unpaid', 'paid', 'analysis'];
+  
+  let isScrolling;
+  viewport.addEventListener('scroll', () => {
+    window.clearTimeout(isScrolling);
+    isScrolling = setTimeout(() => {
+      const scrollLeft = viewport.scrollLeft;
+      const width = viewport.offsetWidth;
+      const index = Math.round(scrollLeft / width);
+      const newTab = tabs[index];
+      
+      if (newTab && activeTab !== newTab) {
+        activeTab = newTab;
+        updateNavState(newTab);
+      }
+    }, 100);
+  });
+}
+window.addEventListener('DOMContentLoaded', initSwipeSync);
 
 // ===== FILTERS =====
 function setFilter(type, value) {
@@ -1154,25 +1232,80 @@ function setFilter(type, value) {
   render();
 }
 
-function renderFilterBar() {
-  const bar = document.getElementById('filterBar');
-  const active = filterArtist || filterVenue;
-  
-  let filterText = T.all;
-  if (filterArtist) filterText = `👤 ${escHtml(filterArtist)}`;
-  else if (filterVenue) filterText = `📍 ${escHtml(filterVenue)}`;
+let isFilterOpen = false;
+let filterSearchQuery = "";
 
-  bar.innerHTML = `
-    <div style="display:flex; align-items:center; gap:8px; width:100%;">
-      <button class="btn-data" onclick="openFilterModal()" style="flex:1; justify-content:space-between; padding: 10px 16px; font-size: 15px; border-radius: 20px; border-color: ${active?'var(--accent)':'var(--border)'}; color: ${active?'var(--accent)':'var(--text-2)'}; background: ${active?'rgba(255,179,0,0.05)':'var(--surface)'}">
-        <span style="display:flex; align-items:center; gap:8px;">
-          ${active ? '' : '🔍'} <span>${filterText}</span>
-        </span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-      </button>
-      ${active ? `<button class="btn-close" style="flex-shrink:0; width:40px; height:40px; background:var(--accent); color:#000; border:none;" onclick="setFilter('all')">✕</button>` : ''}
-    </div>
-  `;
+function toggleFilterBar() {
+  isFilterOpen = !isFilterOpen;
+  filterSearchQuery = "";
+  render();
+}
+
+function handleFilterSearch(val) {
+  filterSearchQuery = (val || "").toLowerCase();
+  const items = document.querySelectorAll('.filter-item-row');
+  items.forEach(row => {
+    const itemEl = row.querySelector('.filter-item');
+    if (itemEl) {
+      const text = itemEl.textContent.toLowerCase();
+      row.style.display = text.includes(filterSearchQuery) ? 'flex' : 'none';
+    }
+  });
+}
+
+function renderFilterBar() {
+  try {
+    const bar = document.getElementById('filterBar');
+    if (!bar) return;
+    
+    const active = filterArtist || filterVenue;
+    const venues = [...new Set(gigs.map(g => g.venue).filter(Boolean))].sort();
+    const artists = [...new Set(gigs.map(g => g.artist).filter(Boolean))].sort();
+
+    let activeLabel = T.all;
+    if (filterArtist) activeLabel = filterArtist;
+    else if (filterVenue) activeLabel = filterVenue;
+
+    bar.innerHTML = `
+      <div class="filter-dropdown-container">
+        <button class="filter-main-btn ${active?'active':''}" onclick="toggleFilterBar()">
+          <span>${active ? '' : '🔍'} ${escHtml(activeLabel)}</span>
+          <span class="filter-arrow ${isFilterOpen?'up':''}">▾</span>
+        </button>
+        
+        <div class="filter-vertical-list ${isFilterOpen?'':'hidden'}">
+          <div class="filter-search-wrapper">
+            <input type="text" id="filterMenuSearch" class="filter-menu-input" placeholder="${T.searchFilter}..." oninput="handleFilterSearch(this.value)">
+          </div>
+          <div class="filter-list-scroll">
+            <div class="filter-item-row">
+              <div class="filter-item ${!active?'active':''}" onclick="setFilter('all'); toggleFilterBar();">${T.all}</div>
+            </div>
+            ${venues.length ? `<div class="filter-group-header">${T.lblVenue}</div>` : ''}
+            ${venues.map(v => `
+              <div class="filter-item-row">
+                <div class="filter-item ${filterVenue===v?'active':''}" onclick="setFilter('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')}); toggleFilterBar();">📍 ${escHtml(v)}</div>
+                <span class="filter-item-delete" onclick="event.stopPropagation(); deleteTag('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">✕</span>
+              </div>
+            `).join('')}
+            ${artists.length ? `<div class="filter-group-header">${T.lblArtist}</div>` : ''}
+            ${artists.map(a => `
+              <div class="filter-item-row">
+                <div class="filter-item ${filterArtist===a?'active':''}" onclick="setFilter('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')}); toggleFilterBar();">👤 ${escHtml(a)}</div>
+                <span class="filter-item-delete" onclick="event.stopPropagation(); deleteTag('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">✕</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+    
+    if (isFilterOpen) {
+      setTimeout(() => document.getElementById('filterMenuSearch')?.focus(), 50);
+    }
+  } catch (e) {
+    console.error("Filter bar error:", e);
+  }
 }
 
 function openFilterModal() {
@@ -1276,7 +1409,7 @@ function gigCard(gig) {
 
   // COLLAPSED
   if (!isExpanded) {
-    const feeColor = gig.paid ? '#5CADFF' : '#fff';
+    const feeColor = gig.paid ? '#5CADFF' : 'var(--text-2)';
     return `
 <div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div style="display:flex;align-items:center;padding:11px 16px;gap:14px;">
@@ -1318,7 +1451,7 @@ function gigCard(gig) {
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee" style="color:${gig.paid?'#5CADFF':'#fff'}; font-family:'Inter',sans-serif; font-weight:200; font-size:18px;">${feeDisplay}</div>
+      <div class="gig-fee" style="color:${gig.paid?'#5CADFF':'var(--text-2)'}; font-family:'Inter',sans-serif; font-weight:200; font-size:18px;">${feeDisplay}</div>
       ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
       <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
@@ -1746,6 +1879,7 @@ function handleCalendarOverlayClick(e) {
 
 function render() {
   document.getElementById('headerYear').textContent = activeYear;
+  renderFilterBar();
   if (activeTab === 'gigs') renderGigs();
   renderUnpaid();
   renderPaid();
