@@ -22,6 +22,8 @@
       font-style: italic;
     }
 
+
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -93,13 +95,15 @@
     .header-actions { display: flex; align-items: center; gap: 8px; }
 
     .btn-add {
-      display: flex; align-items: center; gap: 6px;
-      padding: 9px 16px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 44px; height: 44px; padding: 0;
       background: linear-gradient(135deg, var(--accent), var(--accent-alt));
-      border: none; border-radius: var(--radius-sm);
-      color: #000; font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700;
-      cursor: pointer; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent;
+      border: none; border-radius: 12px;
+      color: #000; font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 800;
+      line-height: 1.1; cursor: pointer; transition: all 0.2s ease;
+      -webkit-tap-highlight-color: transparent;
       box-shadow: 0 4px 12px var(--accent-glow);
+      text-transform: uppercase;
     }
     .btn-add:active { transform: scale(0.96); opacity: 0.9; }
     .btn-add:hover { transform: scale(1.02); box-shadow: 0 6px 16px rgba(255, 179, 0, 0.35); }
@@ -605,11 +609,10 @@
 <!-- HEADER -->
 <header class="header">
   <div class="header-left" onclick="goHome()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
-    <div class="logo-mark"><img src="logo.png" alt="Logo"></div>
     <span class="app-title"><span>GIG</span><span style="color:#FF8F00;">TRACK</span></span>
   </div>
   <div class="header-actions">
-    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">İş Ekle</button>
+    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn"><span>GIG</span><span>EKLE</span></button>
     <button class="btn-add" style="background:var(--surface-2); border:1px solid var(--border); width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: none; min-width: 44px; border-radius: 12px;" onclick="toggleCalendarTab()">
       <span id="headerYear" style="font-size: 13px; font-weight: 700; color: #94A3B8; opacity: 0.8; font-family: 'Inter', sans-serif;"></span>
     </button>
@@ -876,7 +879,7 @@
 const userLang = (navigator.language || navigator.userLanguage || "en").substring(0,2) === "tr" ? "tr" : "en";
 const T = {
   en: {
-    addGigBtn: "Add Gig", exportData: "⬆ Export", importData: "⬇ Import",
+    addGigBtn: "ADD<br>GIG", exportData: "⬆ Export", importData: "⬇ Import",
     tabGigs: "Gigs", tabUnpaid: "Unpaid", tabPaid: "Paid", tabAnalysis: "Analysis",
     modalTitle: "New Gig",
     lblVenue: "Venue", plcVenue: "Venue Name",
@@ -915,7 +918,7 @@ const T = {
     totalUnpaid: "Total Unpaid:"
   },
   tr: {
-    addGigBtn: "İş Ekle", exportData: "⬆ Dışa Aktar", importData: "⬇ İçe Aktar",
+    addGigBtn: "GIG<br>EKLE", exportData: "⬆ Dışa Aktar", importData: "⬇ İçe Aktar",
     tabGigs: "İşlerim", tabUnpaid: "Ödenmemiş", tabPaid: "Ödenmiş", tabAnalysis: "Analiz",
     modalTitle: "Yeni İş",
     lblVenue: "Mekan", plcVenue: "Mekan Adı",
