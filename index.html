@@ -286,7 +286,7 @@
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
       font-family: 'Inter', sans-serif;
     }
-    .status-badge.paid   { background: var(--paid-bg); color: var(--paid-text); border: 1px solid rgba(255,255,255,0.06); }
+    .status-badge.paid { background: rgba(92, 173, 255, 0.15); color: #5CADFF; }
     .status-badge.unpaid { background: transparent; color: var(--text-2); border: 1px solid rgba(255,255,255,0.1); }
     .status-badge:active { transform: scale(0.95); }
     
@@ -1276,7 +1276,7 @@ function gigCard(gig) {
 
   // COLLAPSED
   if (!isExpanded) {
-    const feeColor = gig.paid ? '#57CC99' : '#fff';
+    const feeColor = gig.paid ? '#5CADFF' : '#fff';
     return `
 <div class="gig-card ${gig.paid?'paid':'unpaid'}${isPast?' past':''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div style="display:flex;align-items:center;padding:11px 16px;gap:14px;">
@@ -1318,7 +1318,7 @@ function gigCard(gig) {
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee" style="color:${gig.paid?'#57CC99':'#fff'}; font-family:'Inter',sans-serif; font-weight:200; font-size:18px;">${feeDisplay}</div>
+      <div class="gig-fee" style="color:${gig.paid?'#5CADFF':'#fff'}; font-family:'Inter',sans-serif; font-weight:200; font-size:18px;">${feeDisplay}</div>
       ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
       <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
