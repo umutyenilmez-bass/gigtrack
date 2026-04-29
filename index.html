@@ -51,7 +51,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Syne', sans-serif;
+      font-family: 'Inter', sans-serif;
       min-height: 100dvh;
       overflow-x: hidden;
     }
@@ -141,15 +141,32 @@
     }
     .filter-chip:hover { border-color: rgba(255,255,255,0.15); }
     .filter-chip.active {
-      background: rgba(255, 179, 0, 0.15); border-color: var(--accent); color: var(--accent);
+      background: var(--accent); border-color: var(--accent); color: #000;
     }
     .filter-chip:active { transform: scale(0.96); }
 
-    .filter-chip-delete {
-      margin-left: 12px; margin-right: -4px; color: var(--text-3); font-weight: 800; font-size: 14px;
-      padding: 2px 6px; border-radius: 20px; display: inline-block;
+    .filter-group-label {
+      font-size: 10px; font-weight: 700; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 8px; margin-top: 16px; padding: 0 4px;
     }
-    .filter-chip-delete:hover { color: var(--red); background: rgba(248,113,113,0.15); }
+
+    .filter-search-input {
+      width: 100%; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px 12px;
+      color: var(--text); font-family: inherit; font-size: 14px;
+      margin-bottom: 12px; position: sticky; top: 0; z-index: 10;
+    }
+
+    .filter-list-item {
+      padding: 10px 12px; border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
+    }
+    .filter-list-item:hover { background: rgba(255,255,255,0.04); }
+    .filter-list-item.active { background: rgba(255, 179, 0, 0.1); color: var(--accent); }
+    
+    .filter-count { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
 
     /* CONTENT */
     .content {
@@ -249,9 +266,9 @@
     .gig-fee-block { text-align: right; flex-shrink: 0; min-width: 0; }
 
     .gig-fee {
-      font-family: 'DM Mono', monospace;
-      font-size: 16px; font-weight: 700; color: #FFF;
-      word-break: break-all; max-width: 90px;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px; font-weight: 200; color: #FFF;
+      word-break: break-all; max-width: 140px;
     }
 
     /* Hızlı Ödeme Durumu Değiştirme Butonu */
@@ -505,7 +522,7 @@
       text-transform: uppercase; color: var(--text-2); margin-bottom: 7px;
     }
     .stat-value {
-      font-family: 'DM Mono', monospace; font-size: 22px; font-weight: 500; color: #D4D4D8;
+      font-family: 'Inter', sans-serif; font-size: 22px; font-weight: 200; color: #D4D4D8;
     }
     .stat-card.accent .stat-value { color: var(--accent); }
     .stat-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
@@ -522,7 +539,7 @@
       transition: all 0.2s;
     }
     .unpaid-summary:empty { display: none; margin: 0; padding: 0; border: none; }
-    .unpaid-sum-item { display: flex; align-items: center; gap: 5px; font-family: 'DM Mono', monospace; font-size: 14px; color: #D4D4D8; }
+    .unpaid-sum-item { display: flex; align-items: center; gap: 5px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; color: #D4D4D8; }
 
     /* EMPTY STATE */
     .empty-state {
@@ -534,7 +551,7 @@
 
     /* CONFIRM */
     .confirm-overlay {
-      position: fixed; inset: 0; z-index: 700;
+      position: fixed; inset: 0; z-index: 9999;
       background: rgba(0,0,0,0.82);
       display: flex; align-items: center; justify-content: center; padding: 20px;
       opacity: 0; pointer-events: none; transition: opacity 0.2s;
@@ -589,18 +606,20 @@
 <header class="header">
   <div class="header-left" onclick="goHome()" style="cursor: pointer; -webkit-tap-highlight-color: transparent;">
     <div class="logo-mark"><img src="logo.png" alt="Logo"></div>
-    <span class="app-title"><span>GIG</span><span style="margin-left:0.35em;">TRACK</span></span>
+    <span class="app-title"><span>GIG</span><span style="color:#FF8F00;">TRACK</span></span>
   </div>
   <div class="header-actions">
-    <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center; box-shadow: none;" onclick="openCalcModal()">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="10.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
+    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">İş Ekle</button>
+    <button class="btn-add" style="background:var(--surface-2); border:1px solid var(--border); width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: none; min-width: 44px; border-radius: 12px;" onclick="toggleCalendarTab()">
+      <span id="headerYear" style="font-size: 13px; font-weight: 700; color: #94A3B8; opacity: 0.8; font-family: 'Inter', sans-serif;"></span>
     </button>
-    <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); padding: 9px 12px; display: flex; align-items: center; justify-content: center; box-shadow: none;" onclick="toggleCalendarTab()">
-      <svg width="18" height="20" viewBox="0 0 18 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="16" height="16" rx="2"/><line x1="1" y1="8" x2="17" y2="8"/><line x1="5" y1="1" x2="5" y2="5"/><line x1="13" y1="1" x2="13" y2="5"/><line x1="5" y1="12" x2="5" y2="12.01"/><line x1="9" y1="12" x2="9" y2="12.01"/><line x1="13" y1="12" x2="13" y2="12.01"/></svg>
+    <button class="btn-add" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: none; min-width: 44px; border-radius: 12px;" onclick="openCalcModal()">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="3"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><line x1="8" y1="10" x2="8" y2="10.01"></line><line x1="12" y1="10" x2="12" y2="10.01"></line><line x1="16" y1="10" x2="16" y2="10.01"></line><line x1="8" y1="14" x2="8" y2="14.01"></line><line x1="12" y1="14" x2="12" y2="14.01"></line><line x1="8" y1="18" x2="8" y2="18.01"></line><line x1="12" y1="18" x2="12" y2="18.01"></line></svg>
     </button>
-    <button class="btn-add" onclick="openAddModal()" data-i18n="addGigBtn">
-      
+    <button id="settingsTrigger" class="header-btn" style="background:var(--surface-2); color:var(--text-3); border:1px solid var(--border); width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 12px; cursor: pointer;" onclick="openSettings()">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
     </button>
+  </div>
   </div>
 </header>
 
@@ -611,7 +630,7 @@
   <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
 </div>
 
-<div class="filter-bar" id="filterBar"></div>
+<div class="filter-bar" id="filterBar" style="padding-top: 14px; padding-bottom: 14px; min-height: 52px;"></div>
 
 <!-- TAB: İşlerim -->
 <div id="tab-gigs" class="tab-content">
@@ -634,6 +653,18 @@
   <div class="content">
     <div class="stats-grid" id="statsGrid"></div>
     <div id="analysisList"></div>
+  </div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div id="settingsOverlay" class="modal-overlay" style="z-index: 1001;" onclick="if(event.target===this) closeSettings()">
+  <div class="modal" style="max-height: 90vh; display: flex; flex-direction: column;">
+    <div class="modal-header">
+      <h2 class="modal-title" data-i18n="settingsTitle">Ayarlar</h2>
+      <button class="btn-close" onclick="closeSettings()">✕</button>
+    </div>
+    <div id="settingsBody" style="padding: 20px; overflow-y: auto; flex: 1;">
+    </div>
   </div>
 </div>
 
@@ -920,7 +951,26 @@ const T = {
     lblFuelRate: "Litre Fiyatı (TL)", plcFuelRate: "Örn. 43.5",
     lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
     calcTitle: "Hesap Makinesi",
-    totalUnpaid: "Toplam Bekleyen:"
+    totalUnpaid: "Toplam Bekleyen:",
+    btnUndo: "Geri Al",
+    searchFilter: "Sanatçı veya Mekan Ara...",
+    lblFilters: "Filtreler",
+    lblFilterBtn: "🔍 Filtrele",
+    searchVenue: "Mekan Ara...",
+    searchArtist: "Sanatçı Ara...",
+    btnClearFilter: "Temizle",
+    settingsTitle: "Ayarlar",
+    archiveTitle: "Yıllık Görünüm",
+    archiveHint: "Buradan hangi yılların ana sayfada görüneceğini seçebilirsin.",
+    lblArchived: "Gizli",
+    lblActive: "Görünür",
+    syncTitle: "Senkronizasyon (Beta)",
+    syncHint: "Telefon ve bilgisayarını eşlemek için yakında eklenecek bulut özelliği.",
+    dangerZone: "Tehlikeli Bölge",
+    btnResetAll: "Tüm Verileri Sıfırla",
+    resetConfirmTitle: "Verileri Sıfırla",
+    resetConfirmText: "Tüm işlerin, ayarların ve arşivin kalıcı olarak silinecek. Bu işlem geri alınamaz!",
+    toastReset: "Tüm veriler sıfırlandı"
   }
 }[userLang];
 
@@ -946,6 +996,9 @@ let filterVenue  = null;
 let paidState    = false;
 let editingId    = null;
 let confirmCallback = null;
+let gigHistory   = [];
+let activeYear   = new Date().getFullYear().toString();
+let manualYears  = [];
 
 const MONTHS = T.monthsShort;
 const MONTHS_FULL = T.monthsFull;
@@ -957,11 +1010,38 @@ function load() {
   localizeDOM();
   try { gigs = JSON.parse(localStorage.getItem('gigtrack_v3') || '[]'); } catch { gigs = []; }
   try { hiddenTemplates = JSON.parse(localStorage.getItem('gigtrack_hidden_tpl') || '[]'); } catch { hiddenTemplates = []; }
+  try { activeYear = localStorage.getItem('gigtrack_active_year') || new Date().getFullYear().toString(); } catch { activeYear = new Date().getFullYear().toString(); }
+  try { 
+    const m = JSON.parse(localStorage.getItem('gigtrack_manual_years') || '[]');
+    manualYears = Array.isArray(m) ? m : [];
+  } catch { manualYears = []; }
   render();
 }
 function save() {
   localStorage.setItem('gigtrack_v3', JSON.stringify(gigs));
   localStorage.setItem('gigtrack_hidden_tpl', JSON.stringify(hiddenTemplates));
+  localStorage.setItem('gigtrack_active_year', activeYear);
+  localStorage.setItem('gigtrack_manual_years', JSON.stringify(manualYears));
+  updateUndoBtn();
+}
+
+function pushHistory() {
+  gigHistory.push(JSON.stringify(gigs));
+  if (gigHistory.length > 30) gigHistory.shift();
+  updateUndoBtn();
+}
+
+function undo() {
+  if (gigHistory.length === 0) return;
+  const last = gigHistory.pop();
+  gigs = JSON.parse(last);
+  save(); render();
+  showToast('↩ Geri alındı');
+}
+
+function updateUndoBtn() {
+  const btn = document.getElementById('undoBtn');
+  if (btn) btn.style.display = gigHistory.length > 0 ? 'flex' : 'none';
 }
 
 // ===== UTILS =====
@@ -997,6 +1077,7 @@ function monthKey(d) {
 function today() { return new Date().toISOString().slice(0,10); }
 
 function isGigVisible(gig) {
+  if (!gig.date.startsWith(activeYear)) return false;
   if (!gig.parentId) return true;
   return gig.date <= addDays(today(), 7);
 }
@@ -1071,18 +1152,84 @@ function setFilter(type, value) {
 }
 
 function renderFilterBar() {
-  const artists = [...new Set(gigs.map(g => g.artist).filter(Boolean))].sort();
-  const venues  = [...new Set(gigs.map(g => g.venue).filter(Boolean))].sort();
   const bar = document.getElementById('filterBar');
   const active = filterArtist || filterVenue;
-  bar.innerHTML =
-    `<div class="filter-chip ${!active?'active':''}" onclick="setFilter('all')">${T.all}</div>` +
-    artists.map(a => `<div class="filter-chip ${filterArtist===a?'active':''}" onclick="setFilter('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">
-      ${escHtml(a)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">×</span>
-    </div>`).join('') +
-    venues.map(v => `<div class="filter-chip ${filterVenue===v?'active':''}" onclick="setFilter('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">
-      ${escHtml(v)} <span class="filter-chip-delete" onclick="event.stopPropagation(); deleteTag('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">×</span>
-    </div>`).join('');
+  
+  let filterText = T.all;
+  if (filterArtist) filterText = `👤 ${escHtml(filterArtist)}`;
+  else if (filterVenue) filterText = `📍 ${escHtml(filterVenue)}`;
+
+  bar.innerHTML = `
+    <div style="display:flex; align-items:center; gap:8px; width:100%;">
+      <button class="btn-data" onclick="openFilterModal()" style="flex:1; justify-content:space-between; padding: 10px 16px; font-size: 15px; border-radius: 20px; border-color: ${active?'var(--accent)':'var(--border)'}; color: ${active?'var(--accent)':'var(--text-2)'}; background: ${active?'rgba(255,179,0,0.05)':'var(--surface)'}">
+        <span style="display:flex; align-items:center; gap:8px;">
+          ${active ? '' : '🔍'} <span>${filterText}</span>
+        </span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </button>
+      ${active ? `<button class="btn-close" style="flex-shrink:0; width:40px; height:40px; background:var(--accent); color:#000; border:none;" onclick="setFilter('all')">✕</button>` : ''}
+    </div>
+  `;
+}
+
+function openFilterModal() {
+  const overlay = document.getElementById('modalOverlay');
+  const content = document.querySelector('.form');
+  
+  document.getElementById('modalTitle').textContent = T.lblFilters;
+  document.getElementById('submitBtn').classList.add('hidden');
+  
+  const artists = [...new Set(gigs.map(g => g.artist).filter(Boolean))].sort();
+  const venues  = [...new Set(gigs.map(g => g.venue).filter(Boolean))].sort();
+
+  const contentDiv = document.querySelector('.form');
+  contentDiv.innerHTML = `
+    <input type="text" class="filter-search-input" id="filterSearch" placeholder="${T.searchFilter}" oninput="filterFilterList(this.value)">
+    
+    <div id="filterListContainer">
+      <div class="filter-group-label">${T.lblVenue}</div>
+      ${venues.map(v => `
+        <div class="filter-list-item ${filterVenue===v?'active':''}" data-val="${escHtml(v).toLowerCase()}" onclick="selectFilter('venue', ${JSON.stringify(v).replace(/"/g, '&quot;')})">
+          <span>📍 ${escHtml(v)}</span>
+          <span class="filter-count">${gigs.filter(g=>g.venue===v).length}</span>
+        </div>
+      `).join('')}
+
+      <div class="filter-group-label">${T.lblArtist}</div>
+      ${artists.map(a => `
+        <div class="filter-list-item ${filterArtist===a?'active':''}" data-val="${escHtml(a).toLowerCase()}" onclick="selectFilter('artist', ${JSON.stringify(a).replace(/"/g, '&quot;')})">
+          <span>👤 ${escHtml(a)}</span>
+          <span class="filter-count">${gigs.filter(g=>g.artist===a).length}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  overlay.classList.add('open');
+  history.pushState({ modal: 'filter' }, '', '#filter');
+}
+
+function filterFilterList(val) {
+  const query = val.toLowerCase();
+  document.querySelectorAll('.filter-list-item').forEach(el => {
+    const text = el.getAttribute('data-val');
+    el.style.display = text.includes(query) ? 'flex' : 'none';
+  });
+  // Sakla boş başlıkları
+  document.querySelectorAll('.filter-group-label').forEach(el => {
+    let next = el.nextElementSibling;
+    let hasVisible = false;
+    while(next && next.classList.contains('filter-list-item')) {
+      if(next.style.display !== 'none') hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    el.style.display = hasVisible ? 'block' : 'none';
+  });
+}
+
+function selectFilter(type, val) {
+  setFilter(type, val);
+  closeModal();
 }
 
 function deleteTag(type, value) {
@@ -1140,7 +1287,7 @@ function gigCard(gig) {
       ${gig.artist ? `<div style="font-size:11px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(gig.artist)}</div>` : ''}
     </div>
     <div style="flex-shrink:0;text-align:right;">
-      <div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:700;color:${feeColor};">${feeDisplay}</div>
+      <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:200;color:${feeColor};">${feeDisplay}</div>
       ${gig.time ? `<div style="font-size:10px;color:var(--text-3);margin-top:2px;">${gig.time}</div>` : ''}
     </div>
     <div style="color:var(--text-3);font-size:16px;flex-shrink:0;">›</div>
@@ -1168,7 +1315,7 @@ function gigCard(gig) {
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee" style="color:${gig.paid?'#57CC99':'#fff'}">${feeDisplay}</div>
+      <div class="gig-fee" style="color:${gig.paid?'#57CC99':'#fff'}; font-family:'Inter',sans-serif; font-weight:200; font-size:18px;">${feeDisplay}</div>
       ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount||0)}</div>` : ''}
       <button class="status-badge ${gig.paid?'paid':'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
@@ -1207,7 +1354,7 @@ function groupByMonth(arr) {
 function renderGroups(arr) {
   if (!arr.length) return '';
   const groups = groupByMonth(arr);
-  return Object.keys(groups).sort().map(k => {
+  return Object.keys(groups).sort().reverse().map(k => {
     const [y, m] = k.split('-');
     return `<div class="section-label">${MONTHS_FULL[+m-1]} ${y}</div>` +
            groups[k].map(g => gigCard(g)).join('');
@@ -1221,9 +1368,15 @@ function renderGigs() {
   if (filterVenue)  list = list.filter(g => g.venue  === filterVenue);
 
   const el = document.getElementById('gigsList');
-  el.innerHTML = list.length
-    ? renderGroups(list)
-    : `<div class="empty-state"><div class="empty-icon">🎵</div><div class="empty-title">${T.noGigs}</div><div class="empty-text">${T.noGigsAdd}</div></div>`;
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🎵</div>
+      <div class="empty-title">${T.noGigs}</div>
+      <div class="empty-text">${T.noGigsAdd}</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML = renderGroups(list);
 }
 
 function renderUnpaid() {
@@ -1231,8 +1384,6 @@ function renderUnpaid() {
   if (filterArtist) unpaid = unpaid.filter(g => g.artist === filterArtist);
   if (filterVenue)  unpaid = unpaid.filter(g => g.venue  === filterVenue);
   
-  /* Badge kaldırıldı */
-
   const unpSummary = document.getElementById('unpaidSummary');
   if (unpaid.length > 0) {
     const sums = {};
@@ -1515,7 +1666,6 @@ function renderCalendar() {
     </div>`;
   }
 
-  // Takvim içeriğini bir kapsayıcı içine alalım ki arka plan tıklamasını ayırt edebilelim
   el.innerHTML = `<div class="calendar-container" onclick="event.stopPropagation()">${html}</div>`;
 }
 
@@ -1592,8 +1742,8 @@ function handleCalendarOverlayClick(e) {
 
 
 function render() {
-  renderFilterBar();
-  renderGigs();
+  document.getElementById('headerYear').textContent = activeYear;
+  if (activeTab === 'gigs') renderGigs();
   renderUnpaid();
   renderPaid();
   renderAnalysis();
@@ -1602,6 +1752,7 @@ function render() {
 
 // ===== TOGGLE PAID =====
 function togglePaidStatus(id) {
+  pushHistory();
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
   gig.paid = !gig.paid;
@@ -1621,7 +1772,15 @@ function fillTemplate(artist, venue, fee, currency, repeat) {
 
 function openAddModal(preDate) {
   editingId = null;
+  const overlay = document.getElementById('modalOverlay');
+  const content = document.querySelector('.form');
+  
+  if (content.innerHTML !== modalFormOriginalHtml) {
+    content.innerHTML = modalFormOriginalHtml;
+  }
+
   document.getElementById('modalTitle').textContent = T.modalTitle;
+  document.getElementById('submitBtn').classList.remove('hidden');
   document.getElementById('submitBtn').textContent  = T.btnSave;
   document.getElementById('fArtist').value  = '';
   document.getElementById('fVenue').value   = '';
@@ -1640,9 +1799,14 @@ function openAddModal(preDate) {
   updatePaidUI(); toggleRepeatUntil();
 
   populateTemplates();
-  document.getElementById('modalOverlay').classList.add('open');
+  overlay.classList.add('open');
   history.pushState({ modal: 'add' }, '', '#modal');
 }
+
+let modalFormOriginalHtml = '';
+window.addEventListener('DOMContentLoaded', () => {
+  modalFormOriginalHtml = document.querySelector('.form').innerHTML;
+});
 
 function hideTemplate(k) {
   hiddenTemplates.push(k);
@@ -1687,8 +1851,15 @@ function populateTemplates() {
 function editGig(id) {
   const gig = gigs.find(g => String(g.id) === String(id));
   if (!gig) return;
+  
+  const content = document.querySelector('.form');
+  if (content.innerHTML !== modalFormOriginalHtml) {
+    content.innerHTML = modalFormOriginalHtml;
+  }
+
   editingId = id;
   document.getElementById('modalTitle').textContent = 'İşi Düzenle';
+  document.getElementById('submitBtn').classList.remove('hidden');
   document.getElementById('submitBtn').textContent  = 'Güncelle';
   document.getElementById('fArtist').value  = gig.artist || '';
   document.getElementById('fVenue').value   = gig.venue  || '';
@@ -1698,8 +1869,6 @@ function editGig(id) {
   document.getElementById('fCurrency').value = gig.currency || 'TRY';
   document.getElementById('fExpenseName').value = gig.expenseName || '';
   document.getElementById('fExpenseAmount').value = gig.expenseAmount || '';
-  document.getElementById('fDistance').value = '';
-  document.getElementById('fFuelRate').value = '';
   document.getElementById('fRepeat').value   = gig.repeat || 'none';
   document.getElementById('fRepeatUntil').value = gig.repeatUntil || '';
   document.getElementById('fNotes').value   = gig.notes  || '';
@@ -1711,7 +1880,7 @@ function editGig(id) {
 
 function closeModal() { 
   document.getElementById('modalOverlay').classList.remove('open'); 
-  if (window.location.hash === '#modal' || window.location.hash === '#calc') history.back();
+  if (window.location.hash === '#modal') history.back();
 }
 
 function handleOverlayClick(e) {
@@ -1747,6 +1916,7 @@ function saveGig() {
   const date = document.getElementById('fDate').value;
   if (!date) { showToast('⚠️ Tarih seçmelisin'); return; }
 
+  pushHistory();
   const data = {
     artist:      document.getElementById('fArtist').value.trim(),
     venue:       document.getElementById('fVenue').value.trim(),
@@ -1784,6 +1954,7 @@ function confirmDelete(id) {
   let text = `"${gig.artist || 'Bu iş'}" · ${gig.date} tarihli kaydı silmek istediğinden emin misin?`;
   if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var; sadece bu kayıt silinecek.)`;
   showConfirm('İşi Sil', text, () => {
+    pushHistory();
     gigs = gigs.filter(g => g.id !== id);
     save(); render(); showToast('🗑 İş silindi');
   });
@@ -1936,7 +2107,6 @@ function exportData() {
     navigator.share({ files: [file], title: 'GigTrack Yedek' })
       .then(() => showToast('⬆ Paylaşıldı'))
       .catch(() => {
-        // Dosya paylaşımı çalışmadıysa URL paylaş
         const url = URL.createObjectURL(blob);
         navigator.share({ title: 'GigTrack Yedek', url })
           .catch(() => { triggerDownload(blob, fileName); });
@@ -1958,19 +2128,44 @@ function importData(e) {
   const reader = new FileReader();
   reader.onload = ev => {
     try {
-      const data     = JSON.parse(ev.target.result);
-      const imported = data.gigs || data;
-      if (!Array.isArray(imported)) throw new Error();
+      const raw = JSON.parse(ev.target.result);
+      let imported = [];
+      if (Array.isArray(raw)) imported = raw;
+      else if (raw.gigs && Array.isArray(raw.gigs)) imported = raw.gigs;
+      else if (raw.data && Array.isArray(raw.data)) imported = raw.data;
+      
+      if (imported.length === 0) {
+        showToast('⚠️ Geçerli bir iş kaydı bulunamadı');
+        return;
+      }
+      
       showConfirm('Verileri İçe Aktar',
-        `${imported.length} iş içe aktarılacak. Zaten kayıtlı olanlar atlanır.`,
+        `${imported.length} kayıt incelenecek. Mevcut işlerinle çakışanlar otomatik olarak atlanacak.`,
         () => {
-          const existing = new Set(gigs.map(g => g.id));
-          const newOnes  = imported.filter(g => !existing.has(g.id));
-          gigs.push(...newOnes);
+          pushHistory();
+          const fingerprint = g => `${g.date || ''}|${(g.venue||'').trim().toLowerCase()}|${(g.artist||'').trim().toLowerCase()}`;
+          const existingFprints = new Set(gigs.map(fingerprint));
+          const existingIds = new Set(gigs.map(g => g.id));
+          
+          let addedCount = 0;
+          imported.forEach(g => {
+            if (!g.date) return;
+            const f = fingerprint(g);
+            if (!existingFprints.has(f) && !existingIds.has(g.id)) {
+              gigs.push(g);
+              addedCount++;
+              existingFprints.add(f);
+              existingIds.add(g.id);
+            }
+          });
+          
           save(); render();
-          showToast(`✓ ${newOnes.length} yeni iş eklendi`);
+          showToast(`✓ ${addedCount} yeni iş eklendi`);
         });
-    } catch { showToast('⚠️ Dosya okunamadı'); }
+    } catch (err) { 
+      console.error(err);
+      showToast('⚠️ Dosya formatı hatalı veya bozuk'); 
+    }
   };
   reader.readAsText(file);
   e.target.value = '';
@@ -2029,7 +2224,6 @@ function calcInput(k) {
     calcExp = calcExp.slice(0, -1); 
   }
   else if (k === '%') {
-    // Sayıdan sonra % gelince /100 ekle
     calcExp += '%';
   }
   else if (k === '=') {
@@ -2037,15 +2231,12 @@ function calcInput(k) {
       let safeExp = calcExp
         .replace(/×/g, '*')
         .replace(/÷/g, '/');
-      // Örn: 100+%10 veya 100+10% gibi göreceli yüzde hesabı
       safeExp = safeExp.replace(/(\d+\.?\d*)([+\-*\/])(\d+\.?\d*)%/g, (m, a, op, b) => {
         if (op === '+' || op === '-') return `${a}${op}(${a}*${b}/100)`;
         return `${a}${op}(${b}/100)`;
       });
-      // Kalan % işaretleri
       safeExp = safeExp.replace(/(\d+\.?\d*)%/g, '($1/100)');
       const result = Function('"use strict"; return (' + safeExp + ')')();
-      // Ondalık hassasiyeti temizle
       calcExp = parseFloat(result.toFixed(10)).toString();
     } catch { calcExp = 'Hata'; }
   }
@@ -2073,7 +2264,10 @@ window.addEventListener('popstate', () => {
   if (hash !== '#calendar') {
     document.getElementById('calendarModalOverlay').classList.remove('open');
   }
-  if (hash !== '#modal' && hash !== '#calc' && hash !== '#calendar') {
+  if (hash !== '#settings') {
+    document.getElementById('settingsOverlay').classList.remove('open');
+  }
+  if (hash !== '#modal' && hash !== '#calc' && hash !== '#calendar' && hash !== '#filter' && hash !== '#settings') {
     document.getElementById('modalOverlay').classList.remove('open');
   }
   if (hash !== '#confirm') {
@@ -2083,6 +2277,116 @@ window.addEventListener('popstate', () => {
 
 // ===== INIT =====
 load();
+
+// ===== SETTINGS =====
+function openSettings() {
+  const overlay = document.getElementById('settingsOverlay');
+  const body = document.getElementById('settingsBody');
+  if (!overlay || !body) return;
+
+  const curYear = new Date().getFullYear().toString();
+  const safeManualYears = Array.isArray(manualYears) ? manualYears : [];
+  const safeGigs = Array.isArray(gigs) ? gigs : [];
+  
+  let years = [...new Set([curYear, ...safeManualYears, ...safeGigs.map(g => (g.date||'').split('-')[0])])];
+  years = years.filter(y => y && y.length === 4).sort().reverse();
+
+  body.innerHTML = `
+    <div style="margin-bottom: 24px;">
+      <div class="section-label" style="margin-top:0;">${T.archiveTitle}</div>
+      <div style="font-size:12px; color:var(--text-3); margin-bottom:12px;">${T.archiveHint}</div>
+      
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <input type="number" id="newYearInput" placeholder="Yıl (Örn: 2027)" onkeydown="if(event.key==='Enter') addManualYear()" style="flex:1; background:var(--surface-2); border:1px solid var(--border); padding:12px 16px; border-radius:12px; color:var(--text); font-size:15px; outline:none;">
+        <button onclick="addManualYear()" style="background:var(--accent); color:#000; border:none; padding:0 20px; border-radius:12px; font-weight:700; font-size:20px;">+</button>
+      </div>
+
+      ${years.map(y => {
+        const isActive = activeYear === y;
+        const yearGigs = safeGigs.filter(g => (g.date||'').startsWith(y));
+        const sums = {};
+        yearGigs.forEach(g => {
+          if (g.paid) {
+            const f = parseFee(g.fee);
+            if (f !== null) {
+              const c = g.currency || 'TRY';
+              sums[c] = (sums[c] || 0) + (f - (parseFloat(g.expenseAmount) || 0));
+            }
+          }
+        });
+        const incomeStr = Object.keys(sums).map(c => `${SYM[c]||''}${sums[c].toLocaleString('tr')}`).join(' · ');
+
+        return `
+          <div class="filter-list-item" onclick="setActiveYear('${y}')" style="background:${isActive?'rgba(255,179,0,0.1)':'var(--surface-2)'}; border:1px solid ${isActive?'var(--accent)':'var(--border)'}; margin-bottom:10px; padding:14px 16px; border-radius:16px;">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <span style="font-size:18px; font-weight:800; color:${isActive?'var(--accent)':'var(--text-3)'}">${y}</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:11px; color:var(--text-3); font-weight:500;">${yearGigs.length} iş</span>
+                ${incomeStr ? `<span style="font-size:11px; color:var(--green); font-family:'DM Mono',monospace; font-weight:700;">${incomeStr}</span>` : ''}
+              </div>
+            </div>
+            <div class="status-badge ${isActive?'paid':'unpaid'}" style="margin:0; padding:6px 12px; border-radius:12px;">
+              ${isActive ? 'Görüntüleniyor' : 'Seç'}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+  overlay.classList.add('open');
+  history.pushState({ modal: 'settings' }, '', '#settings');
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').classList.remove('open');
+  if (window.location.hash === '#settings') history.back();
+}
+
+function setActiveYear(y) {
+  activeYear = y;
+  save();
+  render();
+  closeSettings();
+}
+
+function addManualYear() {
+  const inp = document.getElementById('newYearInput');
+  if (!inp) return;
+  const y = inp.value.trim();
+  
+  if (!y || isNaN(y) || y.length !== 4) {
+    showToast('⚠️ Geçerli bir yıl girin (Örn: 2027)');
+    return;
+  }
+  
+  const curYear = new Date().getFullYear().toString();
+  const safeManualYears = Array.isArray(manualYears) ? manualYears : [];
+  const safeGigs = Array.isArray(gigs) ? gigs : [];
+  
+  const allExisting = new Set([
+    curYear, 
+    ...safeManualYears, 
+    ...safeGigs.map(g => (g.date || '').split('-')[0])
+  ]);
+  
+  if (allExisting.has(y)) {
+    showToast('⚠️ Bu yıl zaten listede var');
+  } else {
+    if (!Array.isArray(manualYears)) manualYears = [];
+    manualYears.push(y);
+    save();
+    openSettings(); 
+    showToast(`✓ ${y} yılı eklendi`);
+  }
+  inp.value = '';
+}
+
+function confirmResetAll() {
+  showConfirm(T.resetConfirmTitle, T.resetConfirmText, () => {
+    localStorage.clear(); 
+    location.reload();
+  });
+}
 
 // ===== PWA SERVICE WORKER =====
 if ('serviceWorker' in navigator) {
