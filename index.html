@@ -2052,8 +2052,7 @@
 
     function isGigVisible(gig) {
       if (!gig.date.startsWith(activeYear)) return false;
-      if (!gig.parentId) return true;
-      return gig.date <= addDays(today(), 7);
+      return true;
     }
 
     function parseFee(s) {
