@@ -487,10 +487,10 @@
     }
 
     .gig-main {
-      padding: 16px;
+      padding: 10px 12px;
       display: grid;
-      grid-template-columns: 46px 1fr auto;
-      gap: 12px;
+      grid-template-columns: 36px 1fr auto;
+      gap: 10px;
       align-items: start;
     }
 
@@ -500,7 +500,7 @@
 
     .gig-date-day {
       font-family: 'DM Mono', monospace;
-      font-size: 28px;
+      font-size: 20px;
       font-weight: 500;
       line-height: 1;
       color: var(--text);
@@ -903,6 +903,80 @@
       flex-direction: column;
     }
 
+    /* MODAL TABS */
+    .modal-tabs {
+      display: flex;
+      margin: 12px 20px 0;
+      background: var(--surface-2);
+      border-radius: 12px;
+      padding: 3px;
+      border: 1px solid var(--border);
+    }
+
+    .modal-tab {
+      flex: 1;
+      padding: 9px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: 'Syne', sans-serif;
+      text-align: center;
+      background: transparent;
+      color: var(--text-3);
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-tab.active {
+      background: var(--surface);
+      color: var(--accent);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    /* SLOT CARDS (Batch modal) */
+    .slot-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 15px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .slot-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 8px;
+    }
+
+    .slot-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-remove-slot {
+      background: transparent;
+      border: none;
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+
+    .btn-remove-slot:hover {
+      background: var(--red-dim);
+    }
+
     .modal-header {
       padding: 16px 20px 0;
       display: flex;
@@ -946,15 +1020,20 @@
 
     .quick-fill-list {
       display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
+      flex-direction: column;
+      gap: 6px;
       margin-bottom: 16px;
-      padding-bottom: 5px;
+      max-height: 160px;
+      overflow-y: auto;
+      padding-right: 4px;
     }
 
     .quick-fill-list::-webkit-scrollbar {
-      display: none;
+      width: 4px;
+    }
+    .quick-fill-list::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
     }
 
     .quick-fill-chip {
@@ -1522,8 +1601,15 @@
           <button class="btn-close" onclick="closeModal()">✕</button>
         </div>
       </div>
-      <div class="form">
-        <div class="quick-fill-list hidden" id="quickFillList"></div>
+      <!-- MODAL TABS -->
+      <div class="modal-tabs hidden" id="modalTabs" style="display: none;">
+        <button class="modal-tab active" id="tabBtnSingle" onclick="switchModalTab('single')" data-i18n="tabSingle">Tek İş</button>
+        <button class="modal-tab" id="tabBtnBatch" onclick="switchModalTab('batch')" data-i18n="tabBatch">Toplu Ekle</button>
+      </div>
+
+      <div class="quick-fill-list hidden" id="quickFillList" style="margin: 12px 20px 0;"></div>
+
+      <div class="form" id="singleGigForm">
         <input type="hidden" id="editingId">
 
         <div class="form-row">
@@ -1543,6 +1629,10 @@
           <div class="form-group">
             <label class="form-label" data-i18n="lblDate">Tarih</label>
             <input type="date" class="form-input" id="fDate" onclick="this.showPicker()">
+            <div style="display: flex; gap: 6px; margin-top: 6px;">
+              <button type="button" class="btn-data" style="padding: 6px 10px; font-size: 11px; flex: 1; min-height: 28px; line-height: 1; display: flex; align-items: center; justify-content: center;" onclick="adjustDate(7)">＋1 Hafta</button>
+              <button type="button" class="btn-data" style="padding: 6px 10px; font-size: 11px; flex: 1; min-height: 28px; line-height: 1; display: flex; align-items: center; justify-content: center;" onclick="adjustDate(28)">＋4 Hafta (1 Ay)</button>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label" data-i18n="lblTime">Saat (opsiyonel)</label>
@@ -1637,6 +1727,19 @@
         </div>
 
         <button class="btn-submit" id="submitBtn" onclick="saveGig()" data-i18n="btnSave">Kaydet</button>
+      </div>
+
+      <!-- BATCH GIG FORM -->
+      <div class="form hidden" id="batchGigForm" style="padding-top: 10px;">
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblBatchMonth">Hedef Ay</label>
+          <input type="month" class="form-input" id="fBatchMonth" onclick="this.showPicker()">
+        </div>
+        
+        <div id="batchSlotsContainer"></div>
+        
+        <button type="button" class="btn-data" style="width: 100%; margin-bottom: 15px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;" onclick="addBatchSlot()" data-i18n="btnAddSlot">＋ Gün Ekle</button>
+        <button class="btn-submit" onclick="saveBatchGigs()" data-i18n="btnCreateBatch">Toplu Oluştur</button>
       </div>
     </div>
   </div>
@@ -1766,7 +1869,14 @@
         lblFuelRate: "Fuel Price/L", plcFuelRate: "e.g. 43.5",
         lblFuelCons: "Consumption (L/100km) - Default: 7", plcFuelCons: "7",
         calcTitle: "Calculator",
-        totalUnpaid: "Total Unpaid:"
+        totalUnpaid: "Total Unpaid:",
+        tabSingle: "Single Gig",
+        tabBatch: "Batch Add",
+        lblBatchMonth: "Target Month",
+        btnAddSlot: "＋ Add Day",
+        btnCreateBatch: "Create Batch",
+        lblDayOfWeek: "Day of Week",
+        daysOfWeek: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
       },
       tr: {
         addGigBtn: "GIG", exportData: "⬆ Dışa Aktar", importData: "⬇ İçe Aktar",
@@ -1806,6 +1916,13 @@
         lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
         calcTitle: "Hesap Makinesi",
         totalUnpaid: "Toplam Bekleyen:",
+        tabSingle: "Tek İş",
+        tabBatch: "Toplu Ekle",
+        lblBatchMonth: "Hedef Ay",
+        btnAddSlot: "＋ Gün Ekle",
+        btnCreateBatch: "Toplu Oluştur",
+        lblDayOfWeek: "Haftanın Günü",
+        daysOfWeek: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
         btnUndo: "Geri Al",
         searchFilter: "Sanatçı veya Mekan Ara...",
         lblFilters: "Filtreler",
@@ -1841,9 +1958,10 @@
       });
     }
 
-    // ===== STATE =====
+     // ===== STATE =====
     let gigs = [];
     let hiddenTemplates = [];
+    let dayNotes = {};
     let activeTab = 'gigs';
     let filterArtist = null;
     let filterVenue = null;
@@ -1864,6 +1982,7 @@
       localizeDOM();
       try { gigs = JSON.parse(localStorage.getItem('gigtrack_v3') || '[]'); } catch { gigs = []; }
       try { hiddenTemplates = JSON.parse(localStorage.getItem('gigtrack_hidden_tpl') || '[]'); } catch { hiddenTemplates = []; }
+      try { dayNotes = JSON.parse(localStorage.getItem('gigtrack_day_notes') || '{}'); } catch { dayNotes = {}; }
       try { activeYear = localStorage.getItem('gigtrack_active_year') || new Date().getFullYear().toString(); } catch { activeYear = new Date().getFullYear().toString(); }
       try {
         const m = JSON.parse(localStorage.getItem('gigtrack_manual_years') || '[]');
@@ -1874,6 +1993,7 @@
     function save() {
       localStorage.setItem('gigtrack_v3', JSON.stringify(gigs));
       localStorage.setItem('gigtrack_hidden_tpl', JSON.stringify(hiddenTemplates));
+      localStorage.setItem('gigtrack_day_notes', JSON.stringify(dayNotes));
       localStorage.setItem('gigtrack_active_year', activeYear);
       localStorage.setItem('gigtrack_manual_years', JSON.stringify(manualYears));
       updateUndoBtn();
@@ -1953,7 +2073,15 @@
     // ===== REPEAT GENERATION =====
     function generateRepeats(base) {
       const list = [{ ...base, parentId: null }];
-      if (base.repeat === 'none' || !base.repeatUntil) return list;
+      if (base.repeat === 'none') return list;
+      
+      let until = base.repeatUntil;
+      if (!until) {
+        const d = new Date(base.date + 'T12:00:00');
+        const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+        until = lastDay.toISOString().slice(0, 10);
+      }
+      
       let cur = base.date;
       while (true) {
         let next;
@@ -1961,7 +2089,7 @@
         else if (base.repeat === 'biweekly') next = addDays(cur, 14);
         else if (base.repeat === 'monthly') next = addMonths(cur, 1);
         else break;
-        if (next > base.repeatUntil) break;
+        if (next > until) break;
         list.push({ ...base, id: uid(), date: next, parentId: base.id, repeat: 'none', repeatUntil: null });
         cur = next;
       }
@@ -2232,26 +2360,27 @@
       const isPast = gig.date < today();
       const isExpanded = expandedCards.has(String(gig.id));
 
+      const textColor = gig.paid ? '#5CADFF' : '#fff';
+      const subTextColor = gig.paid ? 'rgba(92, 173, 255, 0.7)' : 'var(--text-2)';
+
       // COLLAPSED
       if (!isExpanded) {
-        const feeColor = gig.paid ? '#5CADFF' : 'var(--text-2)';
         return `
 <div class="gig-card ${gig.paid ? 'paid' : 'unpaid'}${isPast ? ' past' : ''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
-  <div style="display:flex;align-items:center;padding:11px 16px;gap:14px;">
-    <div style="flex-shrink:0;text-align:center;min-width:36px;">
-      <div style="font-family:'DM Mono',monospace;font-size:20px;font-weight:500;line-height:1;color:var(--text);">${df.day}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-2);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">${df.month}</div>
+  <div style="display:flex;align-items:center;padding:7px 12px;gap:10px;">
+    <div style="flex-shrink:0;text-align:center;min-width:30px;">
+      <div style="font-family:'DM Mono',monospace;font-size:15px;font-weight:500;line-height:1;color:${textColor};">${df.day}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:8px;color:${subTextColor};text-transform:uppercase;letter-spacing:0.5px;margin-top:1px;">${df.month}</div>
     </div>
-    <div style="width:1px;height:32px;background:var(--border);flex-shrink:0;"></div>
+    <div style="width:1px;height:22px;background:var(--border);flex-shrink:0;"></div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;">${T.valNoVenue}</span>`}</div>
-      ${gig.artist ? `<div style="font-size:11px;color:var(--text-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(gig.artist)}</div>` : ''}
+      <div style="font-size:12.5px;font-weight:700;color:${textColor};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;">${T.valNoVenue}</span>`}</div>
+      ${gig.artist ? `<div style="font-size:10px;color:${subTextColor};margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(gig.artist)}</div>` : ''}
     </div>
     <div style="flex-shrink:0;text-align:right;">
-      <div style="font-family:'Inter',sans-serif;font-size:14px;font-weight:200;color:${feeColor};">${feeDisplay}</div>
-      ${gig.time ? `<div style="font-size:10px;color:var(--text-3);margin-top:2px;">${gig.time}</div>` : ''}
+      ${gig.time ? `<div style="font-size:9.5px;color:${subTextColor};margin-top:1px;">${gig.time}</div>` : ''}
     </div>
-    <div style="color:var(--text-3);font-size:16px;flex-shrink:0;">›</div>
+    <div style="color:${subTextColor};font-size:13px;flex-shrink:0;">›</div>
   </div>
 </div>`;
       }
@@ -2261,22 +2390,22 @@
 <div class="gig-card ${gig.paid ? 'paid' : 'unpaid'}${isPast ? ' past' : ''}" id="card-${gig.id}" onclick="toggleCard('${gig.id}')" style="cursor:pointer;">
   <div class="gig-main">
     <div class="gig-date-block">
-      <div class="gig-date-day">${df.day}</div>
-      <div class="gig-date-month">${df.month}</div>
-      <div class="gig-date-day-name">${df.dayName}</div>
+      <div class="gig-date-day" style="color:${textColor};">${df.day}</div>
+      <div class="gig-date-month" style="color:${subTextColor};">${df.month}</div>
+      <div class="gig-date-day-name" style="color:${subTextColor};">${df.dayName}</div>
     </div>
     <div class="gig-info">
-      <div class="gig-venue">
+      <div class="gig-venue" style="color:${textColor};">
         ${gig.venue ? escHtml(gig.venue) : `<span style="color:var(--text-3);font-style:italic;font-weight:500;">${T.valNoVenue}</span>`}
       </div>
-      <div class="gig-artist">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
+      <div class="gig-artist" style="color:${subTextColor};">${gig.artist ? escHtml(gig.artist) : `<span style="color:var(--text-3);font-weight:400;font-style:italic">${T.valNoArtist}</span>`}</div>
       <div class="gig-meta">
-        ${gig.time ? `<span class="gig-time">${gig.time}</span>` : ''}
-        <span class="gig-time">${df.year}</span>
+        ${gig.time ? `<span class="gig-time" style="color:${subTextColor};">${gig.time}</span>` : ''}
+        <span class="gig-time" style="color:${subTextColor};">${df.year}</span>
       </div>
     </div>
     <div class="gig-fee-block">
-      <div class="gig-fee" style="color:${gig.paid ? '#5CADFF' : 'var(--text-2)'}; font-family:'Inter',sans-serif; font-weight:200; font-size:18px;">${feeDisplay}</div>
+      <div class="gig-fee" style="color:${gig.paid ? '#5CADFF' : '#fff'}; font-family:'Inter',sans-serif; font-weight:300; font-size:18px;">${feeDisplay}</div>
       ${(gig.expenseName || gig.expenseAmount) ? `<div style="font-size:10px; color:var(--red); text-align:right; margin-top:3px; word-break: break-word;">${gig.expenseName ? escHtml(gig.expenseName) + ': ' : ''}-${sym}${parseFloat(gig.expenseAmount || 0)}</div>` : ''}
       <button class="status-badge ${gig.paid ? 'paid' : 'unpaid'}" onclick="event.stopPropagation();togglePaidStatus('${gig.id}')">
         ${gig.paid ? T.paidDone : T.unpaidWait}
@@ -2312,13 +2441,25 @@
       return groups;
     }
 
-    function renderGroups(arr) {
+    function renderGroups(arr, tabName) {
       if (!arr.length) return '';
       const groups = groupByMonth(arr);
       return Object.keys(groups).sort().reverse().map(k => {
         const [y, m] = k.split('-');
-        return `<div class="section-label">${MONTHS_FULL[+m - 1]} ${y}</div>` +
-          groups[k].map(g => gigCard(g)).join('');
+        const groupGigsHtml = groups[k].map(g => gigCard(g)).join('');
+        const id = `details-${tabName}-${k}`;
+        
+        return `
+        <div class="gig-card-group" style="margin-bottom:10px;">
+          <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;" onclick="document.getElementById('${id}').classList.toggle('hidden')">
+            <span style="font-weight:600; color:#AEAEB2; font-size:13px; letter-spacing:-0.01em;">${MONTHS_FULL[+m - 1]} ${y}</span>
+            <span style="font-size:10px; color:#AEAEB2; opacity:0.6;">▼</span>
+          </div>
+          <div id="${id}" class="hidden">
+            ${groupGigsHtml}
+          </div>
+        </div>
+        `;
       }).join('');
     }
 
@@ -2337,7 +2478,7 @@
     </div>`;
         return;
       }
-      el.innerHTML = renderGroups(list);
+      el.innerHTML = renderGroups(list, 'gigs');
     }
 
     function renderUnpaid() {
@@ -2371,7 +2512,7 @@
 
       const el = document.getElementById('unpaidList');
       el.innerHTML = unpaid.length
-        ? renderGroups(unpaid)
+        ? renderGroups(unpaid, 'unpaid')
         : `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">${T.noUnpaid}</div><div class="empty-text">${T.noUnpaidYet}</div></div>`;
     }
 
@@ -2382,7 +2523,7 @@
 
       const el = document.getElementById('paidList');
       el.innerHTML = paidGigs.length
-        ? renderGroups(paidGigs)
+        ? renderGroups(paidGigs, 'paid')
         : `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">${T.noPaid}</div><div class="empty-text">${T.noPaidYet}</div></div>`;
     }
 
@@ -2436,17 +2577,20 @@
         const gigCount = thisYearPaid.filter(g => g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
         if (yearlyGross[c] !== 0 || yearlyExp[c] !== 0 || gigCount > 0) {
           statsHtml += `
-      <div class="stat-card accent" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
-           <div>
-             <div class="stat-label" style="margin-bottom: 2px;">${currentYear} Yılı Net Kazanç (${c})</div>
-             <div class="stat-value">${SYM[c] || ''}${yearlyNet[c].toLocaleString('tr')}</div>
-           </div>
-           <div class="stat-sub" style="margin: 0;">${gigCount} iş</div>
+      <div class="stat-card accent" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px; cursor: pointer;" onclick="document.getElementById('yr-details-${c}').classList.toggle('hidden')">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+           <div class="stat-label" style="margin: 0; font-weight: 700;">${currentYear} Yılı Net Kazanç (${c})</div>
+           <div style="font-size: 12px; color: var(--text-3); opacity: 0.8;">▼</div>
         </div>
-        <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 13px;">
-          <div style="color: var(--text-2);">+Brüt: ${SYM[c] || ''}${yearlyGross[c].toLocaleString('tr')}</div>
-          <div style="color: var(--red);">-Masraf: ${SYM[c] || ''}${yearlyExp[c].toLocaleString('tr')}</div>
+        <div id="yr-details-${c}" class="hidden" style="margin-top: 4px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+            <div class="stat-value" style="font-size: 24px; font-weight: 700; color: var(--text);">${SYM[c] || ''}${yearlyNet[c].toLocaleString('tr')}</div>
+            <div class="stat-sub" style="margin: 0; font-size: 12px; color: var(--text-2);">${gigCount} iş</div>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 13px;">
+            <div style="color: var(--text-2);">+Brüt: ${SYM[c] || ''}${yearlyGross[c].toLocaleString('tr')}</div>
+            <div style="color: var(--red);">-Masraf: ${SYM[c] || ''}${yearlyExp[c].toLocaleString('tr')}</div>
+          </div>
         </div>
       </div>`;
         }
@@ -2454,10 +2598,15 @@
 
       if (!hasEarningsOrExpenses) {
         statsHtml = `
-      <div class="stat-card accent" style="grid-column: span 2;">
-        <div class="stat-label">${currentYear} Yılı Toplam Kazancı</div>
-        <div class="stat-value">₺0</div>
-        <div class="stat-sub">0 iş</div>
+      <div class="stat-card accent" style="grid-column: span 2; cursor: pointer;" onclick="document.getElementById('yr-details-empty').classList.toggle('hidden')">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+           <div class="stat-label" style="margin: 0; font-weight: 700;">${currentYear} Yılı Toplam Kazancı</div>
+           <div style="font-size: 12px; color: var(--text-3); opacity: 0.8;">▼</div>
+        </div>
+        <div id="yr-details-empty" class="hidden" style="margin-top: 4px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+          <div class="stat-value">₺0</div>
+          <div class="stat-sub">0 iş</div>
+        </div>
       </div>`;
       }
 
@@ -2469,7 +2618,7 @@
         return;
       }
 
-      let listHtml = '<div class="section-label">${T.sumMonthly}</div>';
+      let listHtml = `<div class="section-label">${T.sumMonthly}</div>`;
       for (let i = 12; i >= 1; i--) {
         let monthHtml = '';
         Object.keys(monthlyNet[i]).forEach(c => {
@@ -2489,19 +2638,30 @@
         if (monthHtml !== '') {
           const gList = monthlyGigs[i].map(g => {
             const feeStr = g.fee ? (SYM[g.currency] || '') + g.fee : T.chipFeeNone;
-            return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid var(--border); margin-top:4px;">
-          <span style="color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-right: 12px;">${g.venue || T.valNoVenue} · ${g.artist || T.valNoArtist}</span>
-          <span style="font-family:'DM Mono',monospace; ${g.paid ? 'color:var(--green)' : 'color:var(--red)'}; flex-shrink:0;">${feeStr}</span>
+            const textColor = g.paid ? '#5CADFF' : '#fff';
+            const df = formatDate(g.date);
+            const dateStr = `${String(df.day).padStart(2, '0')} ${df.month}`;
+            return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid var(--border); margin-top:4px; color:${textColor}; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
+            <span style="font-family:'DM Mono',monospace; font-size:11px; opacity:0.6; flex-shrink:0;">${dateStr}</span>
+            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500;">
+              ${g.venue || T.valNoVenue} · ${g.artist || T.valNoArtist}
+            </span>
+          </div>
+          <span style="font-family:'DM Mono',monospace; flex-shrink:0; font-weight:500; margin-left:12px;">${feeStr}</span>
         </div>`;
           }).join('');
 
           listHtml += `
-        <div class="gig-card" style="padding: 15px; border-left: 3px solid var(--accent); cursor: pointer;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
+        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
            <div style="display: flex; justify-content: space-between; align-items: center;">
-             <div style="font-weight: 700; font-size: 15px; color: var(--text-2);">${MONTHS_FULL[i - 1]}</div>
-             <div style="text-align: right;">${monthHtml}</div>
+             <div style="font-weight: 600; font-size: 13px; color: #AEAEB2; letter-spacing:-0.01em;">${MONTHS_FULL[i - 1]}</div>
+             <div style="font-size: 10px; color: #AEAEB2; opacity: 0.6;">▼</div>
            </div>
-           <div id="m-details-${i}" class="hidden" style="margin-top: 12px; padding-top: 4px;">
+           <div id="m-details-${i}" class="hidden" style="margin-top: 10px; padding-top: 4px;">
+             <div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">
+               ${monthHtml}
+             </div>
              ${gList}
            </div>
         </div>
@@ -2574,18 +2734,28 @@
         const hasGigs = gigDates[dateStr];
         const isToday = dateStr === todayStr;
         const isSelected = dateStr === selectedCalDay;
+        const hasNote = dayNotes && dayNotes[dateStr];
 
-        const dotHtml = hasGigs
-          ? `<div style="display:flex;justify-content:center;gap:2px;margin-top:3px;">${hasGigs.slice(0, 3).map(g => `<div style="width:5px;height:5px;border-radius:50%;background:${g.paid ? '#57CC99' : '#fff'};"></div>`).join('')}</div>`
+        let dotList = [];
+        if (hasGigs) {
+          hasGigs.slice(0, 3).forEach(g => {
+            dotList.push(`<div style="width:5px;height:5px;border-radius:50%;background:${g.paid ? '#57CC99' : '#fff'};"></div>`);
+          });
+        }
+        if (hasNote) {
+          dotList.push(`<div style="width:5px;height:5px;border-radius:50%;background:#FFD166;"></div>`);
+        }
+        const dotHtml = dotList.length > 0
+          ? `<div style="display:flex;justify-content:center;gap:2px;margin-top:3px;">${dotList.join('')}</div>`
           : '';
 
         cells += `<div onclick="calendarDayClick('${dateStr}')" style="
-      text-align:center;padding:8px 2px;border-radius:10px;cursor:${hasGigs ? 'pointer' : 'default'};
-      background:${isSelected ? 'var(--accent)' : isToday ? 'rgba(255,255,255,0.08)' : hasGigs ? 'var(--surface-2)' : 'transparent'};
-      color:${isSelected ? '#000' : isToday ? 'var(--text)' : hasGigs ? 'var(--text)' : 'var(--text-3)'};
-      font-weight:${isSelected || isToday || hasGigs ? '500' : '400'};
+      text-align:center;padding:8px 2px;border-radius:10px;cursor:pointer;
+      background:${isSelected ? 'var(--accent)' : isToday ? 'rgba(255,255,255,0.08)' : (hasGigs || hasNote) ? 'var(--surface-2)' : 'transparent'};
+      color:${isSelected ? '#000' : isToday ? 'var(--text)' : (hasGigs || hasNote) ? 'var(--text)' : 'var(--text-3)'};
+      font-weight:${isSelected || isToday || hasGigs || hasNote ? '500' : '400'};
       font-size:14px; font-family:'Inter', sans-serif;
-      border:${(isToday && !isSelected) ? '1px solid var(--border)' : hasGigs && !isSelected ? '1px solid var(--border)' : 'none'};
+      border:${(isToday && !isSelected) ? '1px solid var(--border)' : (hasGigs || hasNote) && !isSelected ? '1px solid var(--border)' : 'none'};
       transition:all 0.15s;
     ">${d}${dotHtml}</div>`;
       }
@@ -2618,8 +2788,21 @@
       if (!showYearPicker && selectedCalDay) {
         const dayGigs = gigDates[selectedCalDay] || [];
         const df = formatDate(selectedCalDay);
+        const noteVal = dayNotes[selectedCalDay] || '';
+        const noteCardHtml = `
+        <div class="gig-card" style="padding: 10px 12px; margin-bottom: 12px; border-left: 2px solid var(--accent); background: var(--surface-2); display: flex; flex-direction: column;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:10px; font-weight:700; color:var(--text-3); text-transform:uppercase; letter-spacing:0.5px;">
+              📝 ${userLang === 'tr' ? 'GÜNLÜK NOT' : 'DAILY NOTE'}
+            </span>
+            ${noteVal ? `<button onclick="deleteDayNote('${selectedCalDay}')" style="background:none; border:none; color:#FF453A; font-size:11px; cursor:pointer; font-weight:600; padding:0;">${userLang === 'tr' ? 'Sil' : 'Delete'}</button>` : ''}
+          </div>
+          <textarea oninput="saveDayNote('${selectedCalDay}', this.value)" onblur="renderCalendar()" placeholder="${userLang === 'tr' ? 'Bu güne ait bir not yazın...' : 'Write a note for this day...'}" style="width:100%; background:transparent; border:none; color:var(--text); font-size:13px; font-family:inherit; resize:none; outline:none; height:45px; padding:0; margin:0; line-height:1.4;">${noteVal}</textarea>
+        </div>`;
+
         html += `<div style="margin-top:20px;">
       <div class="section-label">${df.day} ${df.monthFull} ${df.year}</div>
+      ${noteCardHtml}
       <button class="btn-add" style="width:100%; justify-content:center; margin-bottom:12px; padding:12px;" onclick="openAddModal('${selectedCalDay}')">
         <span style="font-size:16px;line-height:1">＋</span> ${T.addGigBtn}
       </button>
@@ -2662,6 +2845,21 @@
       calendarYearPicker = false;
       renderCalendar();
     }
+
+    window.saveDayNote = function(dateStr, val) {
+      if (!val || !val.trim()) {
+        delete dayNotes[dateStr];
+      } else {
+        dayNotes[dateStr] = val;
+      }
+      save();
+    };
+
+    window.deleteDayNote = function(dateStr) {
+      delete dayNotes[dateStr];
+      save();
+      renderCalendar();
+    };
 
     let calTouchStart = 0;
     function handleCalendarTouchStart(e) {
@@ -2726,19 +2924,335 @@
     }
 
     // ===== MODAL =====
-    function fillTemplate(artist, venue, fee, currency, repeat) {
-      document.getElementById('fArtist').value = artist;
-      document.getElementById('fVenue').value = venue;
-      document.getElementById('fFee').value = fee;
-      document.getElementById('fCurrency').value = currency || 'TRY';
-      document.getElementById('fRepeat').value = repeat || 'none';
-      toggleRepeatUntil();
+    function fillTemplate(artist, venue, fee, currency, repeat, lastDate) {
+      if (currentModalTab === 'single') {
+        document.getElementById('fArtist').value = artist;
+        document.getElementById('fVenue').value = venue;
+        document.getElementById('fFee').value = fee;
+        document.getElementById('fCurrency').value = currency || 'TRY';
+        document.getElementById('fRepeat').value = repeat || 'none';
+        toggleRepeatUntil();
+        
+        if (lastDate) {
+          const baseDate = new Date(lastDate + 'T12:00:00');
+          const targetDay = baseDate.getDay();
+          const todayObj = new Date();
+          todayObj.setHours(12, 0, 0, 0);
+          let daysToAdd = (targetDay - todayObj.getDay() + 7) % 7;
+          const resultDate = new Date(todayObj);
+          resultDate.setDate(todayObj.getDate() + daysToAdd);
+          document.getElementById('fDate').value = resultDate.toISOString().slice(0, 10);
+        }
+      } else {
+        const container = document.getElementById('batchSlotsContainer');
+        const cards = container.querySelectorAll('.slot-card');
+        if (cards.length > 0) {
+          const lastCard = cards[cards.length - 1];
+          lastCard.querySelector('.slot-artist').value = artist;
+          lastCard.querySelector('.slot-venue').value = venue;
+          lastCard.querySelector('.slot-fee').value = fee;
+          lastCard.querySelector('.slot-currency').value = currency || 'TRY';
+          
+          if (lastDate) {
+            const baseDate = new Date(lastDate + 'T12:00:00');
+            const targetDay = baseDate.getDay();
+            lastCard.querySelector('.slot-day').value = targetDay;
+          }
+        }
+      }
+    }
+
+    function adjustDate(days) {
+      const dateEl = document.getElementById('fDate');
+      let curVal = dateEl.value;
+      if (!curVal) curVal = today();
+      const d = new Date(curVal + 'T12:00:00');
+      d.setDate(d.getDate() + days);
+      dateEl.value = d.toISOString().slice(0, 10);
+    }
+
+    let currentModalTab = 'single';
+    function switchModalTab(mode) {
+      currentModalTab = mode;
+      const btnSingle = document.getElementById('tabBtnSingle');
+      const btnBatch = document.getElementById('tabBtnBatch');
+      const formSingle = document.getElementById('singleGigForm');
+      const formBatch = document.getElementById('batchGigForm');
+      
+      if (mode === 'single') {
+        btnSingle.classList.add('active');
+        btnBatch.classList.remove('active');
+        formSingle.classList.remove('hidden');
+        formBatch.classList.add('hidden');
+      } else {
+        btnSingle.classList.remove('active');
+        btnBatch.classList.add('active');
+        formSingle.classList.add('hidden');
+        formBatch.classList.remove('hidden');
+        if (!document.getElementById('fBatchMonth').value) {
+          document.getElementById('fBatchMonth').value = today().slice(0, 7);
+        }
+        if (document.getElementById('batchSlotsContainer').children.length === 0) {
+          addBatchSlot();
+        }
+      }
+    }
+
+    function addBatchSlot() {
+      const container = document.getElementById('batchSlotsContainer');
+      const slotId = 'slot_' + Math.random().toString(36).slice(2, 9);
+      const slotIndex = container.children.length + 1;
+      
+      const div = document.createElement('div');
+      div.className = 'slot-card';
+      div.id = slotId;
+      
+      const days = T.daysOfWeek || ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+      const dayOptions = [
+        { val: 1, label: days[1] },
+        { val: 2, label: days[2] },
+        { val: 3, label: days[3] },
+        { val: 4, label: days[4] },
+        { val: 5, label: days[5] },
+        { val: 6, label: days[6] },
+        { val: 0, label: days[0] }
+      ].map(o => `<option value="${o.val}">${o.label}</option>`).join('');
+
+      div.innerHTML = `
+        <div class="slot-card-header">
+          <span class="slot-card-title">${userLang === 'tr' ? 'Program' : 'Slot'} #${slotIndex}</span>
+          <button type="button" class="btn-remove-slot" onclick="removeBatchSlot('${slotId}')">${userLang === 'tr' ? 'Sil' : 'Remove'}</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">${T.lblDayOfWeek || 'Haftanın Günü'}</label>
+            <select class="form-select slot-day">${dayOptions}</select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">${userLang === 'tr' ? 'Tekrar Sıklığı' : 'Repeat Frequency'}</label>
+            <select class="form-select slot-frequency">
+              <option value="weekly">${userLang === 'tr' ? 'Her Hafta' : 'Weekly'}</option>
+              <option value="biweekly">${userLang === 'tr' ? '2 Haftada Bir' : 'Bi-weekly'}</option>
+              <option value="monthly">${userLang === 'tr' ? 'Ayda 1 Kez (İlk Hafta)' : 'Once a Month (1st Wk)'}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">${T.lblTime || 'Saat (opt)'}</label>
+            <input type="time" class="form-input slot-time" onclick="this.showPicker()">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">${T.lblVenue || 'Mekan'}</label>
+            <input type="text" class="form-input slot-venue" placeholder="${T.plcVenue || 'Mekan Adı'}" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label class="form-label">${T.lblArtist || 'Sanatçı'}</label>
+            <input type="text" class="form-input slot-artist" placeholder="${T.plcArtist || 'Sahne adı'}" autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">${T.lblFee || 'Ücret'}</label>
+          <div class="fee-row">
+            <input type="text" class="form-input slot-fee" placeholder="${T.plcFee || 'Ücret'}" autocomplete="off">
+            <select class="form-select slot-currency">
+              <option value="TRY">₺ TRY</option>
+              <option value="EUR">€ EUR</option>
+              <option value="USD">$ USD</option>
+              <option value="GBP">£ GBP</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">${T.lblExpenseName || 'Masraf Adı'}</label>
+            <input type="text" class="form-input slot-exp-name" placeholder="${T.plcExpenseName || 'Masraf Adı'}" autocomplete="off">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">${T.lblExpenseAmount || 'Masraf Tutarı'}</label>
+            <input type="number" class="form-input slot-exp-amount" placeholder="${T.plcExpenseAmount || 'Tutar'}" autocomplete="off" step="any">
+          </div>
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px; margin-top: 10px; margin-bottom: 8px;">
+          <div style="font-size: 10px; font-weight: 700; color: var(--accent); margin-bottom: 6px;">
+            ${T.lblAutoFuel || 'Otomatik Yakıt Hesaplama'}
+          </div>
+          <div class="form-row" style="margin-bottom: 0;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-size:9px;">${T.lblDistance || 'Mesafe (KM)'}</label>
+              <input type="number" class="form-input slot-dist" placeholder="KM" oninput="calculateSlotFuel('${slotId}')">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-size:9px;">${T.lblFuelRate || 'Litre Fiyatı (TL)'}</label>
+              <input type="number" class="form-input slot-rate" placeholder="TL" step="any" oninput="calculateSlotFuel('${slotId}')">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-size:9px;">Tüketim (L/100km)</label>
+              <input type="number" class="form-input slot-cons" value="7" placeholder="7" step="any" oninput="calculateSlotFuel('${slotId}')">
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(div);
+    }
+
+    function calculateSlotFuel(slotId) {
+      const card = document.getElementById(slotId);
+      if (!card) return;
+      const dist = parseFloat(card.querySelector('.slot-dist').value);
+      const rate = parseFloat(card.querySelector('.slot-rate').value);
+      let cons = parseFloat(card.querySelector('.slot-cons').value);
+      if (isNaN(cons) || cons <= 0) cons = 7;
+      
+      if (!isNaN(dist) && !isNaN(rate)) {
+        const total = (dist / 100) * cons * rate;
+        card.querySelector('.slot-exp-amount').value = total.toFixed(2);
+        const expNameEl = card.querySelector('.slot-exp-name');
+        if (!expNameEl.value || expNameEl.value.startsWith('Yakıt (') || expNameEl.value.startsWith('Fuel (')) {
+          expNameEl.value = (userLang === 'tr' ? 'Yakıt' : 'Fuel') + ` (${dist}km)`;
+        }
+      }
+    }
+
+    function removeBatchSlot(slotId) {
+      const el = document.getElementById(slotId);
+      if (el) {
+        el.remove();
+        const container = document.getElementById('batchSlotsContainer');
+        Array.from(container.children).forEach((child, index) => {
+          child.querySelector('.slot-card-title').textContent = (userLang === 'tr' ? 'Program' : 'Slot') + ` #${index + 1}`;
+        });
+      }
+    }
+
+    function saveBatchGigs() {
+      const monthVal = document.getElementById('fBatchMonth').value;
+      if (!monthVal) { showToast(userLang === 'tr' ? '⚠️ Lütfen hedef ayı seçin' : '⚠️ Please select target month'); return; }
+      
+      const parts = monthVal.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      
+      const container = document.getElementById('batchSlotsContainer');
+      const slotCards = container.querySelectorAll('.slot-card');
+      if (slotCards.length === 0) { showToast(userLang === 'tr' ? '⚠️ En az bir program günü eklemelisiniz' : '⚠️ Please add at least one slot'); return; }
+      
+      const slots = [];
+      let hasIncompleteSlot = false;
+      
+      slotCards.forEach(card => {
+        const dayVal = parseInt(card.querySelector('.slot-day').value, 10);
+        const frequency = card.querySelector('.slot-frequency').value;
+        const venue = card.querySelector('.slot-venue').value.trim();
+        const artist = card.querySelector('.slot-artist').value.trim();
+        const fee = card.querySelector('.slot-fee').value.trim();
+        const currency = card.querySelector('.slot-currency').value;
+        const time = card.querySelector('.slot-time').value;
+        const expenseName = card.querySelector('.slot-exp-name').value.trim();
+        const expenseAmount = card.querySelector('.slot-exp-amount').value;
+        
+        if (!venue && !artist) {
+          hasIncompleteSlot = true;
+        }
+        
+        slots.push({
+          dayOfWeek: dayVal,
+          frequency,
+          venue,
+          artist,
+          fee,
+          currency,
+          time,
+          expenseName,
+          expenseAmount
+        });
+      });
+      
+      if (hasIncompleteSlot) {
+        showToast(userLang === 'tr' ? '⚠️ Lütfen mekan veya sanatçı alanını doldurun' : '⚠️ Please fill venue or artist name');
+        return;
+      }
+      
+      pushHistory();
+      
+      const dateList = [];
+      const numDays = new Date(year, month + 1, 0).getDate();
+      const weekdayCount = {};
+      
+      for (let d = 1; d <= numDays; d++) {
+        const dateObj = new Date(year, month, d);
+        const dayOfWeek = dateObj.getDay();
+        
+        if (weekdayCount[dayOfWeek] === undefined) {
+          weekdayCount[dayOfWeek] = 0;
+        }
+        weekdayCount[dayOfWeek]++;
+        
+        slots.forEach(slot => {
+          if (slot.dayOfWeek === dayOfWeek) {
+            let matchesFreq = false;
+            if (slot.frequency === 'weekly') {
+              matchesFreq = true;
+            } else if (slot.frequency === 'biweekly') {
+              if (weekdayCount[dayOfWeek] % 2 === 1) {
+                matchesFreq = true;
+              }
+            } else if (slot.frequency === 'monthly') {
+              if (weekdayCount[dayOfWeek] === 1) {
+                matchesFreq = true;
+              }
+            }
+            
+            if (matchesFreq) {
+              const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+              dateList.push({ ...slot, date: ds });
+            }
+          }
+        });
+      }
+      
+      if (dateList.length === 0) {
+        showToast(userLang === 'tr' ? '⚠️ Seçtiğiniz ayda uygun tarih bulunamadı' : '⚠️ No matching dates found');
+        return;
+      }
+      
+      const createdGigs = [];
+      dateList.forEach(item => {
+        const gig = {
+          id: uid(),
+          parentId: null,
+          artist: item.artist,
+          venue: item.venue,
+          date: item.date,
+          time: item.time,
+          fee: item.fee,
+          currency: item.currency,
+          expenseName: item.expenseName,
+          expenseAmount: item.expenseAmount,
+          repeat: 'none',
+          repeatUntil: '',
+          notes: '',
+          paid: false
+        };
+        createdGigs.push(gig);
+      });
+      
+      gigs.push(...createdGigs);
+      save();
+      render();
+      closeModal();
+      
+      showToast(userLang === 'tr' ? `✓ ${createdGigs.length} iş oluşturuldu` : `✓ ${createdGigs.length} gigs created`);
     }
 
     function openAddModal(preDate) {
       editingId = null;
       const overlay = document.getElementById('modalOverlay');
-      const content = document.querySelector('.form');
+      const content = document.getElementById('singleGigForm');
 
       if (content.innerHTML !== modalFormOriginalHtml) {
         content.innerHTML = modalFormOriginalHtml;
@@ -2763,6 +3277,11 @@
       paidState = false;
       updatePaidUI(); toggleRepeatUntil();
 
+      // Reset Batch Add form elements
+      document.getElementById('batchSlotsContainer').innerHTML = '';
+      document.getElementById('modalTabs').style.display = 'flex';
+      switchModalTab('single');
+
       populateTemplates();
       overlay.classList.add('open');
       history.pushState({ modal: 'add' }, '', '#modal');
@@ -2770,7 +3289,7 @@
 
     let modalFormOriginalHtml = '';
     window.addEventListener('DOMContentLoaded', () => {
-      modalFormOriginalHtml = document.querySelector('.form').innerHTML;
+      modalFormOriginalHtml = document.getElementById('singleGigForm').innerHTML;
     });
 
     function hideTemplate(k) {
@@ -2788,7 +3307,7 @@
         if (!templates.has(k)) {
           templates.set(k, {
             k: k, venue: g.venue || '', artist: g.artist || '',
-            fee: g.fee || '', currency: g.currency || 'TRY', repeat: g.repeat || 'none'
+            fee: g.fee || '', currency: g.currency || 'TRY', repeat: g.repeat || 'none', date: g.date
           });
         }
       });
@@ -2800,7 +3319,7 @@
         qfl.innerHTML = Array.from(templates.values()).slice(0, 10).map(t => {
           const title = t.venue && t.artist ? `${t.venue} · ${t.artist}` : (t.venue || t.artist);
           const feeTxt = t.fee ? `${SYM[t.currency] || ''}${t.fee}` : T.chipFeeNone;
-          return `<div class="quick-fill-chip" onclick='fillTemplate(${enc(t.artist)}, ${enc(t.venue)}, ${enc(t.fee)}, "${t.currency}", "${t.repeat}")'>
+          return `<div class="quick-fill-chip" onclick='fillTemplate(${enc(t.artist)}, ${enc(t.venue)}, ${enc(t.fee)}, "${t.currency}", "${t.repeat}", "${t.date}")'>
         <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
           <span class="quick-fill-title">${escHtml(title)}</span>
           <span class="filter-chip-delete" onclick="event.stopPropagation(); hideTemplate(${enc(t.k)})">×</span>
@@ -2817,10 +3336,13 @@
       const gig = gigs.find(g => String(g.id) === String(id));
       if (!gig) return;
 
-      const content = document.querySelector('.form');
+      const content = document.getElementById('singleGigForm');
       if (content.innerHTML !== modalFormOriginalHtml) {
         content.innerHTML = modalFormOriginalHtml;
       }
+
+      document.getElementById('modalTabs').style.display = 'none';
+      switchModalTab('single');
 
       editingId = id;
       document.getElementById('modalTitle').textContent = 'İşi Düzenle';
@@ -2881,6 +3403,9 @@
       const date = document.getElementById('fDate').value;
       if (!date) { showToast('⚠️ Tarih seçmelisin'); return; }
 
+      const repeat = document.getElementById('fRepeat').value;
+      const repeatUntil = document.getElementById('fRepeatUntil').value;
+
       pushHistory();
       const data = {
         artist: document.getElementById('fArtist').value.trim(),
@@ -2891,15 +3416,30 @@
         currency: document.getElementById('fCurrency').value,
         expenseName: document.getElementById('fExpenseName').value.trim(),
         expenseAmount: document.getElementById('fExpenseAmount').value,
-        repeat: document.getElementById('fRepeat').value,
-        repeatUntil: document.getElementById('fRepeatUntil').value,
+        repeat,
+        repeatUntil,
         notes: document.getElementById('fNotes').value.trim(),
         paid: paidState
       };
 
       if (editingId) {
-        const idx = gigs.findIndex(g => g.id === editingId);
-        if (idx !== -1) gigs[idx] = { ...gigs[idx], ...data };
+        const idx = gigs.findIndex(g => String(g.id) === String(editingId));
+        if (idx !== -1) {
+          const oldGig = gigs[idx];
+          gigs[idx] = { ...oldGig, ...data };
+          
+          // If this is a parent gig (meaning parentId is null/falsy), update/regenerate repeats
+          if (!oldGig.parentId) {
+            const base = gigs[idx];
+            // Delete old repeats
+            gigs = gigs.filter(g => String(g.parentId) !== String(editingId));
+            // Generate new repeats
+            const list = generateRepeats(base);
+            // Push only the children (the base parent is already updated in gigs[idx])
+            const children = list.filter(g => g.parentId !== null);
+            gigs.push(...children);
+          }
+        }
         showToast('✓ İş güncellendi');
       } else {
         const base = { id: uid(), parentId: null, ...data };
@@ -2920,7 +3460,7 @@
       if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var; sadece bu kayıt silinecek.)`;
       showConfirm('İşi Sil', text, () => {
         pushHistory();
-        gigs = gigs.filter(g => g.id !== id);
+        gigs = gigs.filter(g => String(g.id) !== String(id));
         save(); render(); showToast('🗑 İş silindi');
       });
     }
@@ -2986,17 +3526,49 @@
       const dayNames = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'];
       const showYearPicker = gigCalYearPicker[gigId];
 
+      const targetGig = gigs.find(g => String(g.id) === String(gigId));
+      const relatedDates = [];
+      if (targetGig) {
+        gigs.forEach(g => {
+          const shareParent = targetGig.parentId && (String(g.parentId) === String(targetGig.parentId) || String(g.id) === String(targetGig.parentId));
+          const isParentOfThis = g.parentId && String(g.parentId) === String(targetGig.id);
+          const sameArtistVenue = targetGig.artist && targetGig.venue && g.artist === targetGig.artist && g.venue === targetGig.venue;
+          if (shareParent || isParentOfThis || sameArtistVenue) {
+            relatedDates.push(g.date);
+          }
+        });
+      }
+
       let cells = '';
       for (let i = 0; i < firstDay; i++) cells += '<div></div>';
       for (let d = 1; d <= daysInMonth; d++) {
         const ds = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         const isGig = ds === gigDate;
+        const isRelated = relatedDates.includes(ds);
         const isTod = ds === todayStr;
+        
+        let bg = 'transparent';
+        let color = 'var(--text-3)';
+        let border = 'none';
+        
+        if (isGig) {
+          bg = 'var(--accent)';
+          color = '#000';
+        } else if (isRelated) {
+          bg = 'rgba(244, 196, 48, 0.15)';
+          color = 'var(--text)';
+          border = '1px dashed rgba(244, 196, 48, 0.4)';
+        } else if (isTod) {
+          bg = 'rgba(255, 255, 255, 0.08)';
+          color = 'var(--text)';
+          border = '1px solid var(--border)';
+        }
+
         cells += `<div style="text-align:center;padding:6px 2px;border-radius:8px;font-size:13px;
-      background:${isGig ? 'var(--accent)' : isTod ? 'rgba(255,255,255,0.08)' : 'transparent'};
-      color:${isGig ? '#000' : isTod ? 'var(--text)' : 'var(--text-3)'};
-      font-weight:${isGig || isTod ? '700' : '400'};
-      outline:${isTod && !isGig ? '1px solid var(--border)' : 'none'};
+      background:${bg};
+      color:${color};
+      font-weight:${isGig || isRelated || isTod ? '700' : '400'};
+      border:${border};
     ">${d}</div>`;
       }
 
