@@ -2021,15 +2021,22 @@
     // ===== UTILS =====
     function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
+    function toLocalDateString(dt) {
+      const y = dt.getFullYear();
+      const m = String(dt.getMonth() + 1).padStart(2, '0');
+      const d = String(dt.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
     function addDays(d, n) {
       const dt = new Date(d + 'T12:00:00');
       dt.setDate(dt.getDate() + n);
-      return dt.toISOString().slice(0, 10);
+      return toLocalDateString(dt);
     }
     function addMonths(d, n) {
       const dt = new Date(d + 'T12:00:00');
       dt.setMonth(dt.getMonth() + n);
-      return dt.toISOString().slice(0, 10);
+      return toLocalDateString(dt);
     }
 
     function formatDate(d) {
@@ -2048,7 +2055,7 @@
       return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
     }
 
-    function today() { return new Date().toISOString().slice(0, 10); }
+    function today() { return toLocalDateString(new Date()); }
 
     function isGigVisible(gig) {
       if (!gig.date.startsWith(activeYear)) return false;
@@ -2076,9 +2083,9 @@
       
       let until = base.repeatUntil;
       if (!until) {
-        const d = new Date(base.date + 'T12:00:00');
-        const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0);
-        until = lastDay.toISOString().slice(0, 10);
+        const [y, m] = base.date.split('-');
+        const lastDay = new Date(parseInt(y), parseInt(m), 0);
+        until = toLocalDateString(lastDay);
       }
       
       let cur = base.date;
@@ -2699,8 +2706,9 @@
 
       const gigDates = {};
       gigs.forEach(g => {
-        const d = new Date(g.date + 'T12:00:00');
-        if (d.getFullYear() === year && d.getMonth() === month) {
+        if (!g.date) return;
+        const [gYear, gMonth] = g.date.split('-');
+        if (parseInt(gYear) === year && parseInt(gMonth) === (month + 1)) {
           if (!gigDates[g.date]) gigDates[g.date] = [];
           gigDates[g.date].push(g);
         }
