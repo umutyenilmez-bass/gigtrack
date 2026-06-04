@@ -2706,10 +2706,11 @@
         }
       });
 
-      const firstDay = new Date(year, month, 1).getDay();
+      const rawFirstDay = new Date(year, month, 1).getDay();
+      const firstDay = rawFirstDay === 0 ? 6 : rawFirstDay - 1;
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const todayStr = today();
-      const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+      const dayNames = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
       // Yıl seçici - kaydırmalı
       let yearPickerHtml = '';
@@ -3538,9 +3539,10 @@
       const year = viewDate.getFullYear();
       const month = viewDate.getMonth();
       const todayStr = today();
-      const firstDay = new Date(year, month, 1).getDay();
+      const rawFirstDay = new Date(year, month, 1).getDay();
+      const firstDay = rawFirstDay === 0 ? 6 : rawFirstDay - 1;
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const dayNames = ['Pz', 'Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct'];
+      const dayNames = ['Pt', 'Sa', 'Ça', 'Pe', 'Cu', 'Ct', 'Pz'];
       const showYearPicker = gigCalYearPicker[gigId];
 
       const targetGig = gigs.find(g => String(g.id) === String(gigId));
