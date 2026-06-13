@@ -5457,7 +5457,12 @@ window.finRenderAsistan = function() {
     var serbestNakit = gelirTL - giderTL - asgariBorcTL;
     var nakitColor = serbestNakit >= 0 ? '#4ade80' : '#ff6b6b';
     
-    var html = '<div class="fin-card" style="margin-bottom:15px;">';
+    var html = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">';
+    html += '<h2 style="margin:0;font-size:18px;color:var(--text-1);">Finansal Asistan</h2>';
+    html += '<button class="fin-btn-primary" onclick="finRenderAsistan()" style="padding:6px 12px;font-size:12px;display:flex;align-items:center;gap:6px;">🔄 Planı Güncelle</button>';
+    html += '</div>';
+
+    html += '<div class="fin-card" style="margin-bottom:15px;">';
     html += '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--text-1);">Aylık Finansal Durum</h3>';
     html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--text-3);">Net Gelir</span><span style="font-weight:600;color:var(--text-2);">' + fFmt(gelirTL, 'TL') + '</span></div>';
     html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--text-3);">Açık Giderler</span><span style="font-weight:600;color:#ff6b6b;">-' + fFmt(giderTL, 'TL') + '</span></div>';
@@ -5465,31 +5470,65 @@ window.finRenderAsistan = function() {
     html += '<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);"><span style="color:var(--text-2);">Serbest Nakit</span><span style="font-weight:700;color:'+nakitColor+';">' + fFmt(serbestNakit, 'TL') + '</span></div>';
     html += '</div>';
     
+    // Bütçeleme Kuralları
+    html += '<div class="fin-card" style="margin-bottom:15px;">';
+    html += '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--text-1);">Bütçe Analizi</h3>';
+    if (gelirTL > 0) {
+        var giderPct = ((giderTL + asgariBorcTL) / gelirTL * 100).toFixed(1);
+        var serbestPct = (serbestNakit > 0 ? (serbestNakit / gelirTL * 100).toFixed(1) : 0);
+        
+        var onerilenGider = 50, onerilenLuks = 30, onerilenTasarruf = 20;
+        var ruleName = "50/30/20 Kuralı";
+        if (acikBorclar.length > 0) {
+           onerilenGider = 60; onerilenLuks = 10; onerilenTasarruf = 30; // Tasarrufun çoğu borca
+           ruleName = "Ağır Borç Yükü (60/10/30) Kuralı";
+        }
+        
+        html += '<p style="font-size:12px;color:var(--text-3);margin-bottom:10px;">Gelirinize göre asistanın uyguladığı kural: <b style="color:#f0c040;">' + ruleName + '</b></p>';
+        html += '<div style="display:flex;flex-direction:column;gap:6px;font-size:13px;">';
+        html += '<div style="display:flex;justify-content:space-between;"><span>Temel + Borç (Hedef Max %'+onerilenGider+'):</span><span style="font-weight:700;color:'+(giderPct>onerilenGider?'#ff6b6b':'#4ade80')+';">%' + giderPct + '</span></div>';
+        html += '<div style="display:flex;justify-content:space-between;"><span>Kalan Nakit / Tasarruf (Hedef Min %'+onerilenTasarruf+'):</span><span style="font-weight:700;color:'+(serbestPct<onerilenTasarruf?'#ff6b6b':'#4ade80')+';">%' + serbestPct + '</span></div>';
+        html += '</div>';
+    } else {
+        html += '<p style="font-size:13px;color:var(--text-3);">Bütçe kuralı uygulayabilmek için sisteme gelir verisi girmelisiniz.</p>';
+    }
+    html += '</div>';
+
+    // Uzman Stratejisi
     html += '<div class="fin-card">';
-    html += '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--text-1);">Uzman Tavsiyesi</h3>';
+    html += '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--text-1);">Uzman Strateji Planı</h3>';
     
     if (serbestNakit <= 0) {
        html += '<div style="background:rgba(255,107,107,0.1);padding:10px;border-radius:8px;border:1px solid rgba(255,107,107,0.3);color:#ff6b6b;font-size:13px;line-height:1.5;">';
-       html += 'Geliriniz, giderleriniz ve asgari borç ödemelerinizi karşılamıyor veya sıfırda. Yeni borçlanmayı durdurup acilen giderlerinizi kısmalısınız. Nakit akışınızı rahatlatmaya odaklanın.';
+       html += 'Geliriniz, giderleriniz ve asgari borç ödemelerinizi karşılamıyor veya tam sınırda. Serbest nakit kalmadığı için "Çığ" veya "Kartopu" yöntemini uygulayacak bütçeniz yok. Öncelikle gelir artırıcı veya gider azaltıcı adımlar atmalısınız.';
        html += '</div>';
     } else if (acikBorclar.length === 0) {
        html += '<div style="background:rgba(74,222,128,0.1);padding:10px;border-radius:8px;border:1px solid rgba(74,222,128,0.3);color:#4ade80;font-size:13px;line-height:1.5;">';
-       html += 'Harika! Hiç borcunuz yok. Kalan ' + fFmt(serbestNakit, 'TL') + ' tutarı birikim veya yatırım (ör: Acil Durum Fonu) olarak değerlendirebilirsiniz.';
+       html += 'Mükemmel! Aktif borcunuz görünmüyor. Kalan <b>' + fFmt(serbestNakit, 'TL') + '</b> tutarı tamamen Acil Durum Fonu veya yatırımlarınıza (Altın, Hisse, Döviz) yönlendirmenizi öneririm.';
        html += '</div>';
     } else {
-       var faizliBorclar = acikBorclar.filter(function(b) { return b.faiz > 0; }).sort(function(a,b) { return b.faiz - a.faiz; });
-       var borcPlaniText = '';
-       if (faizliBorclar.length > 0) {
-           var hedefBorc = faizliBorclar[0];
-           borcPlaniText = '<b>2. Adım:</b> Kalan <b style="color:#4ade80;">' + fFmt(serbestNakit, 'TL') + '</b> tutarındaki fazlalığı, faiz oranı en yüksek olan <b style="color:#f0c040;">' + hedefBorc.ad + ' (%' + hedefBorc.faiz + ')</b> borcunuza ekstra ödeme olarak yatırın.<br><b>3. Adım:</b> Bu borç bittiğinde, aynı mantıkla bir sonraki en yüksek faizli borca yönelin.';
-       } else {
-           var hedefBorc = acikBorclar.sort(function(a,b){return a.tutar - b.tutar;})[0];
-           borcPlaniText = '<b>2. Adım:</b> Borçlarınızın faizi olmadığı için, kalan nakiti bitirmesi en kolay olan <b style="color:#f0c040;">' + hedefBorc.ad + '</b> borcunuza yatırarak o dosyayı tamamen kapatın.';
-       }
-       html += '<div style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:10px;">';
-       html += '<b>Çığ (Avalanche) Stratejisi</b> mantığıyla maliyetinizi en aza indirmek için eylem planınız:<br><br>';
-       html += '<b>1. Adım:</b> Tüm borçlarınızın aylık zorunlu (asgari) ödemelerini aksatmadan gerçekleştirin.<br>';
-       html += borcPlaniText;
+       var avalanche = acikBorclar.slice().sort(function(a,b) { return b.faiz - a.faiz; });
+       var snowball = acikBorclar.slice().sort(function(a,b) { return a.tutar - b.tutar; });
+       
+       var avHedef = avalanche[0];
+       var snHedef = snowball[0];
+       
+       html += '<div style="font-size:13px;color:var(--text-2);line-height:1.5;margin-bottom:15px;">';
+       html += 'Elinizde kalan <b style="color:#4ade80;">' + fFmt(serbestNakit, 'TL') + '</b> nakiti yönetmek için iki farklı strateji sunuyorum. Asistanınızın <b style="color:#60a5fa;">Ana Tavsiyesi Çığ Yöntemidir.</b> Her iki yöntemde de <b>önce tüm borçların asgarisini kesinlikle ödeyin!</b> Kalan nakiti aşağıdakilerden birine yönlendirin:';
+       html += '</div>';
+       
+       // Çığ
+       html += '<div style="border-left:3px solid #60a5fa;padding-left:10px;margin-bottom:15px;">';
+       html += '<div style="font-weight:700;color:#60a5fa;font-size:14px;margin-bottom:4px;">1️⃣ Çığ (Avalanche) Yöntemi - 🏆 Asistan Önerisi</div>';
+       html += '<div style="font-size:12px;color:var(--text-3);margin-bottom:6px;">Matematiksel olarak en az faiz ödeyeceğiniz, en kârlı yöntemdir.</div>';
+       html += '<div style="font-size:13px;color:var(--text-2);line-height:1.4;">Artan nakitin tamamını faizi en yüksek olan <b style="color:#f0c040;">' + avHedef.ad + ' (%' + avHedef.faiz + ')</b> borcuna ekstra ödeme olarak yatırıp önce bu dosyayı tamamen kapatın.</div>';
+       html += '</div>';
+       
+       // Kartopu
+       html += '<div style="border-left:3px solid #4ade80;padding-left:10px;">';
+       html += '<div style="font-weight:700;color:#4ade80;font-size:14px;margin-bottom:4px;">2️⃣ Kartopu (Snowball) Yöntemi - Motivasyon Odaklı</div>';
+       html += '<div style="font-size:12px;color:var(--text-3);margin-bottom:6px;">Borç adedini hızla azaltarak psikolojik rahatlama sağlayan yöntemdir.</div>';
+       html += '<div style="font-size:13px;color:var(--text-2);line-height:1.4;">Artan nakitin tamamını bakiyesi en küçük olan <b style="color:#f0c040;">' + snHedef.ad + ' (' + fFmt(snHedef.tutar, snHedef.kur) + ')</b> borcuna yatırıp o dosyayı hemen çöpe atın.</div>';
        html += '</div>';
     }
     html += '</div>';
