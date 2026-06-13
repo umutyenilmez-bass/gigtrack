@@ -1544,8 +1544,7 @@
           <button class="fin-tab-btn fin-tab-active" onclick="finTab('ozet')" id="fintab-ozet">📊 Özet</button>
           <button class="fin-tab-btn" onclick="finTab('gider')" id="fintab-gider">💸 Giderler</button>
           <button class="fin-tab-btn" onclick="finTab('borc')" id="fintab-borc">🏦 Borçlar</button>
-          <button class="fin-tab-btn" onclick="finTab('portfoy')" id="fintab-portfoy">📈 Portföy</button>
-          <button class="fin-tab-btn" onclick="finTab('kkfaiz')" id="fintab-kkfaiz">💳 KK Faiz</button>
+          <button class="fin-tab-btn" onclick="finTab('asistan')" id="fintab-asistan">🤖 Asistan</button>
         </div>
 
         <!-- ===== ÖZET ===== -->
@@ -1708,10 +1707,7 @@
             <input class="fin-input" type="text" id="fin-bad" placeholder="Borç adı (örn: Garanti Kredi Kartı)" oninput="finDetectBanka()">
             <div id="fin-banka-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/KK algılandı</div>
             <div style="display:flex;gap:8px;margin-top:8px;">
-              <input class="fin-input" type="number" id="fin-blimit" placeholder="Kart Limiti (Ops." oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
-            </div>
-            <div style="display:flex;gap:8px;margin-top:8px;">
-              <input class="fin-input" type="number" id="fin-btutar" placeholder="Bakiye" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
+              <input class="fin-input" type="number" id="fin-btutar" placeholder="Kart Limiti / Ana Borç" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
               <select class="fin-select" id="fin-bkur" style="width:80px;" onchange="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')">
                 <option value="TL">₺ TL</option>
                 <option value="USD">$ USD</option>
@@ -1723,7 +1719,7 @@
               <div id="fin-bfaiz-badge"></div>
             </div>
             <div style="margin-top:8px;">
-              <input class="fin-input" type="number" id="fin-basin" placeholder="Asgari borç/ödeme oranı (%)" min="0" max="100" step="0.1">
+              <input class="fin-input" type="number" id="fin-basin" placeholder="Asgari Ödeme" min="0" max="100" step="0.1">
               <p style="font-size:10px;color:var(--text-3);margin-top:3px;">Banka kartlarında otomatik tespit edilir.</p>
             </div>
             <button class="fin-btn-primary" onclick="finBorcEkle()" style="margin-top:10px;">Ekle</button>
@@ -1753,125 +1749,9 @@
           <p id="fin-borc-empty" style="text-align:center;color:var(--text-3);font-size:14px;padding:32px 0;">Henüz borç eklenmedi.</p>
         </div>
 
-        <!-- ===== PORTFÖY ===== -->
-        <div id="finpanel-portfoy" style="display:none;">
-          <div class="fin-card">
-            <p class="fin-label">Toplam Birikim (₺)</p>
-            <input class="fin-input" type="number" id="fin-ptoplam" placeholder="örn: 200000" oninput="finHesaplaPortfoy()">
-            <p class="fin-label" style="margin-top:14px;">Dağılım Modeli</p>
-            <select class="fin-select" id="fin-pmodel" onchange="finModelDegis()">
-              <option value="enflasyon">Enflasyon Kalkanı — %25 Altın / %45 Hisse / %30 Nakit</option>
-              <option value="muhafazakar">Muhafazakâr — %50 Nakit / %30 Altın / %20 Hisse</option>
-              <option value="agresif">Agresif — %70 Hisse / %20 Altın / %10 Nakit</option>
-              <option value="ozel">Özel Dağılım</option>
-            </select>
-          </div>
-          <div id="fin-pözel" style="display:none;" class="fin-card">
-            <p class="fin-label" style="margin-bottom:10px;">Özel Yüzdeler (Toplam = 100)</p>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-              <span style="font-size:12px;color:#f0c040;width:60px;flex-shrink:0;">Altın</span>
-              <input class="fin-input" type="number" id="fin-paltin" placeholder="%" oninput="finHesaplaPortfoy()">
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-              <span style="font-size:12px;color:#4ade80;width:60px;flex-shrink:0;">Hisse</span>
-              <input class="fin-input" type="number" id="fin-phisse" placeholder="%" oninput="finHesaplaPortfoy()">
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <span style="font-size:12px;color:#60a5fa;width:60px;flex-shrink:0;">Nakit</span>
-              <input class="fin-input" type="number" id="fin-pnakit" placeholder="%" oninput="finHesaplaPortfoy()">
-            </div>
-            <p id="fin-pozel-uyari" style="display:none;color:#ff6b6b;font-size:12px;margin-top:8px;">Toplam 100 olmalı!</p>
-          </div>
-          <div id="fin-portfoy-sonuc" style="display:none;margin-top:4px;">
-            <div id="fin-portfoy-cards"></div>
-            <div class="fin-card" style="margin-top:10px;">
-              <p style="font-size:12px;color:var(--text-3);line-height:1.5;"><span style="color:#f0c040;font-weight:600;">Hatırlatma:</span> Paranın sayısal artması yetmez — getirinizin enflasyonun üzerinde olup olmadığını kontrol edin.</p>
-            </div>
-          </div>
-          <p id="fin-portfoy-empty" style="text-align:center;color:var(--text-3);font-size:14px;padding:32px 0;">Birikim miktarınızı girin.</p>
-        </div>
-
-        <!-- ===== KK FAİZ SİMÜLATÖRÜ ===== -->
-        <div id="finpanel-kkfaiz" style="display:none;">
-          <div class="fin-card">
-            <p class="fin-label">Kart Bilgileri</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-              <div>
-                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Kart Limiti (₺)</p>
-                <input class="fin-input" type="number" id="kk-limit" placeholder="50000" oninput="kkHesapla()">
-              </div>
-              <div>
-                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Dönem Borcu (₺)</p>
-                <input class="fin-input" type="number" id="kk-borc" placeholder="40000" oninput="kkHesapla()">
-              </div>
-            </div>
-            <div style="margin-top:8px;">
-              <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Yaptığınız Ödeme (₺)</p>
-              <input class="fin-input" type="number" id="kk-odeme" placeholder="0" oninput="kkHesapla()">
-            </div>
-          </div>
-          <div id="kk-params" style="display:none;" class="fin-card">
-            <p class="fin-label" style="margin-bottom:10px;">Otomatik Hesaplanan Parametreler</p>
-            <div style="display:flex;flex-direction:column;gap:6px;">
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Faiz Kademesi</span><span id="kk-kademe" style="font-size:13px;font-weight:600;color:var(--accent);"></span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Akdi Faiz</span><span id="kk-akdi-oran" style="font-size:13px;font-weight:600;color:#4ade80;"></span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Gecikme Faizi</span><span id="kk-gecikme-oran" style="font-size:13px;font-weight:600;color:#f0c040;"></span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Asgari Ödeme Oranı</span><span id="kk-asgari-oran" style="font-size:13px;font-weight:600;color:#60a5fa;"></span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Asgari Ödeme Tutarı</span><span id="kk-asgari-tutar" style="font-size:13px;font-weight:600;color:#60a5fa;"></span></div>
-              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Senaryo</span><span id="kk-senaryo" style="font-size:13px;font-weight:700;"></span></div>
-            </div>
-          </div>
-          <div id="kk-hesap" style="display:none;" class="fin-card">
-            <p class="fin-label" style="margin-bottom:10px;">Faiz Hesabı</p>
-            <div id="kk-hesap-detay" style="display:flex;flex-direction:column;gap:6px;"></div>
-          </div>
-          <div id="kk-sonuc" style="display:none;" class="fin-card">
-            <p class="fin-label" style="margin-bottom:12px;">Sonraki Döneme Yansıyacak Maliyet</p>
-            <div style="display:flex;flex-direction:column;gap:8px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--text-2);">Net Faiz</span><span id="kk-net-faiz" style="font-size:16px;font-weight:700;color:#ff6b6b;"></span></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--text-2);">KKDF (%15)</span><span id="kk-kkdf" style="font-size:14px;font-weight:600;color:#f0c040;"></span></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--text-2);">BSMV (%15)</span><span id="kk-bsmv" style="font-size:14px;font-weight:600;color:#f0c040;"></span></div>
-              <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
-              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:14px;font-weight:700;">Toplam Brüt Maliyet</span><span id="kk-brut" style="font-size:20px;font-weight:800;color:#ff6b6b;"></span></div>
-            </div>
-          </div>
-          <div class="fin-card" style="border-color:rgba(96,165,250,0.2);">
-            <p class="fin-label">Kredi Borcu Hesapla &amp; Ekle</p>
-            <p class="fin-hint" style="margin-bottom:10px;">Banka / kredi adı yazın → otomatik algılanır, hesaplanır, Borçlar listesine eklenir.</p>
-            <input class="fin-input" type="text" id="kb-ad" placeholder="örn: İş Bankası, Garanti Kredisi…" oninput="kbDetect()">
-            <div id="kb-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/kredi algılandı — aşağıdaki bilgileri girin</div>
-            <div id="kb-form" style="display:none;margin-top:10px;">
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ana Borç (₺)</p><input class="fin-input" type="number" id="kb-ana" placeholder="örn: 145000" oninput="finAutoFaiz('kb-ana','kb-faiz','kb-faiz-badge');kbHesapla()"></div>
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ödenen Miktar (₺)</p><input class="fin-input" type="number" id="kb-odeme" placeholder="örn: 40000" oninput="kbHesapla()"></div>
-              </div>
-              <div style="margin-top:8px;">
-                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Aylık Faiz Oranı (%)</p>
-                <input class="fin-input" type="number" id="kb-faiz" placeholder="Otomatik hesaplanır" step="0.01" oninput="kbHesapla()">
-                <div id="kb-faiz-badge" style="display:none;font-size:10px;color:#f0c040;margin-top:3px;padding:2px 6px;background:rgba(240,192,64,0.1);border-radius:4px;"></div>
-              </div>
-            </div>
-            <div id="kb-sonuc" style="display:none;margin-top:12px;">
-              <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px;"><div style="display:flex;flex-direction:column;gap:7px;" id="kb-sonuc-detay"></div></div>
-              <button class="fin-btn-primary" onclick="kbBorcaEkle()" style="margin-top:10px;background:#60a5fa;color:#000;">Borç Listesine Ekle</button>
-            </div>
-          </div>
-          <div class="fin-card">
-            <button onclick="kkOranGoster()" class="fin-btn-ghost" style="width:100%;text-align:center;">Faiz Oranlarını Düzenle</button>
-            <div id="kk-oran-form" style="display:none;margin-top:12px;">
-              <p class="fin-hint">Oranlar değişirse buradan güncelleyin (%/ay).</p>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&lt;30k Akdi</p><input class="fin-input" type="number" id="oran-a1" step="0.01" oninput="kkHesapla()"></div>
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&lt;30k Gecikme</p><input class="fin-input" type="number" id="oran-g1" step="0.01" oninput="kkHesapla()"></div>
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">30k-180k Akdi</p><input class="fin-input" type="number" id="oran-a2" step="0.01" oninput="kkHesapla()"></div>
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">30k-180k Gecikme</p><input class="fin-input" type="number" id="oran-g2" step="0.01" oninput="kkHesapla()"></div>
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&gt;180k Akdi</p><input class="fin-input" type="number" id="oran-a3" step="0.01" oninput="kkHesapla()"></div>
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&gt;180k Gecikme</p><input class="fin-input" type="number" id="oran-g3" step="0.01" oninput="kkHesapla()"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- /KK FAİZ SİMÜLATÖRÜ -->
+        <!-- ===== ASİSTAN ===== -->
+        <div id="finpanel-asistan" style="display:none;"></div>
+        <!-- /ASİSTAN -->
 
       </div>
     </div>
@@ -4624,7 +4504,7 @@
 
   // ── SEKME GEÇİŞİ ──────────────────────────────────────────────────────────
   window.finTab = function(id) {
-    ['ozet','gider','borc','portfoy','kkfaiz'].forEach(function(p) {
+    ['ozet','gider','borc','asistan'].forEach(function(p) {
       var panel = document.getElementById('finpanel-' + p);
       if (panel) panel.style.display = p === id ? '' : 'none';
       var btn = document.getElementById('fintab-' + p);
@@ -5045,7 +4925,21 @@
     var limit = limitEl ? parseFloat(limitEl.value) || 0 : 0;
     var bDdkBaz = limit > 0 ? limit : tutar;
     var asgariPct = parseFloat(document.getElementById('fin-basin').value);
-    if (isNaN(asgariPct)) asgariPct = faiz > 0 ? (bDdkBaz > 50000 ? 40 : 20) : 0;
+    var valForBankCheck = (ad||'').toLowerCase();
+    var isBank = KB_KEYWORDS.some(function(k) { return valForBankCheck.indexOf(k) !== -1; });
+    if (!isBank) {
+      faiz = 0;
+      limit = 0;
+      asgariPct = 0;
+    } else if (isNaN(asgariPct)) {
+      asgariPct = faiz > 0 ? (bDdkBaz > 50000 ? 40 : 20) : 0;
+    }
+    var isBank = KB_KEYWORDS.some(function(k) { return ad.toLowerCase().indexOf(k) !== -1; });
+    if (!isBank) {
+      faiz = 0;
+      limit = 0;
+      asgariPct = 0;
+    }
     fState.borclar.push({
       limit: limit, id: Date.now(), ad: ad, tutar: tutar, kur: kur, faiz: faiz,
       asgariPct: asgariPct, odenen: 0, kapali: false, gecmis: []
@@ -5564,6 +5458,70 @@
   };
 
 })();
+  window.finRenderAsistan = function() {
+    var aBol = document.getElementById('finpanel-asistan');
+    if (!aBol) return;
+    
+    var gelirTL = toTL(fState.gelir, fState.gelirKur) || 0;
+    var thisMonth = currentMonthKey();
+    
+    var giderTL = 0;
+    (fState.giderler || []).forEach(function(g) {
+      if ((g.ay || '') === thisMonth && !g.kapali) giderTL += toTL(g.tutar, g.kur);
+    });
+    
+    var asgariBorcTL = 0;
+    var acikBorclar = (fState.borclar || []).filter(function(b) { return !b.kapali && b.tutar > 0; });
+    
+    acikBorclar.forEach(function(b) {
+       var aylikFaiz = b.tutar * ((b.faiz||0)/100);
+       var bAsgari = b.asgariPct ? Math.ceil(Math.max(b.tutar*b.asgariPct/100, aylikFaiz*1.3)) : 0;
+       var odendi = (b.gecmis || []).filter(function(p){return p.ay === thisMonth;}).reduce(function(s,p){return s+p.odeme;},0);
+       var kalanAsgari = Math.max(0, bAsgari - odendi);
+       asgariBorcTL += toTL(kalanAsgari, b.kur);
+    });
+    
+    var serbestNakit = gelirTL - giderTL - asgariBorcTL;
+    var nakitColor = serbestNakit >= 0 ? '#4ade80' : '#ff6b6b';
+    
+    var html = '<div class="fin-card" style="margin-bottom:15px;">';
+    html += '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--text-1);">Aylık Finansal Durum</h3>';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--text-3);">Net Gelir</span><span style="font-weight:600;color:var(--text-2);">' + fFmt(gelirTL, 'TL') + '</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--text-3);">Açık Giderler</span><span style="font-weight:600;color:#ff6b6b;">-' + fFmt(giderTL, 'TL') + '</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--text-3);">Zorunlu Asgari Ödemeler</span><span style="font-weight:600;color:#60a5fa;">-' + fFmt(asgariBorcTL, 'TL') + '</span></div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);"><span style="color:var(--text-2);">Serbest Nakit</span><span style="font-weight:700;color:'+nakitColor+';">' + fFmt(serbestNakit, 'TL') + '</span></div>';
+    html += '</div>';
+    
+    html += '<div class="fin-card">';
+    html += '<h3 style="margin:0 0 10px 0;font-size:16px;color:var(--text-1);">Uzman Tavsiyesi</h3>';
+    
+    if (serbestNakit <= 0) {
+       html += '<div style="background:rgba(255,107,107,0.1);padding:10px;border-radius:8px;border:1px solid rgba(255,107,107,0.3);color:#ff6b6b;font-size:13px;line-height:1.5;">';
+       html += 'Geliriniz, giderleriniz ve asgari borç ödemelerinizi karşılamıyor veya sıfırda. Yeni borçlanmayı durdurup acilen giderlerinizi kısmalısınız. Nakit akışınızı rahatlatmaya odaklanın.';
+       html += '</div>';
+    } else if (acikBorclar.length === 0) {
+       html += '<div style="background:rgba(74,222,128,0.1);padding:10px;border-radius:8px;border:1px solid rgba(74,222,128,0.3);color:#4ade80;font-size:13px;line-height:1.5;">';
+       html += 'Harika! Hiç borcunuz yok. Kalan ' + fFmt(serbestNakit, 'TL') + ' tutarı birikim veya yatırım (ör: Acil Durum Fonu) olarak değerlendirebilirsiniz.';
+       html += '</div>';
+    } else {
+       var faizliBorclar = acikBorclar.filter(function(b) { return b.faiz > 0; }).sort(function(a,b) { return b.faiz - a.faiz; });
+       var borcPlaniText = '';
+       if (faizliBorclar.length > 0) {
+           var hedefBorc = faizliBorclar[0];
+           borcPlaniText = '<b>2. Adım:</b> Kalan <b style="color:#4ade80;">' + fFmt(serbestNakit, 'TL') + '</b> tutarındaki fazlalığı, faiz oranı en yüksek olan <b style="color:#f0c040;">' + hedefBorc.ad + ' (%' + hedefBorc.faiz + ')</b> borcunuza ekstra ödeme olarak yatırın.<br><b>3. Adım:</b> Bu borç bittiğinde, aynı mantıkla bir sonraki en yüksek faizli borca yönelin.';
+       } else {
+           var hedefBorc = acikBorclar.sort(function(a,b){return a.tutar - b.tutar;})[0];
+           borcPlaniText = '<b>2. Adım:</b> Borçlarınızın faizi olmadığı için, kalan nakiti bitirmesi en kolay olan <b style="color:#f0c040;">' + hedefBorc.ad + '</b> borcunuza yatırarak o dosyayı tamamen kapatın.';
+       }
+       html += '<div style="font-size:13px;color:var(--text-2);line-height:1.6;margin-bottom:10px;">';
+       html += '<b>Çığ (Avalanche) Stratejisi</b> mantığıyla maliyetinizi en aza indirmek için eylem planınız:<br><br>';
+       html += '<b>1. Adım:</b> Tüm borçlarınızın aylık zorunlu (asgari) ödemelerini aksatmadan gerçekleştirin.<br>';
+       html += borcPlaniText;
+       html += '</div>';
+    }
+    html += '</div>';
+    aBol.innerHTML = html;
+  };
 </script>
 
   <!-- BORÇ ÖDEME MODALİ -->
