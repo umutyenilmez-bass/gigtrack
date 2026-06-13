@@ -1534,6 +1534,307 @@
         <div id="analysisList"></div>
       </div>
     </div>
+
+    <!-- ===== FİNANS SEKMESİ ===== -->
+    <div id="tab-finans" class="tab-page">
+      <div class="content" id="finans-content">
+
+        <!-- İç sekmeler -->
+        <div style="display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch;">
+          <button class="fin-tab-btn fin-tab-active" onclick="finTab('ozet')" id="fintab-ozet">📊 Özet</button>
+          <button class="fin-tab-btn" onclick="finTab('gider')" id="fintab-gider">💸 Giderler</button>
+          <button class="fin-tab-btn" onclick="finTab('borc')" id="fintab-borc">🏦 Borçlar</button>
+          <button class="fin-tab-btn" onclick="finTab('portfoy')" id="fintab-portfoy">📈 Portföy</button>
+          <button class="fin-tab-btn" onclick="finTab('kkfaiz')" id="fintab-kkfaiz">💳 KK Faiz</button>
+        </div>
+
+        <!-- ===== ÖZET ===== -->
+        <div id="finpanel-ozet">
+          <div class="fin-card">
+            <p class="fin-label">Gelir Kaynağı</p>
+            <select class="fin-select" id="fin-period" onchange="finPeriodDegis()" style="margin-bottom:10px;">
+              <option value="thismonth">Bu Ay (GigTrack)</option>
+              <option value="thisyear">Bu Yıl Aylık Ort. (GigTrack)</option>
+              <option value="lastyear">Geçen Yıl Aylık Ort. (GigTrack)</option>
+              <option value="allpaid">Tüm Zamanlar Aylık Ort.</option>
+              <option value="manual">Manuel Giriş</option>
+            </select>
+            <div id="fin-giginfo" style="font-size:12px;color:var(--text-3);margin-bottom:10px;"></div>
+            <p class="fin-label">Aylık Net Gelir (₺)</p>
+            <input class="fin-input" type="number" id="fin-gelir" placeholder="örn: 45000" oninput="finHesaplaOzet()">
+            <p class="fin-label" style="margin-top:14px;">Bütçe Sistemi</p>
+            <select class="fin-select" id="fin-sistem" onchange="finHesaplaOzet()">
+              <option value="503020">50/30/20 — Standart</option>
+              <option value="603010">60/30/10 — Büyükşehir / Yüksek Kira</option>
+              <option value="zbb">Sıfır Tabanlı (ZBB)</option>
+            </select>
+          </div>
+          <div id="fin-ozet-sonuc" style="display:none;">
+            <div class="fin-card" style="border-color:rgba(255,179,0,0.2);">
+              <p class="fin-label" style="margin-bottom:12px;">Bu Ay Nakit Akışı</p>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:14px;color:var(--text-2);">💰 Gelir</span>
+                  <span id="ozet-gelir" style="font-size:16px;font-weight:700;color:#4ade80;"></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:14px;color:var(--text-2);">📦 Sabit Giderler</span>
+                  <span id="ozet-sabit" style="font-size:14px;font-weight:600;color:#ff6b6b;"></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:14px;color:var(--text-2);">🛍 Değişken Giderler</span>
+                  <span id="ozet-degisken" style="font-size:14px;font-weight:600;color:#ff6b6b;"></span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:14px;color:var(--text-2);">🏦 Borç Ödemeleri</span>
+                  <span id="ozet-borc-odeme" style="font-size:14px;font-weight:600;color:#f0c040;"></span>
+                </div>
+                <div style="height:1px;background:rgba(255,255,255,0.08);"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                  <span style="font-size:15px;font-weight:700;">Net Kalan</span>
+                  <span id="ozet-kalan" style="font-size:20px;font-weight:800;"></span>
+                </div>
+              </div>
+            </div>
+            <div class="fin-card">
+              <p class="fin-label" style="margin-bottom:12px;">Bütçe Hedeflerine Göre</p>
+              <div id="ozet-hedef-bars"></div>
+            </div>
+            <div class="fin-card">
+              <p class="fin-label">Acil Durum Fonu Hedefi</p>
+              <div style="display:flex;justify-content:space-between;margin-top:8px;">
+                <span style="font-size:13px;color:var(--text-2);">Minimum (3 ay)</span>
+                <span id="fin-acil-min" style="font-size:13px;font-weight:600;color:var(--accent);"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                <span style="font-size:13px;color:var(--text-2);">Optimal (6 ay)</span>
+                <span id="fin-acil-max" style="font-size:13px;font-weight:600;color:#82b4ff;"></span>
+              </div>
+            </div>
+          </div>
+          <p id="fin-ozet-empty" style="text-align:center;color:var(--text-3);font-size:14px;padding:32px 0;">Gelirinizi girerek başlayın.</p>
+        </div>
+
+        <!-- ===== GİDERLER ===== -->
+        <div id="finpanel-gider" style="display:none;">
+          <div class="fin-card">
+            <p class="fin-label">Yeni Harcama</p>
+            <input class="fin-input" type="text" id="fin-gad" placeholder="Açıklama (örn: Market, Kira)">
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <input class="fin-input" type="number" id="fin-gtutar" placeholder="Tutar (₺)" style="flex:1;">
+              <select class="fin-select" id="fin-gkat" style="flex:1;">
+                <option value="ihtiyac">İhtiyaç</option>
+                <option value="istek">İstek</option>
+                <option value="birikim">Birikim</option>
+                <option value="borc">Borç Öd.</option>
+              </select>
+            </div>
+            <div onclick="finToggleSabit()" id="fin-sabit-toggle-wrap"
+              style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:10px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;cursor:pointer;">
+              <div>
+                <span style="font-size:13px;font-weight:600;">📌 Sabit Gider</span>
+                <p style="font-size:11px;color:var(--text-3);margin-top:2px;">Her aya otomatik aktarılır</p>
+              </div>
+              <div class="toggle-switch" id="fin-sabit-toggle"><div class="toggle-knob"></div></div>
+            </div>
+            <button class="fin-btn-primary" onclick="finGiderEkle()" style="margin-top:10px;">Ekle</button>
+          </div>
+          <div id="fin-gider-ozet" style="display:none;margin-top:4px;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+              <div class="fin-card" style="text-align:center;">
+                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Bu Ay Toplam</p>
+                <p id="fin-gtoplam" style="font-size:20px;font-weight:700;"></p>
+              </div>
+              <div class="fin-card" style="text-align:center;">
+                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Kalan</p>
+                <p id="fin-gkalan" style="font-size:20px;font-weight:700;"></p>
+              </div>
+            </div>
+            <div class="fin-card" style="margin-bottom:12px;">
+              <p class="fin-label" style="margin-bottom:10px;">Kategoriye Göre</p>
+              <div id="fin-gkat-bars"></div>
+            </div>
+          </div>
+          <div id="fin-sabit-bolum" style="display:none;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;">📌 Sabit Giderler</span>
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+            </div>
+            <div id="fin-sabit-liste"></div>
+          </div>
+          <div id="fin-degisken-bolum" style="display:none;margin-top:8px;">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <span style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;">🛍 Değişken Giderler</span>
+              <div style="flex:1;height:1px;background:var(--border);"></div>
+            </div>
+            <div id="fin-degisken-liste"></div>
+          </div>
+          <p id="fin-gider-empty" style="text-align:center;color:var(--text-3);font-size:14px;padding:32px 0;">Henüz harcama eklenmedi.</p>
+        </div>
+
+        <!-- ===== BORÇLAR ===== -->
+        <div id="finpanel-borc" style="display:none;">
+          <div class="fin-card">
+            <p class="fin-label">Borç Ekle</p>
+            <input class="fin-input" type="text" id="fin-bad" placeholder="Borç adı (örn: Garanti Kredi Kartı)" oninput="finDetectBanka()">
+            <div id="fin-banka-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/KK algılandı</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+              <input class="fin-input" type="number" id="fin-btutar" placeholder="Bakiye (₺)">
+              <input class="fin-input" type="number" id="fin-bfaiz" placeholder="Akdi faiz (%/ay)">
+            </div>
+            <button class="fin-btn-primary" onclick="finBorcEkle()" style="margin-top:10px;">Ekle</button>
+          </div>
+          <div class="fin-card">
+            <p class="fin-label">Toplu Ekle</p>
+            <p class="fin-hint">Her satıra bir borç: <span style="color:var(--accent);font-family:monospace;">İsim, Bakiye, Faiz%</span><br>Örn: Garanti KK, 25000, 4.5</p>
+            <textarea class="fin-input" id="fin-toplu" rows="4" placeholder="Garanti KK, 25000, 4.5&#10;İhtiyaç Kredisi, 50000, 2.1" style="resize:vertical;font-family:monospace;font-size:13px;"></textarea>
+            <button class="fin-btn-primary" onclick="finTopluEkle()" style="margin-top:10px;">Tümünü Ekle</button>
+          </div>
+          <div id="fin-borc-strateji" style="display:none;">
+            <div class="fin-card">
+              <p class="fin-label" style="margin-bottom:8px;">Ödeme Stratejisi</p>
+              <div style="display:flex;gap:8px;">
+                <button class="fin-strat-btn fin-strat-active" id="fin-strat-avalanche" onclick="finStrateji('avalanche')">Çığ (Önce Yüksek Faiz)</button>
+                <button class="fin-strat-btn" id="fin-strat-snowball" onclick="finStrateji('snowball')">Kartopu (Önce Küçük)</button>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:12px;">
+                <span style="font-size:13px;color:var(--text-2);">Toplam Borç</span>
+                <span id="fin-borc-toplam" style="font-size:13px;font-weight:700;color:#ff6b6b;"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                <span style="font-size:13px;color:var(--text-2);">Bu Ay Toplam Faiz</span>
+                <span id="fin-borc-faiz-toplam" style="font-size:13px;font-weight:700;color:#f0c040;"></span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                <span style="font-size:13px;color:var(--text-2);">Bu Ay Ödenen</span>
+                <span id="fin-borc-ay-odeme" style="font-size:13px;font-weight:700;color:#4ade80;"></span>
+              </div>
+            </div>
+          </div>
+          <div id="fin-borc-liste" style="margin-top:4px;"></div>
+          <p id="fin-borc-empty" style="text-align:center;color:var(--text-3);font-size:14px;padding:32px 0;">Henüz borç eklenmedi.</p>
+        </div>
+
+        <!-- ===== PORTFÖY ===== -->
+        <div id="finpanel-portfoy" style="display:none;">
+          <div class="fin-card">
+            <p class="fin-label">Toplam Birikim (₺)</p>
+            <input class="fin-input" type="number" id="fin-ptoplam" placeholder="örn: 200000" oninput="finHesaplaPortfoy()">
+            <p class="fin-label" style="margin-top:14px;">Dağılım Modeli</p>
+            <select class="fin-select" id="fin-pmodel" onchange="finModelDegis()">
+              <option value="enflasyon">Enflasyon Kalkanı — %25 Altın / %45 Hisse / %30 Nakit</option>
+              <option value="muhafazakar">Muhafazakâr — %50 Nakit / %30 Altın / %20 Hisse</option>
+              <option value="agresif">Agresif — %70 Hisse / %20 Altın / %10 Nakit</option>
+              <option value="ozel">Özel Dağılım</option>
+            </select>
+          </div>
+          <div id="fin-pözel" style="display:none;" class="fin-card">
+            <p class="fin-label" style="margin-bottom:10px;">Özel Yüzdeler (Toplam = 100)</p>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <span style="font-size:12px;color:#f0c040;width:60px;flex-shrink:0;">Altın</span>
+              <input class="fin-input" type="number" id="fin-paltin" placeholder="%" oninput="finHesaplaPortfoy()">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <span style="font-size:12px;color:#4ade80;width:60px;flex-shrink:0;">Hisse</span>
+              <input class="fin-input" type="number" id="fin-phisse" placeholder="%" oninput="finHesaplaPortfoy()">
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <span style="font-size:12px;color:#60a5fa;width:60px;flex-shrink:0;">Nakit</span>
+              <input class="fin-input" type="number" id="fin-pnakit" placeholder="%" oninput="finHesaplaPortfoy()">
+            </div>
+            <p id="fin-pozel-uyari" style="display:none;color:#ff6b6b;font-size:12px;margin-top:8px;">Toplam 100 olmalı!</p>
+          </div>
+          <div id="fin-portfoy-sonuc" style="display:none;margin-top:4px;">
+            <div id="fin-portfoy-cards"></div>
+            <div class="fin-card" style="margin-top:10px;">
+              <p style="font-size:12px;color:var(--text-3);line-height:1.5;"><span style="color:#f0c040;font-weight:600;">Hatırlatma:</span> Paranın sayısal artması yetmez — getirinizin enflasyonun üzerinde olup olmadığını kontrol edin.</p>
+            </div>
+          </div>
+          <p id="fin-portfoy-empty" style="text-align:center;color:var(--text-3);font-size:14px;padding:32px 0;">Birikim miktarınızı girin.</p>
+        </div>
+
+        <!-- ===== KK FAİZ SİMÜLATÖRÜ ===== -->
+        <div id="finpanel-kkfaiz" style="display:none;">
+          <div class="fin-card">
+            <p class="fin-label">Kart Bilgileri</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div>
+                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Kart Limiti (₺)</p>
+                <input class="fin-input" type="number" id="kk-limit" placeholder="50000" oninput="kkHesapla()">
+              </div>
+              <div>
+                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Dönem Borcu (₺)</p>
+                <input class="fin-input" type="number" id="kk-borc" placeholder="40000" oninput="kkHesapla()">
+              </div>
+            </div>
+            <div style="margin-top:8px;">
+              <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Yaptığınız Ödeme (₺)</p>
+              <input class="fin-input" type="number" id="kk-odeme" placeholder="0" oninput="kkHesapla()">
+            </div>
+          </div>
+          <div id="kk-params" style="display:none;" class="fin-card">
+            <p class="fin-label" style="margin-bottom:10px;">Otomatik Hesaplanan Parametreler</p>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Faiz Kademesi</span><span id="kk-kademe" style="font-size:13px;font-weight:600;color:var(--accent);"></span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Akdi Faiz</span><span id="kk-akdi-oran" style="font-size:13px;font-weight:600;color:#4ade80;"></span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Gecikme Faizi</span><span id="kk-gecikme-oran" style="font-size:13px;font-weight:600;color:#f0c040;"></span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Asgari Ödeme Oranı</span><span id="kk-asgari-oran" style="font-size:13px;font-weight:600;color:#60a5fa;"></span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Asgari Ödeme Tutarı</span><span id="kk-asgari-tutar" style="font-size:13px;font-weight:600;color:#60a5fa;"></span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--text-2);">Senaryo</span><span id="kk-senaryo" style="font-size:13px;font-weight:700;"></span></div>
+            </div>
+          </div>
+          <div id="kk-hesap" style="display:none;" class="fin-card">
+            <p class="fin-label" style="margin-bottom:10px;">Faiz Hesabı</p>
+            <div id="kk-hesap-detay" style="display:flex;flex-direction:column;gap:6px;"></div>
+          </div>
+          <div id="kk-sonuc" style="display:none;" class="fin-card">
+            <p class="fin-label" style="margin-bottom:12px;">Sonraki Döneme Yansıyacak Maliyet</p>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--text-2);">Net Faiz</span><span id="kk-net-faiz" style="font-size:16px;font-weight:700;color:#ff6b6b;"></span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--text-2);">KKDF (%15)</span><span id="kk-kkdf" style="font-size:14px;font-weight:600;color:#f0c040;"></span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;color:var(--text-2);">BSMV (%15)</span><span id="kk-bsmv" style="font-size:14px;font-weight:600;color:#f0c040;"></span></div>
+              <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:14px;font-weight:700;">Toplam Brüt Maliyet</span><span id="kk-brut" style="font-size:20px;font-weight:800;color:#ff6b6b;"></span></div>
+            </div>
+          </div>
+          <div class="fin-card" style="border-color:rgba(96,165,250,0.2);">
+            <p class="fin-label">Kredi Borcu Hesapla &amp; Ekle</p>
+            <p class="fin-hint" style="margin-bottom:10px;">Banka / kredi adı yazın → otomatik algılanır, hesaplanır, Borçlar listesine eklenir.</p>
+            <input class="fin-input" type="text" id="kb-ad" placeholder="örn: İş Bankası, Garanti Kredisi…" oninput="kbDetect()">
+            <div id="kb-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/kredi algılandı — aşağıdaki bilgileri girin</div>
+            <div id="kb-form" style="display:none;margin-top:10px;">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ana Borç (₺)</p><input class="fin-input" type="number" id="kb-ana" placeholder="örn: 145000" oninput="kbHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ödenen Miktar (₺)</p><input class="fin-input" type="number" id="kb-odeme" placeholder="örn: 40000" oninput="kbHesapla()"></div>
+              </div>
+              <div style="margin-top:8px;"><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Aylık Faiz Oranı (%)</p><input class="fin-input" type="number" id="kb-faiz" placeholder="örn: 3.5" step="0.01" oninput="kbHesapla()"></div>
+            </div>
+            <div id="kb-sonuc" style="display:none;margin-top:12px;">
+              <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px;"><div style="display:flex;flex-direction:column;gap:7px;" id="kb-sonuc-detay"></div></div>
+              <button class="fin-btn-primary" onclick="kbBorcaEkle()" style="margin-top:10px;background:#60a5fa;color:#000;">Borç Listesine Ekle</button>
+            </div>
+          </div>
+          <div class="fin-card">
+            <button onclick="kkOranGoster()" class="fin-btn-ghost" style="width:100%;text-align:center;">Faiz Oranlarını Düzenle</button>
+            <div id="kk-oran-form" style="display:none;margin-top:12px;">
+              <p class="fin-hint">Oranlar değişirse buradan güncelleyin (%/ay).</p>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&lt;30k Akdi</p><input class="fin-input" type="number" id="oran-a1" step="0.01" oninput="kkHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&lt;30k Gecikme</p><input class="fin-input" type="number" id="oran-g1" step="0.01" oninput="kkHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">30k-180k Akdi</p><input class="fin-input" type="number" id="oran-a2" step="0.01" oninput="kkHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">30k-180k Gecikme</p><input class="fin-input" type="number" id="oran-g2" step="0.01" oninput="kkHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&gt;180k Akdi</p><input class="fin-input" type="number" id="oran-a3" step="0.01" oninput="kkHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:3px;">&gt;180k Gecikme</p><input class="fin-input" type="number" id="oran-g3" step="0.01" oninput="kkHesapla()"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /KK FAİZ SİMÜLATÖRÜ -->
+
+      </div>
+    </div>
+    <!-- ===== /FİNANS SEKMESİ ===== -->
+
   </div>
 
   <!-- SETTINGS OVERLAY -->
@@ -1572,6 +1873,7 @@
     <div class="nav-item" id="nav-unpaid" onclick="switchTab('unpaid')" data-i18n="tabUnpaid">Ödenmemiş</div>
     <div class="nav-item" id="nav-paid" onclick="switchTab('paid')" data-i18n="tabPaid">Ödenmiş</div>
     <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')" data-i18n="tabAnalysis">Analiz</div>
+    <div class="nav-item" id="nav-finans" onclick="switchTab('finans')">Finans</div>
   </nav>
 
   <!-- ADD / EDIT MODAL -->
@@ -4046,6 +4348,982 @@
       });
     }
   </script>
+
+<!-- ===== FİNANS CSS ===== -->
+<style>
+  .fin-tab-btn {
+    flex-shrink: 0;
+    padding: 7px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fin-tab-active {
+    background: var(--accent) !important;
+    color: #000 !important;
+    border-color: var(--accent) !important;
+    font-weight: 600 !important;
+  }
+  .fin-card {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .fin-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .fin-hint {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .fin-input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .fin-input:focus { border-color: var(--accent); }
+  .fin-input::placeholder { color: var(--text-3); }
+  .fin-select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+    cursor: pointer;
+  }
+  .fin-btn-primary {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fin-btn-primary:active { opacity: 0.8; }
+  .fin-btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--text-2);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fin-btn-ghost:active { opacity: 0.7; }
+  .fin-btn-danger {
+    background: transparent;
+    border: none;
+    color: #ff6b6b;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fin-strat-btn {
+    flex: 1;
+    padding: 8px 4px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: var(--surface-2);
+    color: var(--text-2);
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fin-strat-active {
+    background: var(--accent) !important;
+    color: #000 !important;
+    border-color: var(--accent) !important;
+    font-weight: 600 !important;
+  }
+  .fin-bar-wrap { margin-bottom: 10px; }
+  .fin-bar-row { display:flex; justify-content:space-between; margin-bottom:4px; }
+  .fin-bar-bg { width:100%; height:6px; background:var(--surface-2); border-radius:3px; overflow:hidden; }
+  .fin-bar-fill { height:6px; border-radius:3px; transition: width 0.4s ease; }
+  .fin-item {
+    background: var(--surface);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .fin-item-info { flex: 1; min-width: 0; }
+  .fin-item-title { font-size: 14px; font-weight: 500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fin-item-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .fin-progress-wrap { margin-top: 8px; }
+  .fin-progress-bg { width:100%; height:5px; background:var(--surface-2); border-radius:3px; overflow:hidden; }
+  .fin-progress-fill { height:5px; border-radius:3px; transition: width 0.4s ease; }
+</style>
+
+<!-- ===== FİNANS JS ===== -->
+<script>
+(function() {
+  // ── STATE & STORAGE ───────────────────────────────────────────────────────
+  var LS_KEY = 'gigtrack_finans_v2';
+  var fState = {};
+  try {
+    fState = JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+    // Migrate from old key
+    if (!fState.giderler) {
+      var old = JSON.parse(localStorage.getItem('gigtrack_finans') || '{}');
+      fState.giderler = (old.giderler || []).map(function(g) {
+        return Object.assign({ sabit: false, ay: currentMonthKey() }, g);
+      });
+      fState.borclar   = old.borclar   || [];
+      fState.borc_strat= old.borc_strat|| 'avalanche';
+    }
+  } catch(e) {}
+  if (!fState.giderler)   fState.giderler   = [];
+  if (!fState.borclar)    fState.borclar    = [];
+  if (!fState.borc_strat) fState.borc_strat = 'avalanche';
+  if (!fState.sistem)     fState.sistem     = '503020';
+
+  var sabitToggleOn = false;
+
+  function fSave() { localStorage.setItem(LS_KEY, JSON.stringify(fState)); }
+  function fFmt(n) { return '₺' + Math.round(n).toLocaleString('tr-TR'); }
+
+  function currentMonthKey() {
+    var n = new Date();
+    return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0');
+  }
+
+  // ── SABIT GİDER OTOMATİK AKTARIM ─────────────────────────────────────────
+  function autoCarrySabit() {
+    var thisMonth = currentMonthKey();
+    var sabitler = fState.giderler.filter(function(g) { return g.sabit; });
+    sabitler.forEach(function(s) {
+      // Bu aya ait instance var mı?
+      var existing = fState.giderler.find(function(g) {
+        return g.sabit && g.sabitRef === s.id && g.ay === thisMonth;
+      });
+      // Eğer bu kopyayı biz oluşturduk (orijinal değil) ve ay geçmişse skip
+      if (s.ay === thisMonth) return; // zaten bu ay
+      if (existing) return;           // zaten kopyalandı
+      // Yeni instance ekle
+      fState.giderler.push({
+        id: Date.now() + Math.random(),
+        ad: s.ad,
+        tutar: s.tutar,
+        kat: s.kat,
+        sabit: true,
+        sabitRef: s.id,
+        ay: thisMonth,
+        tarih: new Date().toLocaleDateString('tr-TR')
+      });
+    });
+    fSave();
+  }
+
+  // ── SEKME GEÇİŞİ ──────────────────────────────────────────────────────────
+  window.finTab = function(id) {
+    ['ozet','gider','borc','portfoy','kkfaiz'].forEach(function(p) {
+      var panel = document.getElementById('finpanel-' + p);
+      if (panel) panel.style.display = p === id ? '' : 'none';
+      var btn = document.getElementById('fintab-' + p);
+      if (btn) btn.classList.toggle('fin-tab-active', p === id);
+    });
+    if (id === 'ozet')   { finPeriodDegis(); finHesaplaOzet(); }
+    if (id === 'gider')  { autoCarrySabit(); fRenderGider(); }
+    if (id === 'borc')   { fRenderBorc(); }
+    if (id === 'kkfaiz') { kkInit(); }
+  };
+
+  // ── GİGTRACK'TEN GELİR OKU ────────────────────────────────────────────────
+  function fGigGelirByPeriod(period) {
+    try {
+      var gigs = JSON.parse(localStorage.getItem('gigtrack_v3') || '[]');
+      var now = new Date();
+      var thisYear  = String(now.getFullYear());
+      var lastYear  = String(now.getFullYear() - 1);
+      var thisMonth = thisYear + '-' + String(now.getMonth()+1).padStart(2,'0');
+      var tryFee = function(g) {
+        var m = String(g.fee||'').replace(/,/g,'.').match(/(\d+\.?\d*)/);
+        return (m && (!g.currency || g.currency === 'TRY')) ? parseFloat(m[1]) : 0;
+      };
+      var filtered, total, months, info;
+      if (period === 'thismonth') {
+        filtered = gigs.filter(function(g) { return g.paid && (g.date||'').startsWith(thisMonth); });
+        total = filtered.reduce(function(s,g) { return s+tryFee(g); }, 0);
+        info = filtered.length + ' ödenmiş iş · ' + thisMonth;
+        return { total: total, info: info };
+      }
+      if (period === 'thisyear') {
+        filtered = gigs.filter(function(g) { return g.paid && (g.date||'').startsWith(thisYear); });
+        total = filtered.reduce(function(s,g) { return s+tryFee(g); }, 0);
+        months = new Set(filtered.map(function(g) { return (g.date||'').slice(0,7); })).size || 1;
+        info = filtered.length + ' iş · ' + thisYear + ' · ' + months + ' ay ortalaması';
+        return { total: total/months, info: info };
+      }
+      if (period === 'lastyear') {
+        filtered = gigs.filter(function(g) { return g.paid && (g.date||'').startsWith(lastYear); });
+        total = filtered.reduce(function(s,g) { return s+tryFee(g); }, 0);
+        months = new Set(filtered.map(function(g) { return (g.date||'').slice(0,7); })).size || 1;
+        info = filtered.length + ' iş · ' + lastYear + ' · ' + months + ' ay ortalaması';
+        return { total: total/months, info: info };
+      }
+      if (period === 'allpaid') {
+        filtered = gigs.filter(function(g) { return g.paid; });
+        total = filtered.reduce(function(s,g) { return s+tryFee(g); }, 0);
+        months = new Set(filtered.map(function(g) { return (g.date||'').slice(0,7); })).size || 1;
+        info = filtered.length + ' ödenmiş iş · tüm zamanlar · ' + months + ' ay';
+        return { total: total/months, info: info };
+      }
+      return { total: 0, info: '' };
+    } catch(e) { return { total: 0, info: '' }; }
+  }
+
+  window.finPeriodDegis = function() {
+    var period = document.getElementById('fin-period') && document.getElementById('fin-period').value;
+    if (!period) return;
+    var infoEl = document.getElementById('fin-giginfo');
+    if (period === 'manual') {
+      if (infoEl) infoEl.textContent = 'Geliri kendiniz girin.';
+      var inp = document.getElementById('fin-gelir');
+      if (inp) inp.value = fState.gelir || '';
+      finHesaplaOzet();
+      return;
+    }
+    var res = fGigGelirByPeriod(period);
+    if (infoEl) infoEl.textContent = res.info ? ('GigTrack: ' + res.info) : 'Bu dönemde ödenmiş TRY iş bulunamadı.';
+    var inp2 = document.getElementById('fin-gelir');
+    if (inp2) {
+      inp2.value = res.total > 0 ? Math.round(res.total) : '';
+    }
+    finHesaplaOzet();
+  };
+
+  // ── ÖZET HESAPLAMA ─────────────────────────────────────────────────────────
+  window.finHesaplaOzet = function() {
+    var gelir = parseFloat(document.getElementById('fin-gelir') && document.getElementById('fin-gelir').value) || 0;
+    var sistem = document.getElementById('fin-sistem') && document.getElementById('fin-sistem').value || '503020';
+    fState.gelir = gelir; fState.sistem = sistem; fSave();
+
+    var sonucEl = document.getElementById('fin-ozet-sonuc');
+    var emptyEl = document.getElementById('fin-ozet-empty');
+    if (!gelir) {
+      if (sonucEl) sonucEl.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = '';
+      return;
+    }
+    if (sonucEl) sonucEl.style.display = '';
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    // Gider toplamları (bu ay)
+    var thisMonth = currentMonthKey();
+    var sabitTopla = 0, degiskenTopla = 0;
+    fState.giderler.forEach(function(g) {
+      if ((g.ay || '') !== thisMonth) return;
+      if (g.sabit) sabitTopla += g.tutar;
+      else degiskenTopla += g.tutar;
+    });
+
+    // Bu aydaki borç ödemeleri
+    var borcOdemeTopla = 0;
+    fState.borclar.forEach(function(b) {
+      (b.gecmis || []).forEach(function(p) {
+        if (p.ay === thisMonth) borcOdemeTopla += p.odeme;
+      });
+    });
+
+    var toplamGider = sabitTopla + degiskenTopla + borcOdemeTopla;
+    var kalan = gelir - toplamGider;
+
+    var elG = document.getElementById('ozet-gelir');
+    var elS = document.getElementById('ozet-sabit');
+    var elD = document.getElementById('ozet-degisken');
+    var elB = document.getElementById('ozet-borc-odeme');
+    var elK = document.getElementById('ozet-kalan');
+
+    if (elG) elG.textContent = fFmt(gelir);
+    if (elS) elS.textContent = sabitTopla   > 0 ? '- ' + fFmt(sabitTopla)    : fFmt(0);
+    if (elD) elD.textContent = degiskenTopla > 0 ? '- ' + fFmt(degiskenTopla) : fFmt(0);
+    if (elB) elB.textContent = borcOdemeTopla > 0 ? '- ' + fFmt(borcOdemeTopla) : fFmt(0);
+    if (elK) {
+      elK.textContent = fFmt(kalan);
+      elK.style.color = kalan >= 0 ? '#4ade80' : '#ff6b6b';
+    }
+
+    // Bütçe kategorileri
+    var cats;
+    if (sistem === '603010') {
+      cats = [
+        {l:'İhtiyaçlar', p:60, c:'#FFB300', d:'Kira, fatura, market, ulaşım'},
+        {l:'İstekler',   p:30, c:'#60a5fa', d:'Eğlence, yemek dışı, alışveriş'},
+        {l:'Birikim',    p:10, c:'#4ade80', d:'Tasarruf ve yatırım'},
+      ];
+    } else if (sistem === 'zbb') {
+      cats = [
+        {l:'İhtiyaçlar', p:55, c:'#FFB300', d:'Kira, fatura, market, ulaşım'},
+        {l:'İstekler',   p:25, c:'#60a5fa', d:'Eğlence, yemek dışı'},
+        {l:'Birikim',    p:20, c:'#4ade80', d:'Tasarruf — Her kuruş görevli'},
+      ];
+    } else {
+      cats = [
+        {l:'İhtiyaçlar', p:50, c:'#FFB300', d:'Kira, fatura, market, ulaşım'},
+        {l:'İstekler',   p:30, c:'#60a5fa', d:'Eğlence, yemek dışı, alışveriş'},
+        {l:'Birikim',    p:20, c:'#4ade80', d:'Tasarruf ve yatırım'},
+      ];
+    }
+
+    // Gerçekleşen dağılım: sabit+değişken → ihtiyaç/istek/birikim kategorilerine say
+    var katToplam = {ihtiyac:0, istek:0, birikim:0, borc:0};
+    fState.giderler.forEach(function(g) {
+      if ((g.ay||'') !== thisMonth) return;
+      katToplam[g.kat] = (katToplam[g.kat]||0) + g.tutar;
+    });
+    katToplam.borc += borcOdemeTopla; // borç ödemelerini de say
+
+    var ihtiyacGercek = (katToplam.ihtiyac||0) + (katToplam.borc||0);
+    var istekGercek   = katToplam.istek||0;
+    var birikimGercek = katToplam.birikim||0;
+    var gercekler     = [ihtiyacGercek, istekGercek, birikimGercek];
+
+    var hedefBarsEl = document.getElementById('ozet-hedef-bars');
+    if (hedefBarsEl) {
+      hedefBarsEl.innerHTML = cats.map(function(c, i) {
+        var hedef = gelir * c.p / 100;
+        var gercek = gercekler[i] || 0;
+        var pct = Math.min(100, (gercek / hedef * 100)).toFixed(0);
+        var arti = gercek > hedef;
+        var statusColor = arti ? '#ff6b6b' : '#4ade80';
+        var statusIcon  = arti ? '⚠️' : '✓';
+        return '<div style="margin-bottom:14px;">' +
+          '<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">' +
+            '<span style="font-size:13px;font-weight:600;">' + c.l + '</span>' +
+            '<span style="font-size:11px;color:var(--text-3);">' + statusIcon + ' ' + fFmt(gercek) + ' / ' + fFmt(hedef) + ' (%' + c.p + ')</span>' +
+          '</div>' +
+          '<div style="width:100%;height:7px;background:var(--surface-2);border-radius:4px;overflow:hidden;">' +
+            '<div style="height:7px;border-radius:4px;width:' + Math.min(pct,100) + '%;background:' + (arti ? '#ff6b6b' : c.c) + ';transition:width 0.4s;"></div>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--text-3);margin-top:3px;">' + c.d + '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    // Acil durum fonu
+    var ihtiyacHedef = gelir * cats[0].p / 100;
+    var acilMin = document.getElementById('fin-acil-min');
+    var acilMax = document.getElementById('fin-acil-max');
+    if (acilMin) acilMin.textContent = fFmt(ihtiyacHedef * 3);
+    if (acilMax) acilMax.textContent = fFmt(ihtiyacHedef * 6);
+  };
+
+  // Eski compat alias
+  window.finHesaplaButce = window.finHesaplaOzet;
+
+  // ── GİDERLER ──────────────────────────────────────────────────────────────
+  window.finToggleSabit = function() {
+    sabitToggleOn = !sabitToggleOn;
+    var tog = document.getElementById('fin-sabit-toggle');
+    if (tog) tog.classList.toggle('on', sabitToggleOn);
+  };
+
+  window.finGiderEkle = function() {
+    var ad    = document.getElementById('fin-gad').value.trim();
+    var tutar = parseFloat(document.getElementById('fin-gtutar').value);
+    var kat   = document.getElementById('fin-gkat').value;
+    if (!ad || !tutar) return;
+
+    var thisMonth = currentMonthKey();
+    var id = Date.now();
+    var entry = {
+      id: id,
+      ad: ad,
+      tutar: tutar,
+      kat: kat,
+      sabit: sabitToggleOn,
+      ay: thisMonth,
+      tarih: new Date().toLocaleDateString('tr-TR')
+    };
+    fState.giderler.push(entry);
+    fSave();
+
+    document.getElementById('fin-gad').value = '';
+    document.getElementById('fin-gtutar').value = '';
+    sabitToggleOn = false;
+    var tog = document.getElementById('fin-sabit-toggle');
+    if (tog) tog.classList.remove('on');
+
+    fRenderGider();
+    finHesaplaOzet();
+  };
+
+  window.finGiderSil = function(id, tipSabit) {
+    if (tipSabit) {
+      // Sabit gider: sadece bu ay kaldır mı yoksa tamamen mi?
+      var g = fState.giderler.find(function(x) { return x.id === id; });
+      if (g && g.ay !== currentMonthKey()) {
+        // template orijinal → tamamen sil
+        fState.giderler = fState.giderler.filter(function(x) { return x.id !== id && x.sabitRef !== id; });
+      } else {
+        // Bu ay siliyoruz ama template kalmalı mı? Hepsi birlikte sil
+        fState.giderler = fState.giderler.filter(function(x) { return x.id !== id; });
+      }
+    } else {
+      fState.giderler = fState.giderler.filter(function(g) { return g.id !== id; });
+    }
+    fSave(); fRenderGider(); finHesaplaOzet();
+  };
+
+  function fRenderGider() {
+    var thisMonth = currentMonthKey();
+    var list = fState.giderler.filter(function(g) { return (g.ay||currentMonthKey()) === thisMonth; });
+
+    var sabitList = list.filter(function(g) { return g.sabit; });
+    var degList   = list.filter(function(g) { return !g.sabit; });
+
+    var emptyEl   = document.getElementById('fin-gider-empty');
+    var ozetEl    = document.getElementById('fin-gider-ozet');
+    var sabitBol  = document.getElementById('fin-sabit-bolum');
+    var degBol    = document.getElementById('fin-degisken-bolum');
+
+    if (!list.length) {
+      if (emptyEl) emptyEl.style.display = '';
+      if (ozetEl) ozetEl.style.display = 'none';
+      if (sabitBol) sabitBol.style.display = 'none';
+      if (degBol)   degBol.style.display   = 'none';
+      return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (ozetEl)  ozetEl.style.display  = '';
+
+    var toplam = list.reduce(function(s,g) { return s+g.tutar; }, 0);
+    var gelir = fState.gelir || 0;
+    var kalan = gelir - toplam;
+
+    var tplEl = document.getElementById('fin-gtoplam');
+    var kalEl = document.getElementById('fin-gkalan');
+    if (tplEl) tplEl.textContent = fFmt(toplam);
+    if (kalEl) {
+      kalEl.textContent = gelir ? fFmt(kalan) : '—';
+      kalEl.style.color = kalan >= 0 ? '#4ade80' : '#ff6b6b';
+    }
+
+    var KL = {ihtiyac:'İhtiyaç', istek:'İstek', birikim:'Birikim', borc:'Borç Öd.'};
+    var KC = {ihtiyac:'#FFB300', istek:'#60a5fa', birikim:'#4ade80', borc:'#ff6b6b'};
+    var sums = {};
+    list.forEach(function(g) { sums[g.kat] = (sums[g.kat]||0) + g.tutar; });
+    var barsEl = document.getElementById('fin-gkat-bars');
+    if (barsEl) {
+      barsEl.innerHTML = Object.keys(sums).map(function(k) {
+        var pct = (sums[k]/toplam*100).toFixed(0);
+        return '<div class="fin-bar-wrap">' +
+          '<div class="fin-bar-row">' +
+            '<span style="font-size:12px;color:var(--text-2);">' + (KL[k]||k) + '</span>' +
+            '<span style="font-size:12px;font-weight:600;color:' + KC[k] + ';">' + fFmt(sums[k]) + ' <span style="color:var(--text-3);font-weight:400;">(' + pct + '%)</span></span>' +
+          '</div>' +
+          '<div class="fin-bar-bg"><div class="fin-bar-fill" style="width:' + pct + '%;background:' + KC[k] + ';"></div></div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderGiderCard(g) {
+      return '<div class="fin-item">' +
+        '<div class="fin-item-info">' +
+          '<div class="fin-item-title">' + g.ad + (g.sabit ? ' <span style="font-size:10px;padding:1px 5px;background:rgba(255,179,0,0.15);color:var(--accent);border-radius:4px;">📌</span>' : '') + '</div>' +
+          '<div class="fin-item-sub">' + (KL[g.kat]||g.kat) + ' · ' + g.tarih + '</div>' +
+        '</div>' +
+        '<span style="font-size:14px;font-weight:600;color:' + (KC[g.kat]||'#fff') + ';">' + fFmt(g.tutar) + '</span>' +
+        '<button class="fin-btn-danger" onclick="finGiderSil(' + g.id + ',' + (g.sabit ? 'true' : 'false') + ')" aria-label="Sil">×</button>' +
+      '</div>';
+    }
+
+    if (sabitBol && sabitList.length) {
+      sabitBol.style.display = '';
+      var sl = document.getElementById('fin-sabit-liste');
+      if (sl) sl.innerHTML = [...sabitList].reverse().map(renderGiderCard).join('');
+    } else if (sabitBol) sabitBol.style.display = 'none';
+
+    if (degBol && degList.length) {
+      degBol.style.display = '';
+      var dl = document.getElementById('fin-degisken-liste');
+      if (dl) dl.innerHTML = [...degList].reverse().map(renderGiderCard).join('');
+    } else if (degBol) degBol.style.display = 'none';
+  }
+
+  // ── BORÇLAR ───────────────────────────────────────────────────────────────
+  var KB_KEYWORDS = ['bank','banka','bankası','garanti','akbank','ziraat','ish','iş','yapi','yapı','vakif','vakıf','halk','teb','ing','bnp','qnb','deniz','sekerbank','şeker','fibabanka','albaraka','kuveyt','icbc','odeabank','mng','burgan','credit','kredi','loan','kobi','konut','ihtiyac','ihtiyaç','taşıt','tasit','ticari'];
+
+  window.finDetectBanka = function() {
+    var val = (document.getElementById('fin-bad').value||'').toLowerCase();
+    var isBank = KB_KEYWORDS.some(function(k) { return val.indexOf(k) !== -1; });
+    var badge = document.getElementById('fin-banka-badge');
+    if (badge) badge.style.display = isBank ? '' : 'none';
+  };
+
+  window.finBorcEkle = function() {
+    var ad    = document.getElementById('fin-bad').value.trim();
+    var tutar = parseFloat(document.getElementById('fin-btutar').value);
+    var faiz  = parseFloat(document.getElementById('fin-bfaiz').value) || 0;
+    if (!ad || !tutar) return;
+    fState.borclar.push({ id: Date.now(), ad: ad, tutar: tutar, faiz: faiz, odenen: 0, kapali: false, gecmis: [] });
+    fSave();
+    ['fin-bad','fin-btutar','fin-bfaiz'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    var badge = document.getElementById('fin-banka-badge');
+    if (badge) badge.style.display = 'none';
+    fRenderBorc();
+  };
+
+  window.finTopluEkle = function() {
+    var text = document.getElementById('fin-toplu').value.trim();
+    if (!text) return;
+    var eklendi = 0;
+    text.split('\n').forEach(function(satir) {
+      var parts = satir.split(',').map(function(s) { return s.trim(); });
+      if (parts.length < 2) return;
+      var tutar = parseFloat(parts[1].replace(/\./g,'').replace(',','.'));
+      var faiz  = parseFloat((parts[2]||'0').replace(',','.')) || 0;
+      if (!parts[0] || !tutar) return;
+      fState.borclar.push({ id: Date.now()+eklendi, ad: parts[0], tutar: tutar, faiz: faiz, odenen: 0, kapali: false, gecmis: [] });
+      eklendi++;
+    });
+    if (eklendi > 0) {
+      fSave();
+      document.getElementById('fin-toplu').value = '';
+      fRenderBorc();
+    }
+  };
+
+  window.finBorcOde = function(id) {
+    var b = fState.borclar.find(function(x) { return x.id === id; });
+    if (!b) return;
+    var aylikFaiz = b.tutar * (b.faiz / 100);
+    var msg = 'Bu ay ne kadar ödediniz? (₺)\n\nMevcut bakiye: ' + fFmt(b.tutar) + '\nBu aya faiz: ' + fFmt(aylikFaiz);
+    var val = prompt(msg);
+    if (!val) return;
+    var odeme = parseFloat(val.replace(',','.'));
+    if (!odeme || odeme <= 0) return;
+    var yeniBakiye = Math.max(0, b.tutar + aylikFaiz - odeme);
+    var tarih = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'short',year:'numeric'});
+    var thisMonth = currentMonthKey();
+    fState.borclar = fState.borclar.map(function(x) {
+      if (x.id !== id) return x;
+      var g = (x.gecmis||[]).concat([{ ay: thisMonth, tarih: tarih, odeme: odeme, faiz: aylikFaiz, sonra: yeniBakiye }]);
+      return Object.assign({}, x, { tutar: yeniBakiye, odenen: (x.odenen||0)+odeme, gecmis: g });
+    });
+    fSave(); fRenderBorc(); finHesaplaOzet();
+  };
+
+  window.finBorcKapat = function(id) {
+    fState.borclar = fState.borclar.map(function(x) {
+      if (x.id !== id) return x;
+      return Object.assign({}, x, { kapali: !x.kapali });
+    });
+    fSave(); fRenderBorc(); finHesaplaOzet();
+  };
+
+  window.finBorcSil = function(id) {
+    fState.borclar = fState.borclar.filter(function(b) { return b.id !== id; });
+    fSave(); fRenderBorc(); finHesaplaOzet();
+  };
+
+  window.finStrateji = function(s) {
+    fState.borc_strat = s; fSave();
+    var av = document.getElementById('fin-strat-avalanche');
+    var sn = document.getElementById('fin-strat-snowball');
+    if (av) av.classList.toggle('fin-strat-active', s==='avalanche');
+    if (sn) sn.classList.toggle('fin-strat-active', s==='snowball');
+    fRenderBorc();
+  };
+
+  function fRenderBorc() {
+    var list     = fState.borclar;
+    var stratEl  = document.getElementById('fin-borc-strateji');
+    var emptyEl  = document.getElementById('fin-borc-empty');
+    var listeEl  = document.getElementById('fin-borc-liste');
+    if (!list.length) {
+      if (stratEl) stratEl.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = '';
+      if (listeEl) listeEl.innerHTML = '';
+      return;
+    }
+    if (stratEl) stratEl.style.display = '';
+    if (emptyEl) emptyEl.style.display = 'none';
+
+    var actif  = list.filter(function(b) { return !b.kapali; });
+    var kapali = list.filter(function(b) { return  b.kapali; });
+    var toplam     = actif.reduce(function(s,b) { return s+b.tutar; }, 0);
+    var faizToplam = actif.reduce(function(s,b) { return s+b.tutar*(b.faiz/100); }, 0);
+
+    var thisMonth = currentMonthKey();
+    var ayOdeme   = list.reduce(function(s,b) {
+      return s + (b.gecmis||[]).filter(function(p) { return p.ay === thisMonth; })
+                                .reduce(function(ss,p) { return ss+p.odeme; }, 0);
+    }, 0);
+
+    var tEl = document.getElementById('fin-borc-toplam');
+    var fEl = document.getElementById('fin-borc-faiz-toplam');
+    var oEl = document.getElementById('fin-borc-ay-odeme');
+    if (tEl) tEl.textContent = fFmt(toplam);
+    if (fEl) fEl.textContent = fFmt(faizToplam);
+    if (oEl) oEl.textContent = fFmt(ayOdeme);
+
+    var sorted = actif.slice().sort(function(a,b) {
+      return fState.borc_strat === 'avalanche' ? b.faiz - a.faiz : a.tutar - b.tutar;
+    });
+
+    function borcCard(b, i, isKapali) {
+      var done = b.tutar <= 0 || b.kapali;
+      var baslangic = (b.odenen||0) + b.tutar;
+      var pct = baslangic > 0 ? Math.min(100, (b.odenen||0)/baslangic*100) : 100;
+      var aylikFaiz = b.tutar * (b.faiz/100);
+      var fillColor = done ? '#4ade80' : (pct > 50 ? '#f0c040' : '#ff6b6b');
+
+      var gecmis = (b.gecmis||[]).slice(-3).reverse();
+      var gecmisHtml = gecmis.length
+        ? '<div style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;">' +
+            '<p style="font-size:11px;color:var(--text-3);margin-bottom:6px;">Son Ödemeler</p>' +
+            gecmis.map(function(g) {
+              return '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">' +
+                '<span style="color:var(--text-3);">' + g.tarih + '</span>' +
+                '<span style="color:#4ade80;">-' + fFmt(g.odeme) + '</span>' +
+                '<span style="color:#f0c040;">+faiz ' + fFmt(g.faiz) + '</span>' +
+                '<span style="color:var(--text-2);">' + fFmt(g.sonra) + '</span>' +
+              '</div>';
+            }).join('') +
+          '</div>'
+        : '';
+
+      var kapatLabel = b.kapali ? '↩ Yeniden Aç' : '✓ Ödendi';
+      var kapatStyle = b.kapali ? 'background:rgba(255,255,255,0.05);color:var(--text-2);' : 'background:rgba(74,222,128,0.1);color:#4ade80;';
+
+      return '<div class="fin-card" style="' + (isKapali ? 'opacity:0.55;' : '') + '">' +
+        '<div style="display:flex;align-items:flex-start;gap:10px;">' +
+          (isKapali ? '' : '<span style="width:22px;height:22px;border-radius:50%;background:var(--surface-2);color:var(--text-3);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">' + (i+1) + '</span>') +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">' +
+              '<span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + b.ad + (done ? ' <span style="color:#4ade80;font-size:11px;">✓</span>' : '') + '</span>' +
+              '<button class="fin-btn-danger" onclick="finBorcSil(' + b.id + ')" aria-label="Sil">×</button>' +
+            '</div>' +
+            '<div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;">' +
+              '<span style="font-size:12px;color:var(--text-3);">Kalan: <span style="color:#ff6b6b;font-weight:600;">' + fFmt(b.tutar) + '</span></span>' +
+              (b.faiz ? '<span style="font-size:12px;color:var(--text-3);">Faiz: <span style="font-weight:600;color:#f0c040;">' + b.faiz + '%/ay</span></span>' : '') +
+              (b.faiz ? '<span style="font-size:12px;color:var(--text-3);">Bu ay: <span style="font-weight:600;color:#f0c040;">' + fFmt(aylikFaiz) + '</span></span>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div style="margin-top:10px;">' +
+          '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+            '<span style="font-size:11px;color:var(--text-3);">Ödenen ilerleme</span>' +
+            '<span style="font-size:11px;color:var(--text-3);">' + pct.toFixed(0) + '%</span>' +
+          '</div>' +
+          '<div class="fin-progress-bg"><div class="fin-progress-fill" style="width:' + pct + '%;background:' + fillColor + ';"></div></div>' +
+        '</div>' +
+        gecmisHtml +
+        '<div style="display:flex;gap:8px;margin-top:10px;">' +
+          (!done ? '<button class="fin-btn-ghost" onclick="finBorcOde(' + b.id + ')" style="flex:1;">Bu Ay Ödeme Yaptım</button>' : '') +
+          '<button class="fin-btn-ghost" onclick="finBorcKapat(' + b.id + ')" style="' + (done ? 'flex:1;' : '') + kapatStyle + '">' + kapatLabel + '</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    var html = sorted.map(function(b, i) { return borcCard(b, i, false); }).join('');
+    if (kapali.length) {
+      html += '<div style="display:flex;align-items:center;gap:8px;margin:12px 0 8px;">' +
+        '<span style="font-size:11px;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:1px;">✅ Kapatılanlar</span>' +
+        '<div style="flex:1;height:1px;background:var(--border);"></div></div>';
+      html += kapali.map(function(b, i) { return borcCard(b, i, true); }).join('');
+    }
+    if (listeEl) listeEl.innerHTML = html;
+  }
+
+  // ── PORTFÖY ───────────────────────────────────────────────────────────────
+  var FIN_MODELS = {
+    enflasyon:   {altin:25, hisse:45, nakit:30},
+    muhafazakar: {altin:30, hisse:20, nakit:50},
+    agresif:     {altin:20, hisse:70, nakit:10},
+  };
+
+  window.finModelDegis = function() {
+    var m = document.getElementById('fin-pmodel').value;
+    var ozel = document.getElementById('fin-pözel');
+    if (ozel) ozel.style.display = m === 'ozel' ? '' : 'none';
+    finHesaplaPortfoy();
+  };
+
+  window.finHesaplaPortfoy = function() {
+    var toplam = parseFloat(document.getElementById('fin-ptoplam').value) || 0;
+    var model  = document.getElementById('fin-pmodel').value;
+    var pcts;
+    if (model === 'ozel') {
+      var a = parseFloat(document.getElementById('fin-paltin').value) || 0;
+      var h = parseFloat(document.getElementById('fin-phisse').value) || 0;
+      var n = parseFloat(document.getElementById('fin-pnakit').value) || 0;
+      var uyari = document.getElementById('fin-pozel-uyari');
+      if (uyari) uyari.style.display = Math.abs(a+h+n-100) > 0.5 ? '' : 'none';
+      pcts = {altin:a, hisse:h, nakit:n};
+    } else {
+      pcts = FIN_MODELS[model];
+    }
+    var sonuc = document.getElementById('fin-portfoy-sonuc');
+    var empty = document.getElementById('fin-portfoy-empty');
+    if (!toplam) {
+      if (sonuc) sonuc.style.display = 'none';
+      if (empty) empty.style.display = '';
+      return;
+    }
+    if (sonuc) sonuc.style.display = '';
+    if (empty) empty.style.display = 'none';
+    var cats = [
+      {l:'Altın & Emtia',          k:'altin', c:'#f0c040', d:'Belirsizliklere karşı sigorta'},
+      {l:'Hisse & Yatırım Fonları',k:'hisse', c:'#4ade80', d:'Reel getiri potansiyeli'},
+      {l:'Nakit & Vadeli Mevduat', k:'nakit', c:'#60a5fa', d:'Acil nakit akışı'},
+    ];
+    var cardsEl = document.getElementById('fin-portfoy-cards');
+    if (cardsEl) {
+      cardsEl.innerHTML = cats.map(function(c) {
+        var t   = toplam * pcts[c.k] / 100;
+        var pct = pcts[c.k];
+        return '<div class="fin-card">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">' +
+            '<span style="font-size:14px;font-weight:600;">' + c.l + '</span>' +
+            '<span style="font-size:17px;font-weight:700;color:' + c.c + ';">' + fFmt(t) + '</span>' +
+          '</div>' +
+          '<div class="fin-bar-bg"><div class="fin-bar-fill" style="width:' + pct + '%;background:' + c.c + ';"></div></div>' +
+          '<div style="display:flex;justify-content:space-between;margin-top:6px;">' +
+            '<span style="font-size:12px;color:var(--text-3);">' + c.d + '</span>' +
+            '<span style="font-size:12px;color:var(--text-3);">%' + pct + '</span>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+  };
+
+  // ── KK FAİZ SİMÜLATÖRÜ ──────────────────────────────────────────────────
+  var KK_ORANLAR = [
+    { max: 30000,    akdi: 3.25, gecikme: 3.55, label: '< 30.000 TL' },
+    { max: 180000,   akdi: 3.75, gecikme: 4.05, label: '30.000 – 180.000 TL' },
+    { max: Infinity, akdi: 4.25, gecikme: 4.55, label: '> 180.000 TL' },
+  ];
+
+  function kkInit() {
+    var fields = [
+      ['oran-a1', KK_ORANLAR[0].akdi],  ['oran-g1', KK_ORANLAR[0].gecikme],
+      ['oran-a2', KK_ORANLAR[1].akdi],  ['oran-g2', KK_ORANLAR[1].gecikme],
+      ['oran-a3', KK_ORANLAR[2].akdi],  ['oran-g3', KK_ORANLAR[2].gecikme],
+    ];
+    fields.forEach(function(f) {
+      var el = document.getElementById(f[0]);
+      if (el && !el.value) el.value = f[1];
+    });
+  }
+
+  window.kkOranGoster = function() {
+    var el = document.getElementById('kk-oran-form');
+    if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+    kkInit();
+  };
+
+  function kkOranGuncelle() {
+    var get = function(id) { var el=document.getElementById(id); return el ? (parseFloat(el.value)||KK_ORANLAR[0].akdi) : KK_ORANLAR[0].akdi; };
+    KK_ORANLAR[0].akdi=get('oran-a1'); KK_ORANLAR[0].gecikme=get('oran-g1');
+    KK_ORANLAR[1].akdi=get('oran-a2'); KK_ORANLAR[1].gecikme=get('oran-g2');
+    KK_ORANLAR[2].akdi=get('oran-a3'); KK_ORANLAR[2].gecikme=get('oran-g3');
+  }
+
+  window.kkHesapla = function() {
+    kkOranGuncelle();
+    var limit = parseFloat(document.getElementById('kk-limit').value)  || 0;
+    var borc  = parseFloat(document.getElementById('kk-borc').value)   || 0;
+    var odeme = parseFloat(document.getElementById('kk-odeme').value)  || 0;
+    var paramsEl=document.getElementById('kk-params');
+    var hesapEl =document.getElementById('kk-hesap');
+    var sonucEl =document.getElementById('kk-sonuc');
+    if (!limit || !borc) {
+      if (paramsEl) paramsEl.style.display='none';
+      if (hesapEl)  hesapEl.style.display='none';
+      if (sonucEl)  sonucEl.style.display='none';
+      return;
+    }
+    var kademe = KK_ORANLAR[0];
+    for (var i=0;i<KK_ORANLAR.length;i++) { if (borc<=KK_ORANLAR[i].max){kademe=KK_ORANLAR[i];break;} }
+    var akdiOran=kademe.akdi, gecikmeOran=kademe.gecikme;
+    var asgariYuzde = limit<=50000 ? 20 : 40;
+    var asgariTutar = borc*asgariYuzde/100;
+    var senaryo, senaryoLabel, senaryoColor, netFaiz=0, detaylar=[];
+    if (odeme>=borc) {
+      senaryo='A'; senaryoLabel='A — Tam Ödeme (Faiz Yok)'; senaryoColor='#4ade80';
+      detaylar.push({aciklama:'Borcun tamamı ödendi.',tutar:0,renk:'#4ade80'});
+    } else if (odeme>=asgariTutar) {
+      senaryo='B'; senaryoLabel='B — Asgari Ödendi (Akdi Faiz)'; senaryoColor='#f0c040';
+      var kalanBakiye=borc-odeme, akdiFaiz=kalanBakiye*akdiOran/100;
+      netFaiz=akdiFaiz;
+      detaylar.push({aciklama:'Kalan ('+fFmt(kalanBakiye)+') × Akdi %'+akdiOran,tutar:akdiFaiz,renk:'#f0c040'});
+    } else {
+      senaryo='C'; senaryoLabel='C — Asgari Altı (Gecikme+Akdi)'; senaryoColor='#ff6b6b';
+      var odenMeyenAsgari=asgariTutar-odeme, gecikFaiz=odenMeyenAsgari*gecikmeOran/100;
+      var akdiKisim=borc-asgariTutar, akdiFaizC=akdiKisim*akdiOran/100;
+      netFaiz=gecikFaiz+akdiFaizC;
+      detaylar.push({aciklama:'Ödenmeyen asgari ('+fFmt(odenMeyenAsgari)+') × Gecikme %'+gecikmeOran,tutar:gecikFaiz,renk:'#ff6b6b'});
+      detaylar.push({aciklama:'Kalan borç ('+fFmt(akdiKisim)+') × Akdi %'+akdiOran,tutar:akdiFaizC,renk:'#f0c040'});
+    }
+    var kkdf=netFaiz*0.15, bsmv=netFaiz*0.15, toplam=netFaiz+kkdf+bsmv;
+    if (paramsEl) {
+      paramsEl.style.display='';
+      document.getElementById('kk-kademe').textContent=kademe.label;
+      document.getElementById('kk-akdi-oran').textContent='%'+akdiOran+'/ay';
+      document.getElementById('kk-gecikme-oran').textContent='%'+gecikmeOran+'/ay';
+      document.getElementById('kk-asgari-oran').textContent='%'+asgariYuzde;
+      document.getElementById('kk-asgari-tutar').textContent=fFmt(asgariTutar);
+      var senEl=document.getElementById('kk-senaryo');
+      senEl.textContent=senaryoLabel; senEl.style.color=senaryoColor;
+    }
+    if (hesapEl) {
+      hesapEl.style.display='';
+      document.getElementById('kk-hesap-detay').innerHTML=detaylar.map(function(d){
+        return '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">' +
+          '<span style="font-size:12px;color:var(--text-2);flex:1;">'+d.aciklama+'</span>' +
+          '<span style="font-size:13px;font-weight:700;color:'+d.renk+';white-space:nowrap;">'+fFmt(d.tutar)+'</span>' +
+        '</div>';
+      }).join('<div style="height:1px;background:rgba(255,255,255,0.04);margin:4px 0;"></div>');
+    }
+    if (sonucEl) {
+      sonucEl.style.display='';
+      if (senaryo==='A') {
+        document.getElementById('kk-net-faiz').textContent='₺0';
+        document.getElementById('kk-kkdf').textContent='₺0';
+        document.getElementById('kk-bsmv').textContent='₺0';
+        document.getElementById('kk-brut').textContent='₺0';
+        document.getElementById('kk-brut').style.color='#4ade80';
+      } else {
+        document.getElementById('kk-net-faiz').textContent=fFmt(netFaiz);
+        document.getElementById('kk-kkdf').textContent=fFmt(kkdf);
+        document.getElementById('kk-bsmv').textContent=fFmt(bsmv);
+        document.getElementById('kk-brut').textContent=fFmt(toplam);
+        document.getElementById('kk-brut').style.color='#ff6b6b';
+      }
+    }
+  };
+
+  // ── KREDİ BORCU HESAPLA & EKLE ────────────────────────────────────────────
+  window.kbDetect = function() {
+    var val=(document.getElementById('kb-ad').value||'').toLowerCase();
+    var isBank=KB_KEYWORDS.some(function(k){return val.indexOf(k)!==-1;});
+    document.getElementById('kb-badge').style.display=isBank?'':'none';
+    document.getElementById('kb-form').style.display=isBank?'':'none';
+    if (!isBank) document.getElementById('kb-sonuc').style.display='none';
+    if (isBank) kbHesapla();
+  };
+
+  window.kbHesapla = function() {
+    var ana=parseFloat(document.getElementById('kb-ana').value)||0;
+    var ode=parseFloat(document.getElementById('kb-odeme').value)||0;
+    var faiz=parseFloat(document.getElementById('kb-faiz').value)||0;
+    var sonucEl=document.getElementById('kb-sonuc');
+    if (!ana||!faiz){sonucEl.style.display='none';return;}
+    var kalan=Math.max(0,ana-ode);
+    var aylikFaiz=kalan*faiz/100;
+    var kkdf=aylikFaiz*0.15, bsmv=aylikFaiz*0.15;
+    var faizVergi=aylikFaiz+kkdf+bsmv;
+    var toplamKalan=kalan+faizVergi;
+    var rows=[
+      {label:'Ana Borç',val:fFmt(ana),color:'var(--text)'},
+      {label:'Ödenen',val:'− '+fFmt(ode),color:'#4ade80'},
+      {label:'Kalan Anapara',val:fFmt(kalan),color:'#ff6b6b'},
+      {label:'Aylık Faiz (%'+faiz+')',val:fFmt(aylikFaiz),color:'#f0c040'},
+      {label:'KKDF + BSMV',val:fFmt(kkdf+bsmv),color:'#f0c040'},
+      {label:'Sonraki Dönem Borç',val:fFmt(toplamKalan),color:'#ff6b6b',bold:true}
+    ];
+    document.getElementById('kb-sonuc-detay').innerHTML=rows.map(function(r,i){
+      var sep=i===4?'<div style="height:1px;background:rgba(255,255,255,0.08);margin:2px 0;"></div>':'';
+      return sep+'<div style="display:flex;justify-content:space-between;align-items:center;">'+
+        '<span style="font-size:'+(r.bold?'13':'12')+'px;color:var(--text-2);">'+r.label+'</span>'+
+        '<span style="font-size:'+(r.bold?'15':'13')+'px;font-weight:'+(r.bold?'800':'600')+';color:'+r.color+';">'+r.val+'</span>'+
+      '</div>';
+    }).join('');
+    sonucEl.style.display='';
+  };
+
+  window.kbBorcaEkle = function() {
+    var ad=document.getElementById('kb-ad').value.trim();
+    var kalan=Math.max(0,(parseFloat(document.getElementById('kb-ana').value)||0)-(parseFloat(document.getElementById('kb-odeme').value)||0));
+    var faiz=parseFloat(document.getElementById('kb-faiz').value)||0;
+    var kkdf=kalan*faiz/100*0.15, bsmv=kalan*faiz/100*0.15, aylikFaiz=kalan*faiz/100;
+    var toplamKalan=kalan+aylikFaiz+kkdf+bsmv;
+    if (!ad||!toplamKalan) return;
+    var mevcut=fState.borclar.find(function(b){return b.ad.toLowerCase()===ad.toLowerCase()&&b._kbKaynak;});
+    if (mevcut){mevcut.tutar=toplamKalan;mevcut.faiz=faiz;}
+    else {fState.borclar.push({id:Date.now(),ad:ad,tutar:toplamKalan,faiz:faiz,odenen:0,kapali:false,gecmis:[],_kbKaynak:true});}
+    fSave();
+    finTab('borc');
+    ['kb-ad','kb-ana','kb-odeme','kb-faiz'].forEach(function(id){document.getElementById(id).value='';});
+    document.getElementById('kb-badge').style.display='none';
+    document.getElementById('kb-form').style.display='none';
+    document.getElementById('kb-sonuc').style.display='none';
+  };
+
+  // ── SAYFA AÇILDIĞINDA RESTORE ─────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', function() {
+    if (fState.gelir) {
+      var inp = document.getElementById('fin-gelir');
+      if (inp) inp.value = fState.gelir;
+      var sistEl = document.getElementById('fin-sistem');
+      if (sistEl && fState.sistem) sistEl.value = fState.sistem;
+      finHesaplaOzet();
+    } else {
+      finPeriodDegis();
+    }
+    finStrateji(fState.borc_strat || 'avalanche');
+  });
+
+  // ── SWITCH TAB HOOK ───────────────────────────────────────────────────────
+  var _origSwitch = window.switchTab;
+  window.switchTab = function(tab) {
+    _origSwitch(tab);
+    if (tab === 'finans') {
+      finPeriodDegis();
+    }
+  };
+
+})();
+</script>
 </body>
 
 </html>
