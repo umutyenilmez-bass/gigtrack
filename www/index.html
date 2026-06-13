@@ -1708,6 +1708,9 @@
             <input class="fin-input" type="text" id="fin-bad" placeholder="Borç adı (örn: Garanti Kredi Kartı)" oninput="finDetectBanka()">
             <div id="fin-banka-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/KK algılandı</div>
             <div style="display:flex;gap:8px;margin-top:8px;">
+              <input class="fin-input" type="number" id="fin-blimit" placeholder="Kart Limiti (Ops." oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
               <input class="fin-input" type="number" id="fin-btutar" placeholder="Bakiye" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
               <select class="fin-select" id="fin-bkur" style="width:80px;" onchange="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')">
                 <option value="TL">₺ TL</option>
@@ -4565,6 +4568,19 @@
 
   function fSave() { localStorage.setItem(LS_KEY, JSON.stringify(fState)); }
   var KURLAR = { 'TL': 1, 'USD': 32.5, 'EUR': 35.0 };
+  fetch('https://open.er-api.com/v6/latest/TRY')
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data && data.rates) {
+        if (data.rates.USD) KURLAR.USD = 1 / data.rates.USD;
+        if (data.rates.EUR) KURLAR.EUR = 1 / data.rates.EUR;
+        console.log('GigTrack: Döviz kurları güncellendi.', KURLAR);
+        if (window.finHesaplaOzet) window.finHesaplaOzet();
+        if (window.fRenderBorc) window.fRenderBorc();
+      }
+    })
+    .catch(function(e) { console.log('GigTrack: Kur API hatası', e); });
+
   function toTL(tutar, kur) { return (tutar||0) * (KURLAR[kur||'TL'] || 1); }
 
   function fFmt(num, kur) {
@@ -5025,14 +5041,17 @@
     var kurEl = document.getElementById('fin-bkur');
     var kur   = kurEl ? kurEl.value : 'TL';
     if (!ad || !tutar) return;
-    // Asgari oran: KK için tutara göre otomatik, kredi için 0
-    var asgariPct = faiz > 0 ? (tutar > 50000 ? 40 : 20) : 0;
+    var limitEl = document.getElementById('fin-blimit');
+    var limit = limitEl ? parseFloat(limitEl.value) || 0 : 0;
+    var bDdkBaz = limit > 0 ? limit : tutar;
+    var asgariPct = parseFloat(document.getElementById('fin-basin').value);
+    if (isNaN(asgariPct)) asgariPct = faiz > 0 ? (bDdkBaz > 50000 ? 40 : 20) : 0;
     fState.borclar.push({
-      id: Date.now(), ad: ad, tutar: tutar, kur: kur, faiz: faiz,
+      limit: limit, id: Date.now(), ad: ad, tutar: tutar, kur: kur, faiz: faiz,
       asgariPct: asgariPct, odenen: 0, kapali: false, gecmis: []
     });
     fSave();
-    ['fin-bad','fin-btutar','fin-bfaiz'].forEach(function(id) {
+    ['fin-bad','fin-btutar','fin-blimit','fin-bfaiz','fin-basin'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.value = '';
     });
     ['fin-banka-badge','fin-bfaiz-badge'].forEach(function(id) {
@@ -5202,10 +5221,11 @@
               '<span style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + b.ad + (done ? ' <span style="color:#4ade80;font-size:11px;">✓</span>' : '') + '</span>' +
               '<button class="fin-btn-danger" onclick="finBorcSil(' + b.id + ')" aria-label="Sil">×</button>' +
             '</div>' +
-            '<div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;">' +
-              '<span style="font-size:12px;color:var(--text-3);">Kalan: <span style="color:#ff6b6b;font-weight:600;">' + fFmt(b.tutar, curr) + '</span></span>' +
-              (b.faiz ? '<span style="font-size:12px;color:var(--text-3);">Faiz: <span style="font-weight:600;color:#f0c040;">' + b.faiz + '%/ay → ' + fFmt(aylikFaiz, curr) + '</span></span>' : '') +
-              (b.asgariPct ? '<span style="font-size:12px;color:var(--text-3);">Asgari %' + b.asgariPct + ': <span style="font-weight:600;color:#60a5fa;">' + fFmt(Math.ceil(Math.max(b.tutar*b.asgariPct/100, aylikFaiz*1.3)), curr) + '</span></span>' : '') +
+            '<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;background:rgba(255,255,255,0.02);padding:6px;border-radius:6px;border:1px solid rgba(255,255,255,0.05);">' +
+              (b.limit ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Limit: <span style="color:var(--text-2);font-weight:600;">' + fFmt(b.limit, curr) + '</span></div>' : '') +
+              '<div style="font-size:11px;color:var(--text-3);width:45%;">Bakiye: <span style="color:#ff6b6b;font-weight:600;">' + fFmt(b.tutar, curr) + '</span></div>' +
+              (b.faiz ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Faiz (%'+b.faiz+'): <span style="color:#f0c040;font-weight:600;">' + fFmt(aylikFaiz, curr) + '</span></div>' : '') +
+              (b.asgariPct ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Asgari (%'+b.asgariPct+'): <span style="color:#60a5fa;font-weight:600;">' + fFmt(Math.ceil(Math.max(b.tutar*b.asgariPct/100, aylikFaiz*1.3)), curr) + '</span></div>' : '') +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -5545,6 +5565,28 @@
 
 })();
 </script>
+
+  <!-- BORÇ ÖDEME MODALİ -->
+  <div id="fin-odeme-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px;">
+    <div class="fin-card" style="width:100%;max-width:400px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
+        <h3 id="fin-modal-ad" style="margin:0;font-size:16px;color:var(--text-1);">Borç Ödeme</h3>
+        <button class="fin-btn-danger" onclick="document.getElementById('fin-odeme-modal').style.display='none'" style="background:transparent;color:var(--text-3);">✕</button>
+      </div>
+      <div id="fin-modal-info" style="font-size:13px;color:var(--text-2);margin-bottom:15px;line-height:1.6;background:var(--surface-3);padding:10px;border-radius:8px;"></div>
+      
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <button class="fin-btn-primary" id="fin-modal-btn-asgari" style="flex:1;background:rgba(96,165,250,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);">Asgari Öde</button>
+        <button class="fin-btn-primary" id="fin-modal-btn-tam" style="flex:1;background:rgba(74,222,128,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">Tamamını Kapat</button>
+      </div>
+      
+      <div style="display:flex;gap:8px;align-items:center;">
+        <input type="number" id="fin-modal-input" class="fin-input" style="flex:1;" placeholder="Farklı Tutar Gir">
+        <button class="fin-btn-primary" id="fin-modal-btn-ozel" style="width:80px;">Öde</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 
 </html>
