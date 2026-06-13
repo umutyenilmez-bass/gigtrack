@@ -4989,7 +4989,7 @@
       'Mevcut bakiye : ' + fFmt(b.tutar, curr),
     ];
     if (b.faiz) infoLines.push('Aylık faiz (%' + b.faiz + ') : ' + fFmt(aylikFaiz, curr) + ' (Eksik ödemede yansır)');
-    if (asgariTutar) infoLines.push('Asgari ödeme (%' + asgariPct + ') : ' + fFmt(asgariTutar, curr));
+    if (asgariTutar) infoLines.push('Asgari ödeme : ' + fFmt(asgariTutar, curr));
     infoLines.push('Tam kapatma   : ' + fFmt(tamOdeme, curr));
 
     var sym = curr==='USD' ? '$' : (curr==='EUR' ? '€' : '₺');
@@ -5126,7 +5126,7 @@
               (b.limit ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Limit: <span style="color:var(--text-2);font-weight:600;">' + fFmt(b.limit, curr) + '</span></div>' : '') +
               '<div style="font-size:11px;color:var(--text-3);width:45%;">Bakiye: <span style="color:#ff6b6b;font-weight:600;">' + fFmt(b.tutar, curr) + '</span></div>' +
               (b.faiz ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Faiz (%'+b.faiz+'): <span style="color:#f0c040;font-weight:600;">' + fFmt(aylikFaiz, curr) + '</span></div>' : '') +
-              (b.asgariPct ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Asgari (%'+b.asgariPct+'): <span style="color:#60a5fa;font-weight:600;">' + fFmt(Math.ceil(Math.max(b.tutar*b.asgariPct/100, aylikFaiz*1.3)), curr) + '</span></div>' : '') +
+              (b.asgariPct ? '<div style="font-size:11px;color:var(--text-3);width:45%;">Asgari Ödeme: <span style="color:#60a5fa;font-weight:600;">' + fFmt(Math.ceil(Math.max(b.tutar*b.asgariPct/100, aylikFaiz*1.3)), curr) + '</span></div>' : '') +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -5346,7 +5346,7 @@
       badgeEl.textContent = '⚡ ' + k.label
         + '  ·  Akdi %' + k.akdi + '/ay'
         + '  ·  Gecikme %' + k.gecikme + '/ay'
-        + '  ·  Asgari öd. %' + asgariPct;
+        + '  ·  Asgari oto hesaplanır';
       badgeEl.style.display = '';
     }
   };
