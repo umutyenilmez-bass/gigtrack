@@ -1725,15 +1725,13 @@
               <input class="fin-input" type="number" id="fin-basin" placeholder="Asgari Ödeme" min="0" step="0.1">
               <p style="font-size:10px;color:var(--text-3);margin-top:3px;">Banka kartlarında otomatik tespit edilir.</p>
             </div>
+            <div style="margin-top:8px;">
+              <input class="fin-input" type="number" id="fin-bodeme" placeholder="Şimdi Yapılan Ödeme (Opsiyonel)" min="0" step="0.1">
+            </div>
             <button class="fin-btn-primary" onclick="finBorcEkle()" style="margin-top:10px;">Ekle</button>
           </div>
           <div id="fin-borc-strateji" style="display:none;">
             <div class="fin-card">
-              <p class="fin-label" style="margin-bottom:8px;">Ödeme Stratejisi</p>
-              <div style="display:flex;gap:8px;">
-                <button class="fin-strat-btn fin-strat-active" id="fin-strat-avalanche" onclick="finStrateji('avalanche')">Çığ (Önce Yüksek Faiz)</button>
-                <button class="fin-strat-btn" id="fin-strat-snowball" onclick="finStrateji('snowball')">Kartopu (Önce Küçük)</button>
-              </div>
               <div style="display:flex;justify-content:space-between;margin-top:12px;">
                 <span style="font-size:13px;color:var(--text-2);">Toplam Borç</span>
                 <span id="fin-borc-toplam" style="font-size:13px;font-weight:700;color:#ff6b6b;"></span>
@@ -4941,12 +4939,46 @@
       asgariPct = Math.min(100, (asgariPct / tutar) * 100);
     }
     
-    fState.borclar.push({
-      limit: limit, id: Date.now(), ad: ad, tutar: tutar, kur: kur, faiz: faiz,
+    var id = Date.now();
+    var b = {
+      limit: limit, id: id, ad: ad, tutar: tutar, kur: kur, faiz: faiz,
       asgariPct: asgariPct, odenen: 0, kapali: false, gecmis: []
-    });
+    };
+    
+    var ilkOdemeStr = document.getElementById('fin-bodeme') ? document.getElementById('fin-bodeme').value : '';
+    var ilkOdeme = parseFloat(ilkOdemeStr.replace(',','.'));
+    
+    if (ilkOdeme && ilkOdeme > 0) {
+        var aylikFaiz = faiz ? tutar * faiz / 100 : 0;
+        var asgariTutar = asgariPct ? Math.ceil(Math.max(tutar * asgariPct / 100, aylikFaiz * 1.3)) : 0;
+        var tamOdeme = tutar;
+        
+        var tipKey = 'kısmi', tipLabel = '📦 Kısmi Ödeme', tipColor = '#f0c040';
+        if (ilkOdeme >= tamOdeme) {
+            tipKey = 'tam'; tipLabel = '✅ Tam Ödeme'; tipColor = '#4ade80';
+            aylikFaiz = 0;
+        } else if (asgariTutar && ilkOdeme >= asgariTutar) {
+            tipKey = 'asgari'; tipLabel = '⚡ Asgari Ödeme'; tipColor = '#60a5fa';
+        } else if (asgariTutar) {
+            tipKey = 'eksik'; tipLabel = '⚠️ Eksik (Asgari Altı)'; tipColor = '#ff6b6b';
+        }
+        
+        var yeniBakiye = Math.max(0, tutar + aylikFaiz - ilkOdeme);
+        var tarih = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'short',year:'numeric'});
+        var thisMonth = currentMonthKey();
+        
+        b.gecmis.push({
+            ay: thisMonth, tarih: tarih, odeme: ilkOdeme, faiz: aylikFaiz,
+            sonra: yeniBakiye, tip: tipKey, tipLabel: tipLabel, tipColor: tipColor
+        });
+        b.tutar = yeniBakiye;
+        b.odenen = ilkOdeme;
+        if (yeniBakiye <= 0) b.kapali = true;
+    }
+    
+    fState.borclar.push(b);
     fSave();
-    ['fin-bad','fin-btutar','fin-blimit','fin-bfaiz','fin-basin'].forEach(function(id) {
+    ['fin-bad','fin-btutar','fin-blimit','fin-bfaiz','fin-basin','fin-bodeme'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.value = '';
     });
     ['fin-banka-badge','fin-bfaiz-badge'].forEach(function(id) {
@@ -4976,63 +5008,75 @@
     }
   };
 
-  window.finBorcOde = function(id) {
+  var activeUpdateId = null;
+  window.finBorcUpdateOpen = function(id) {
     var b = fState.borclar.find(function(x) { return x.id === id; });
     if (!b) return;
-    var aylikFaiz  = b.faiz ? b.tutar * b.faiz / 100 : 0;
-    var asgariPct  = b.asgariPct || (b.faiz > 0 ? (b.tutar > 50000 ? 40 : 20) : 0);
-    var asgariTutar= asgariPct ? Math.ceil(Math.max(b.tutar * asgariPct / 100, aylikFaiz * 1.3)) : 0;
-    var tamOdeme   = b.tutar; // Tüm borç kapanırsa faiz işlemez
-
-    var curr = b.kur || 'TL';
-    var infoLines = [
-      'Mevcut bakiye : ' + fFmt(b.tutar, curr),
-    ];
-    if (b.faiz) infoLines.push('Aylık faiz (%' + b.faiz + ') : ' + fFmt(aylikFaiz, curr) + ' (Eksik ödemede yansır)');
-    if (asgariTutar) infoLines.push('Asgari ödeme : ' + fFmt(asgariTutar, curr));
-    infoLines.push('Tam kapatma   : ' + fFmt(tamOdeme, curr));
-
-    var sym = curr==='USD' ? '$' : (curr==='EUR' ? '€' : '₺');
-    var val = prompt(infoLines.join('\n') + '\n\nBu ay ne kadar ödediniz? (' + sym + ')');
-    if (!val) return;
-    var odeme = parseFloat(val.toString().replace(',','.'));
-    if (!odeme || odeme <= 0) return;
+    activeUpdateId = id;
     
-    // Eğer tüm borcu ödediyse faiz iptal olur
-    if (odeme >= b.tutar) {
-        aylikFaiz = 0;
-    }
+    document.getElementById('fin-up-limit').value = b.limit || '';
+    document.getElementById('fin-up-bakiye').value = b.tutar || '';
+    document.getElementById('fin-up-odeme').value = '';
     
-    var yeniBakiye = Math.max(0, b.tutar + aylikFaiz - odeme);
-    var tarih = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'short',year:'numeric'});
-    var thisMonth = currentMonthKey();
-
-    // Ödeme tipi tespiti
-    var tipLabel, tipColor, tipKey;
-    if (odeme >= tamOdeme) {
-      tipKey = 'tam';    tipLabel = '✅ Tam Ödeme';      tipColor = '#4ade80';
-    } else if (asgariTutar && odeme >= asgariTutar) {
-      tipKey = 'asgari'; tipLabel = '⚡ Asgari Ödeme';   tipColor = '#60a5fa';
-    } else if (asgariTutar) {
-      tipKey = 'eksik';  tipLabel = '⚠️ Eksik (Asgari Altı)'; tipColor = '#ff6b6b';
-    } else {
-      tipKey = 'kısmi';  tipLabel = '📦 Kısmi Ödeme';   tipColor = '#f0c040';
-    }
-
-    // Bilgi mesajı
-    alert(tipLabel + '\n' + fFmt(odeme, b.kur) + ' ödeme kaydedildi.\nYeni bakiye: ' + fFmt(yeniBakiye, b.kur));
-
-    fState.borclar = fState.borclar.map(function(x) {
-      if (x.id !== id) return x;
-      var g = (x.gecmis||[]).concat([{
-        ay: thisMonth, tarih: tarih, odeme: odeme, faiz: aylikFaiz,
-        sonra: yeniBakiye, tip: tipKey, tipLabel: tipLabel, tipColor: tipColor
-      }]);
-      return Object.assign({}, x, { tutar: yeniBakiye, odenen: (x.odened||0)+odeme, gecmis: g });
-    });
-    fSave(); fRenderBorc(); finHesaplaOzet();
+    document.getElementById('fin-update-modal').style.display = 'flex';
   };
 
+  window.finBorcUpdateSave = function() {
+    var b = fState.borclar.find(function(x) { return x.id === activeUpdateId; });
+    if (!b) return;
+    
+    var newLimit = parseFloat(document.getElementById('fin-up-limit').value) || 0;
+    var newBakiye = parseFloat(document.getElementById('fin-up-bakiye').value) || 0;
+    var odeme = parseFloat(document.getElementById('fin-up-odeme').value) || 0;
+    
+    // Update Limit and Bakiye if they changed
+    if (newLimit !== b.limit || newBakiye !== b.tutar) {
+        b.limit = newLimit;
+        b.tutar = newBakiye;
+        // Recalculate auto faiz logic based on new limit
+        var bDdkBaz = b.limit > 0 ? b.limit : b.tutar;
+        // Check if it's a bank (if it had faiz or asgariPct before)
+        var valForBankCheck = (b.ad||'').toLowerCase();
+        var isBank = KB_KEYWORDS.some(function(k) { return valForBankCheck.indexOf(k) !== -1; });
+        if (isBank) {
+            b.faiz = 3.75; // Default reference interest. In a real app we'd ask an API, but for now fallback to 3.75%
+            b.asgariPct = (bDdkBaz > 50000) ? 40 : 20;
+        }
+    }
+    
+    // Process Payment if given
+    if (odeme > 0) {
+        var aylikFaiz  = b.faiz ? b.tutar * b.faiz / 100 : 0;
+        var asgariTutar = b.asgariPct ? Math.ceil(Math.max(b.tutar * b.asgariPct / 100, aylikFaiz * 1.3)) : 0;
+        var tamOdeme = b.tutar;
+        
+        var tipKey = 'kısmi', tipLabel = '📦 Kısmi Ödeme', tipColor = '#f0c040';
+        if (odeme >= tamOdeme) {
+            tipKey = 'tam'; tipLabel = '✅ Tam Ödeme'; tipColor = '#4ade80';
+            aylikFaiz = 0;
+        } else if (asgariTutar && odeme >= asgariTutar) {
+            tipKey = 'asgari'; tipLabel = '⚡ Asgari Ödeme'; tipColor = '#60a5fa';
+        } else if (asgariTutar) {
+            tipKey = 'eksik'; tipLabel = '⚠️ Eksik (Asgari Altı)'; tipColor = '#ff6b6b';
+        }
+        
+        var yeniBakiye = Math.max(0, b.tutar + aylikFaiz - odeme);
+        var tarih = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'short',year:'numeric'});
+        
+        b.gecmis.push({
+            ay: currentMonthKey(), tarih: tarih, odeme: odeme, faiz: aylikFaiz,
+            sonra: yeniBakiye, tip: tipKey, tipLabel: tipLabel, tipColor: tipColor
+        });
+        b.tutar = yeniBakiye;
+        b.odenen = (b.odenen || 0) + odeme;
+        if (yeniBakiye <= 0) b.kapali = true;
+    }
+    
+    fSave();
+    document.getElementById('fin-update-modal').style.display = 'none';
+    fRenderBorc();
+    finRenderAsistan();
+  };
   window.finBorcKapat = function(id) {
     fState.borclar = fState.borclar.map(function(x) {
       if (x.id !== id) return x;
@@ -5044,15 +5088,6 @@
   window.finBorcSil = function(id) {
     fState.borclar = fState.borclar.filter(function(b) { return b.id !== id; });
     fSave(); fRenderBorc(); finHesaplaOzet();
-  };
-
-  window.finStrateji = function(s) {
-    fState.borc_strat = s; fSave();
-    var av = document.getElementById('fin-strat-avalanche');
-    var sn = document.getElementById('fin-strat-snowball');
-    if (av) av.classList.toggle('fin-strat-active', s==='avalanche');
-    if (sn) sn.classList.toggle('fin-strat-active', s==='snowball');
-    fRenderBorc();
   };
 
   function fRenderBorc() {
@@ -5132,7 +5167,7 @@
         '</div>' +
         gecmisHtml +
         '<div style="display:flex;gap:6px;margin-top:10px;">' +
-          (!done ? '<button class="fin-btn-ghost" onclick="finBorcOde(' + b.id + ')" style="flex:2;">💳 Ödeme Gir</button>' : '') +
+          (!done ? '<button class="fin-btn-ghost" onclick="finBorcUpdateOpen(' + b.id + ')" style="flex:2;">✏️ Güncelle / Öde</button>' : '') +
           '<button class="fin-btn-ghost" onclick="finBorcKapat(' + b.id + ')" style="' + (done?'flex:1;':'flex:1;') + kapatStyle + '">' + kapatLabel + '</button>' +
         '</div>' +
       '</div>';
@@ -5544,24 +5579,31 @@ window.finRenderAsistan = function() {
 })();
 </script>
 
-  <!-- BORÇ ÖDEME MODALİ -->
-  <div id="fin-odeme-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px;">
-    <div class="fin-card" style="width:100%;max-width:400px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+  <!-- GÜNCELLE / ÖDE MODALİ -->
+  <div id="fin-update-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(4px);padding:20px;">
+    <div class="fin-card" style="width:100%;max-width:360px;border:1px solid rgba(255,255,255,0.1);box-shadow:0 10px 30px rgba(0,0,0,0.5);">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;">
-        <h3 id="fin-modal-ad" style="margin:0;font-size:16px;color:var(--text-1);">Borç Ödeme</h3>
-        <button class="fin-btn-danger" onclick="document.getElementById('fin-odeme-modal').style.display='none'" style="background:transparent;color:var(--text-3);">✕</button>
-      </div>
-      <div id="fin-modal-info" style="font-size:13px;color:var(--text-2);margin-bottom:15px;line-height:1.6;background:var(--surface-3);padding:10px;border-radius:8px;"></div>
-      
-      <div style="display:flex;gap:8px;margin-bottom:10px;">
-        <button class="fin-btn-primary" id="fin-modal-btn-asgari" style="flex:1;background:rgba(96,165,250,0.2);color:#60a5fa;border:1px solid rgba(96,165,250,0.3);">Asgari Öde</button>
-        <button class="fin-btn-primary" id="fin-modal-btn-tam" style="flex:1;background:rgba(74,222,128,0.2);color:#4ade80;border:1px solid rgba(74,222,128,0.3);">Tamamını Kapat</button>
+        <h3 style="margin:0;font-size:16px;color:var(--text-1);">✏️ Güncelle / Öde</h3>
+        <button class="fin-btn-danger" onclick="document.getElementById('fin-update-modal').style.display='none'" style="background:transparent;color:var(--text-3);">✕</button>
       </div>
       
-      <div style="display:flex;gap:8px;align-items:center;">
-        <input type="number" id="fin-modal-input" class="fin-input" style="flex:1;" placeholder="Farklı Tutar Gir">
-        <button class="fin-btn-primary" id="fin-modal-btn-ozel" style="width:80px;">Öde</button>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--text-3);margin-bottom:4px;display:block;">Kart Limiti (Opsiyonel)</label>
+        <input type="number" id="fin-up-limit" class="fin-input" placeholder="Limiti düzelt">
       </div>
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;color:var(--text-3);margin-bottom:4px;display:block;">Güncel Bakiye (Ana Para)</label>
+        <input type="number" id="fin-up-bakiye" class="fin-input" placeholder="Bakiyeyi düzelt">
+      </div>
+      
+      <div style="margin:16px 0;height:1px;background:var(--border);"></div>
+      
+      <div style="margin-bottom:12px;">
+        <label style="font-size:11px;color:#4ade80;margin-bottom:4px;display:block;font-weight:600;">Bu Ay Yapılan Ödeme (TL)</label>
+        <input type="number" id="fin-up-odeme" class="fin-input" placeholder="Ödeme girdiyseniz buraya yazın">
+      </div>
+      
+      <button class="fin-btn-primary" onclick="finBorcUpdateSave()" style="width:100%;margin-top:10px;">Kaydet</button>
     </div>
   </div>
 
