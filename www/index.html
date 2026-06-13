@@ -1707,6 +1707,9 @@
             <input class="fin-input" type="text" id="fin-bad" placeholder="Borç adı (örn: Garanti Kredi Kartı)" oninput="finDetectBanka()">
             <div id="fin-banka-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/KK algılandı</div>
             <div style="display:flex;gap:8px;margin-top:8px;">
+              <input class="fin-input" type="number" id="fin-blimit" placeholder="Kart Limiti (Faiz/Asgari Hesabı İçin)" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
               <input class="fin-input" type="number" id="fin-btutar" placeholder="Güncel Borç" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
               <select class="fin-select" id="fin-bkur" style="width:80px;" onchange="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')">
                 <option value="TL">₺ TL</option>
@@ -4927,6 +4930,7 @@
     var asgariPct = parseFloat(document.getElementById('fin-basin').value);
     var valForBankCheck = (ad||'').toLowerCase();
     var isBank = KB_KEYWORDS.some(function(k) { return valForBankCheck.indexOf(k) !== -1; });
+    
     if (!isBank) {
       faiz = 0;
       limit = 0;
@@ -4934,12 +4938,7 @@
     } else if (isNaN(asgariPct)) {
       asgariPct = faiz > 0 ? (bDdkBaz > 50000 ? 40 : 20) : 0;
     }
-    var isBank = KB_KEYWORDS.some(function(k) { return ad.toLowerCase().indexOf(k) !== -1; });
-    if (!isBank) {
-      faiz = 0;
-      limit = 0;
-      asgariPct = 0;
-    }
+    
     fState.borclar.push({
       limit: limit, id: Date.now(), ad: ad, tutar: tutar, kur: kur, faiz: faiz,
       asgariPct: asgariPct, odenen: 0, kapali: false, gecmis: []
@@ -5311,36 +5310,6 @@
 
   // ── FAİZ OTO-TESPİT ──────────────────────────────────────────────────────
   // KK_ORANLAR tablosunu kullanarak bakiyeye göre faiz kademesini döndürür
-  function kkFaizKademesi(tutar) {
-    // 50.000 TL eşiği: asgari ödeme oranı %20 → %40
-    // Akdi faiz kademeleri: <30k, 30k-180k, >180k
-    for (var i = 0; i < KK_ORANLAR.length; i++) {
-      if (tutar <= KK_ORANLAR[i].max) {
-        return KK_ORANLAR[i]; // { akdi, gecikme, label }
-      }
-    }
-    return KK_ORANLAR[KK_ORANLAR.length - 1];
-  }
-
-  // tutarInputId'deki değeri okuyup faizInputId'e yazar, badgeId'de gösterir
-  window.finAutoFaiz = function(tutarInputId, faizInputId, badgeId) {
-    var tutar = parseFloat(document.getElementById(tutarInputId).value) || 0;
-    var faizEl  = document.getElementById(faizInputId);
-    var badgeEl = document.getElementById(badgeId);
-    if (!tutar) {
-      if (faizEl)  faizEl.value = '';
-      if (badgeEl) badgeEl.style.display = 'none';
-      return;
-    }
-    var kademe = kkFaizKademesi(tutar);
-    if (faizEl)  faizEl.value = kademe.akdi;
-    if (badgeEl) {
-      var asgariPct = tutar > 50000 ? 40 : 20;
-      badgeEl.textContent = '⚡ ' + kademe.label + ' → Akdi %' + kademe.akdi + '/ay · Gecikme %' + kademe.gecikme + '/ay · Asgari Öd. %' + asgariPct;
-      badgeEl.style.display = '';
-    }
-  };
-
   // ── FAİZ OTO-TESPİT ──────────────────────────────────────────────────────
   function kkFaizKademesi(tutar) {
     for (var i = 0; i < KK_ORANLAR.length; i++) {
@@ -5349,19 +5318,22 @@
     return KK_ORANLAR[KK_ORANLAR.length - 1];
   }
 
-  // Tutara göre faiz input'unu doldur + badge'i güncelle
   window.finAutoFaiz = function(tutarId, faizId, badgeId) {
-    var tutar  = parseFloat(document.getElementById(tutarId).value) || 0;
-    var faizEl  = document.getElementById(faizId);
+    var tutar = parseFloat(document.getElementById(tutarId).value) || 0;
+    var faizEl = document.getElementById(faizId);
     var badgeEl = document.getElementById(badgeId);
-    if (!tutar) {
+    var limitEl = document.getElementById('fin-blimit');
+    var limit = limitEl ? parseFloat(limitEl.value) || 0 : 0;
+    var bazTutar = limit > 0 ? limit : tutar;
+
+    if (!bazTutar && !tutar) {
       if (faizEl) faizEl.value = '';
       if (badgeEl) badgeEl.style.display = 'none';
       return;
     }
-    var k = kkFaizKademesi(tutar);
-    if (faizEl && !faizEl.value) faizEl.value = k.akdi;
-    var asgariPct = tutar > 50000 ? 40 : 20;
+    var k = kkFaizKademesi(bazTutar);
+    if (faizEl) faizEl.value = k.akdi;
+    var asgariPct = bazTutar > 50000 ? 40 : 20;
     if (badgeEl) {
       badgeEl.textContent = '⚡ ' + k.label
         + '  ·  Akdi %' + k.akdi + '/ay'
