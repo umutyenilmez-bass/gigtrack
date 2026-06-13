@@ -1701,8 +1701,11 @@
             <input class="fin-input" type="text" id="fin-bad" placeholder="Borç adı (örn: Garanti Kredi Kartı)" oninput="finDetectBanka()">
             <div id="fin-banka-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/KK algılandı</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
-              <input class="fin-input" type="number" id="fin-btutar" placeholder="Bakiye (₺)">
-              <input class="fin-input" type="number" id="fin-bfaiz" placeholder="Akdi faiz (%/ay)">
+              <input class="fin-input" type="number" id="fin-btutar" placeholder="Bakiye (₺)" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')">
+              <div>
+                <input class="fin-input" type="number" id="fin-bfaiz" placeholder="Akdi faiz (%/ay)" style="width:100%;">
+                <div id="fin-bfaiz-badge" style="display:none;font-size:10px;color:#f0c040;margin-top:3px;padding:2px 6px;background:rgba(240,192,64,0.1);border-radius:4px;"></div>
+              </div>
             </div>
             <button class="fin-btn-primary" onclick="finBorcEkle()" style="margin-top:10px;">Ekle</button>
           </div>
@@ -1826,10 +1829,14 @@
             <div id="kb-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/kredi algılandı — aşağıdaki bilgileri girin</div>
             <div id="kb-form" style="display:none;margin-top:10px;">
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ana Borç (₺)</p><input class="fin-input" type="number" id="kb-ana" placeholder="örn: 145000" oninput="kbHesapla()"></div>
+                <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ana Borç (₺)</p><input class="fin-input" type="number" id="kb-ana" placeholder="örn: 145000" oninput="finAutoFaiz('kb-ana','kb-faiz','kb-faiz-badge');kbHesapla()"></div>
                 <div><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Ödenen Miktar (₺)</p><input class="fin-input" type="number" id="kb-odeme" placeholder="örn: 40000" oninput="kbHesapla()"></div>
               </div>
-              <div style="margin-top:8px;"><p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Aylık Faiz Oranı (%)</p><input class="fin-input" type="number" id="kb-faiz" placeholder="örn: 3.5" step="0.01" oninput="kbHesapla()"></div>
+              <div style="margin-top:8px;">
+                <p style="font-size:11px;color:var(--text-3);margin-bottom:4px;">Aylık Faiz Oranı (%)</p>
+                <input class="fin-input" type="number" id="kb-faiz" placeholder="Otomatik hesaplanır" step="0.01" oninput="kbHesapla()">
+                <div id="kb-faiz-badge" style="display:none;font-size:10px;color:#f0c040;margin-top:3px;padding:2px 6px;background:rgba(240,192,64,0.1);border-radius:4px;"></div>
+              </div>
             </div>
             <div id="kb-sonuc" style="display:none;margin-top:12px;">
               <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:12px;"><div style="display:flex;flex-direction:column;gap:7px;" id="kb-sonuc-detay"></div></div>
@@ -4993,13 +5000,19 @@
     var tutar = parseFloat(document.getElementById('fin-btutar').value);
     var faiz  = parseFloat(document.getElementById('fin-bfaiz').value) || 0;
     if (!ad || !tutar) return;
-    fState.borclar.push({ id: Date.now(), ad: ad, tutar: tutar, faiz: faiz, odenen: 0, kapali: false, gecmis: [] });
+    // Asgari oran: KK için tutara göre otomatik, kredi için 0
+    var asgariPct = faiz > 0 ? (tutar > 50000 ? 40 : 20) : 0;
+    fState.borclar.push({
+      id: Date.now(), ad: ad, tutar: tutar, faiz: faiz,
+      asgariPct: asgariPct, odenen: 0, kapali: false, gecmis: []
+    });
     fSave();
     ['fin-bad','fin-btutar','fin-bfaiz'].forEach(function(id) {
       var el = document.getElementById(id); if (el) el.value = '';
     });
-    var badge = document.getElementById('fin-banka-badge');
-    if (badge) badge.style.display = 'none';
+    ['fin-banka-badge','fin-bfaiz-badge'].forEach(function(id) {
+      var el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
     fRenderBorc();
   };
 
@@ -5013,7 +5026,8 @@
       var tutar = parseFloat(parts[1].replace(/\./g,'').replace(',','.'));
       var faiz  = parseFloat((parts[2]||'0').replace(',','.')) || 0;
       if (!parts[0] || !tutar) return;
-      fState.borclar.push({ id: Date.now()+eklendi, ad: parts[0], tutar: tutar, faiz: faiz, odenen: 0, kapali: false, gecmis: [] });
+      var ap = faiz > 0 ? (tutar > 50000 ? 40 : 20) : 0;
+      fState.borclar.push({ id: Date.now()+eklendi, ad: parts[0], tutar: tutar, faiz: faiz, asgariPct: ap, odenen: 0, kapali: false, gecmis: [] });
       eklendi++;
     });
     if (eklendi > 0) {
@@ -5026,19 +5040,48 @@
   window.finBorcOde = function(id) {
     var b = fState.borclar.find(function(x) { return x.id === id; });
     if (!b) return;
-    var aylikFaiz = b.tutar * (b.faiz / 100);
-    var msg = 'Bu ay ne kadar ödediniz? (₺)\n\nMevcut bakiye: ' + fFmt(b.tutar) + '\nBu aya faiz: ' + fFmt(aylikFaiz);
-    var val = prompt(msg);
+    var aylikFaiz  = b.faiz ? b.tutar * b.faiz / 100 : 0;
+    var asgariPct  = b.asgariPct || (b.faiz > 0 ? (b.tutar > 50000 ? 40 : 20) : 0);
+    var asgariTutar= asgariPct ? Math.ceil(Math.max(b.tutar * asgariPct / 100, aylikFaiz * 1.3)) : 0;
+    var tamOdeme   = Math.ceil(b.tutar + aylikFaiz);
+
+    var infoLines = [
+      'Mevcut bakiye : ' + fFmt(b.tutar),
+    ];
+    if (b.faiz) infoLines.push('Aylık faiz (%' + b.faiz + ') : ' + fFmt(aylikFaiz));
+    if (asgariTutar) infoLines.push('Asgari ödeme (%' + asgariPct + ') : ' + fFmt(asgariTutar));
+    infoLines.push('Tam kapatma   : ' + fFmt(tamOdeme));
+
+    var val = prompt(infoLines.join('\n') + '\n\nBu ay ne kadar ödediniz? (₺)');
     if (!val) return;
-    var odeme = parseFloat(val.replace(',','.'));
+    var odeme = parseFloat(val.toString().replace(',','.'));
     if (!odeme || odeme <= 0) return;
     var yeniBakiye = Math.max(0, b.tutar + aylikFaiz - odeme);
     var tarih = new Date().toLocaleDateString('tr-TR', {day:'numeric',month:'short',year:'numeric'});
     var thisMonth = currentMonthKey();
+
+    // Ödeme tipi tespiti
+    var tipLabel, tipColor, tipKey;
+    if (odeme >= tamOdeme) {
+      tipKey = 'tam';    tipLabel = '✅ Tam Ödeme';      tipColor = '#4ade80';
+    } else if (asgariTutar && odeme >= asgariTutar) {
+      tipKey = 'asgari'; tipLabel = '⚡ Asgari Ödeme';   tipColor = '#60a5fa';
+    } else if (asgariTutar) {
+      tipKey = 'eksik';  tipLabel = '⚠️ Eksik (Asgari Altı)'; tipColor = '#ff6b6b';
+    } else {
+      tipKey = 'kısmi';  tipLabel = '📦 Kısmi Ödeme';   tipColor = '#f0c040';
+    }
+
+    // Bilgi mesajı
+    alert(tipLabel + '\n' + fFmt(odeme) + ' ödeme kaydedildi.\nYeni bakiye: ' + fFmt(yeniBakiye));
+
     fState.borclar = fState.borclar.map(function(x) {
       if (x.id !== id) return x;
-      var g = (x.gecmis||[]).concat([{ ay: thisMonth, tarih: tarih, odeme: odeme, faiz: aylikFaiz, sonra: yeniBakiye }]);
-      return Object.assign({}, x, { tutar: yeniBakiye, odenen: (x.odenen||0)+odeme, gecmis: g });
+      var g = (x.gecmis||[]).concat([{
+        ay: thisMonth, tarih: tarih, odeme: odeme, faiz: aylikFaiz,
+        sonra: yeniBakiye, tip: tipKey, tipLabel: tipLabel, tipColor: tipColor
+      }]);
+      return Object.assign({}, x, { tutar: yeniBakiye, odenen: (x.odened||0)+odeme, gecmis: g });
     });
     fSave(); fRenderBorc(); finHesaplaOzet();
   };
@@ -5113,11 +5156,11 @@
         ? '<div style="margin-top:10px;border-top:1px solid rgba(255,255,255,0.06);padding-top:10px;">' +
             '<p style="font-size:11px;color:var(--text-3);margin-bottom:6px;">Son Ödemeler</p>' +
             gecmis.map(function(g) {
-              return '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;">' +
-                '<span style="color:var(--text-3);">' + g.tarih + '</span>' +
-                '<span style="color:#4ade80;">-' + fFmt(g.odeme) + '</span>' +
-                '<span style="color:#f0c040;">+faiz ' + fFmt(g.faiz) + '</span>' +
-                '<span style="color:var(--text-2);">' + fFmt(g.sonra) + '</span>' +
+              return '<div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:5px;gap:6px;">' +
+                '<span style="color:var(--text-3);white-space:nowrap;">' + g.tarih + '</span>' +
+                '<span style="font-weight:600;color:#4ade80;white-space:nowrap;">-' + fFmt(g.odeme) + '</span>' +
+                (g.faiz ? '<span style="color:#f0c040;white-space:nowrap;">+' + fFmt(g.faiz) + ' faiz</span>' : '') +
+                '<span style="padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:' + (g.tipColor||'rgba(255,255,255,0.08)') + '22;color:' + (g.tipColor||'var(--text-3)') + ';white-space:nowrap;">' + (g.tipLabel||'Ödeme') + '</span>' +
               '</div>';
             }).join('') +
           '</div>'
@@ -5136,8 +5179,8 @@
             '</div>' +
             '<div style="display:flex;gap:10px;margin-top:4px;flex-wrap:wrap;">' +
               '<span style="font-size:12px;color:var(--text-3);">Kalan: <span style="color:#ff6b6b;font-weight:600;">' + fFmt(b.tutar) + '</span></span>' +
-              (b.faiz ? '<span style="font-size:12px;color:var(--text-3);">Faiz: <span style="font-weight:600;color:#f0c040;">' + b.faiz + '%/ay</span></span>' : '') +
-              (b.faiz ? '<span style="font-size:12px;color:var(--text-3);">Bu ay: <span style="font-weight:600;color:#f0c040;">' + fFmt(aylikFaiz) + '</span></span>' : '') +
+              (b.faiz ? '<span style="font-size:12px;color:var(--text-3);">Faiz: <span style="font-weight:600;color:#f0c040;">' + b.faiz + '%/ay → ' + fFmt(aylikFaiz) + '</span></span>' : '') +
+              (b.asgariPct ? '<span style="font-size:12px;color:var(--text-3);">Asgari %' + b.asgariPct + ': <span style="font-weight:600;color:#60a5fa;">' + fFmt(Math.ceil(Math.max(b.tutar*b.asgariPct/100, aylikFaiz*1.3))) + '</span></span>' : '') +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -5149,9 +5192,9 @@
           '<div class="fin-progress-bg"><div class="fin-progress-fill" style="width:' + pct + '%;background:' + fillColor + ';"></div></div>' +
         '</div>' +
         gecmisHtml +
-        '<div style="display:flex;gap:8px;margin-top:10px;">' +
-          (!done ? '<button class="fin-btn-ghost" onclick="finBorcOde(' + b.id + ')" style="flex:1;">Bu Ay Ödeme Yaptım</button>' : '') +
-          '<button class="fin-btn-ghost" onclick="finBorcKapat(' + b.id + ')" style="' + (done ? 'flex:1;' : '') + kapatStyle + '">' + kapatLabel + '</button>' +
+        '<div style="display:flex;gap:6px;margin-top:10px;">' +
+          (!done ? '<button class="fin-btn-ghost" onclick="finBorcOde(' + b.id + ')" style="flex:1;">💳 Ödeme Gir</button>' : '') +
+          '<button class="fin-btn-ghost" onclick="finBorcKapat(' + b.id + ')" style="' + (done?'flex:1;':'') + kapatStyle + '">' + kapatLabel + '</button>' +
         '</div>' +
       '</div>';
     }
@@ -5334,6 +5377,68 @@
     }
   };
 
+  // ── FAİZ OTO-TESPİT ──────────────────────────────────────────────────────
+  // KK_ORANLAR tablosunu kullanarak bakiyeye göre faiz kademesini döndürür
+  function kkFaizKademesi(tutar) {
+    // 50.000 TL eşiği: asgari ödeme oranı %20 → %40
+    // Akdi faiz kademeleri: <30k, 30k-180k, >180k
+    for (var i = 0; i < KK_ORANLAR.length; i++) {
+      if (tutar <= KK_ORANLAR[i].max) {
+        return KK_ORANLAR[i]; // { akdi, gecikme, label }
+      }
+    }
+    return KK_ORANLAR[KK_ORANLAR.length - 1];
+  }
+
+  // tutarInputId'deki değeri okuyup faizInputId'e yazar, badgeId'de gösterir
+  window.finAutoFaiz = function(tutarInputId, faizInputId, badgeId) {
+    var tutar = parseFloat(document.getElementById(tutarInputId).value) || 0;
+    var faizEl  = document.getElementById(faizInputId);
+    var badgeEl = document.getElementById(badgeId);
+    if (!tutar) {
+      if (faizEl)  faizEl.value = '';
+      if (badgeEl) badgeEl.style.display = 'none';
+      return;
+    }
+    var kademe = kkFaizKademesi(tutar);
+    if (faizEl)  faizEl.value = kademe.akdi;
+    if (badgeEl) {
+      var asgariPct = tutar > 50000 ? 40 : 20;
+      badgeEl.textContent = '⚡ ' + kademe.label + ' → Akdi %' + kademe.akdi + '/ay · Gecikme %' + kademe.gecikme + '/ay · Asgari Öd. %' + asgariPct;
+      badgeEl.style.display = '';
+    }
+  };
+
+  // ── FAİZ OTO-TESPİT ──────────────────────────────────────────────────────
+  function kkFaizKademesi(tutar) {
+    for (var i = 0; i < KK_ORANLAR.length; i++) {
+      if (tutar <= KK_ORANLAR[i].max) return KK_ORANLAR[i];
+    }
+    return KK_ORANLAR[KK_ORANLAR.length - 1];
+  }
+
+  // Tutara göre faiz input'unu doldur + badge'i güncelle
+  window.finAutoFaiz = function(tutarId, faizId, badgeId) {
+    var tutar  = parseFloat(document.getElementById(tutarId).value) || 0;
+    var faizEl  = document.getElementById(faizId);
+    var badgeEl = document.getElementById(badgeId);
+    if (!tutar) {
+      if (faizEl) faizEl.value = '';
+      if (badgeEl) badgeEl.style.display = 'none';
+      return;
+    }
+    var k = kkFaizKademesi(tutar);
+    if (faizEl && !faizEl.value) faizEl.value = k.akdi;
+    var asgariPct = tutar > 50000 ? 40 : 20;
+    if (badgeEl) {
+      badgeEl.textContent = '⚡ ' + k.label
+        + '  ·  Akdi %' + k.akdi + '/ay'
+        + '  ·  Gecikme %' + k.gecikme + '/ay'
+        + '  ·  Asgari öd. %' + asgariPct;
+      badgeEl.style.display = '';
+    }
+  };
+
   // ── KREDİ BORCU HESAPLA & EKLE ────────────────────────────────────────────
   window.kbDetect = function() {
     var val=(document.getElementById('kb-ad').value||'').toLowerCase();
@@ -5347,9 +5452,15 @@
   window.kbHesapla = function() {
     var ana=parseFloat(document.getElementById('kb-ana').value)||0;
     var ode=parseFloat(document.getElementById('kb-odeme').value)||0;
-    var faiz=parseFloat(document.getElementById('kb-faiz').value)||0;
+    // Faiz girilmemişse otomatik hesapla
+    var faizEl=document.getElementById('kb-faiz');
+    var faiz=parseFloat(faizEl.value)||0;
+    if (!faiz && ana) {
+      var autoFaiz = kkFaizKademesi(ana);
+      faiz = autoFaiz.akdi;
+    }
     var sonucEl=document.getElementById('kb-sonuc');
-    if (!ana||!faiz){sonucEl.style.display='none';return;}
+    if (!ana){sonucEl.style.display='none';return;}
     var kalan=Math.max(0,ana-ode);
     var aylikFaiz=kalan*faiz/100;
     var kkdf=aylikFaiz*0.15, bsmv=aylikFaiz*0.15;
