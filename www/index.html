@@ -1707,7 +1707,7 @@
             <input class="fin-input" type="text" id="fin-bad" placeholder="Borç adı (örn: Garanti Kredi Kartı)" oninput="finDetectBanka()">
             <div id="fin-banka-badge" style="display:none;margin-top:6px;padding:5px 10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);border-radius:8px;font-size:12px;color:#60a5fa;">🏦 Banka/KK algılandı</div>
             <div style="display:flex;gap:8px;margin-top:8px;">
-              <input class="fin-input" type="number" id="fin-btutar" placeholder="Kart Limiti / Ana Borç" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
+              <input class="fin-input" type="number" id="fin-btutar" placeholder="Güncel Borç" oninput="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')" style="flex:1;">
               <select class="fin-select" id="fin-bkur" style="width:80px;" onchange="finAutoFaiz('fin-btutar','fin-bfaiz','fin-bfaiz-badge')">
                 <option value="TL">₺ TL</option>
                 <option value="USD">$ USD</option>
@@ -4513,7 +4513,7 @@
     if (id === 'ozet')   { finPeriodDegis(); finHesaplaOzet(); }
     if (id === 'gider')  { autoCarrySabit(); fRenderGider(); }
     if (id === 'borc')   { fRenderBorc(); }
-    if (id === 'kkfaiz') { kkInit(); }
+    if (id === 'asistan'){ finRenderAsistan(); }
   };
 
   // ── GİGTRACK'TEN GELİR OKU ────────────────────────────────────────────────
@@ -5457,8 +5457,7 @@
     }
   };
 
-})();
-  window.finRenderAsistan = function() {
+window.finRenderAsistan = function() {
     var aBol = document.getElementById('finpanel-asistan');
     if (!aBol) return;
     
@@ -5522,6 +5521,8 @@
     html += '</div>';
     aBol.innerHTML = html;
   };
+
+})();
 </script>
 
   <!-- BORÇ ÖDEME MODALİ -->
