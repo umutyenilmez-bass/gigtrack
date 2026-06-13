@@ -1639,6 +1639,28 @@
             </div>
             <button class="fin-btn-primary" onclick="finGiderEkle()" style="margin-top:10px;">Ekle</button>
           </div>
+
+          <!-- Toplu Gider Ekle -->
+          <div class="fin-card">
+            <p class="fin-label">Toplu Gider Ekle</p>
+            <p class="fin-hint" style="line-height:1.6;">
+              Bölüm başlıklarıyla grupla. "sabit" geçen başlıklar 📌 olarak eklenir:<br>
+              <span style="color:var(--accent);font-family:monospace;font-size:11px;">Masraflar<br>Benzin, 200 TL<br>Migros, 1594,95 TL<br><br>Aylık sabit masraflar<br>Kira, 35000 TL<br>Spotify, 165 TL</span>
+            </p>
+            <textarea class="fin-input" id="fin-gtoplu" rows="8"
+              placeholder="Masraflar&#10;Benzin, 200 TL&#10;Migros, 1594,95 TL&#10;&#10;Aylık sabit masraflar&#10;Kira, 35000 TL&#10;Spotify, 165 TL"
+              style="resize:vertical;font-family:monospace;font-size:13px;line-height:1.6;"></textarea>
+            <div style="display:flex;gap:8px;margin-top:10px;align-items:center;">
+              <select class="fin-select" id="fin-gtoplu-kat" style="flex:1;">
+                <option value="ihtiyac">İhtiyaç</option>
+                <option value="istek">İstek</option>
+                <option value="birikim">Birikim</option>
+                <option value="borc">Borç Öd.</option>
+              </select>
+              <button class="fin-btn-primary" onclick="finGiderTopluEkle()" style="flex:2;">Tümünü Ekle</button>
+            </div>
+            <p id="fin-gtoplu-sonuc" style="display:none;font-size:12px;color:#4ade80;margin-top:8px;text-align:center;"></p>
+          </div>
           <div id="fin-gider-ozet" style="display:none;margin-top:4px;">
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
               <div class="fin-card" style="text-align:center;">
@@ -4791,6 +4813,76 @@
 
     fRenderGider();
     finHesaplaOzet();
+  };
+
+  window.finGiderTopluEkle = function() {
+    var text = (document.getElementById('fin-gtoplu').value || '').trim();
+    if (!text) return;
+    var defaultKat = document.getElementById('fin-gtoplu-kat').value || 'ihtiyac';
+    var thisMonth  = currentMonthKey();
+
+    // Türkçe tutar parse: "1.594,95 TL" veya "1594,95 TL" veya "200 TL"
+    function parseTutar(s) {
+      // noktaları kaldır (binlik ayrac), virgülü noktayla değiştir
+      return parseFloat(s.replace(/\./g, '').replace(',', '.')) || 0;
+    }
+
+    var lines = text.split('\n');
+    var isSabit = false;       // aktif bölümün sabit durumu
+    var eklendi = 0;
+    var hatalar = [];
+
+    lines.forEach(function(line) {
+      line = line.trim();
+      if (!line) return; // boş satır atla
+
+      // Virgül var mı? → gider satırı
+      var commaIdx = line.indexOf(',');
+      if (commaIdx > 0) {
+        var ad     = line.slice(0, commaIdx).trim();
+        var tutarStr = line.slice(commaIdx + 1).replace(/TL|tl|₺/gi, '').trim();
+        var tutar  = parseTutar(tutarStr);
+        if (!ad || tutar <= 0) {
+          hatalar.push(line);
+          return;
+        }
+        fState.giderler.push({
+          id: Date.now() + eklendi + Math.random(),
+          ad: ad,
+          tutar: tutar,
+          kat: defaultKat,
+          sabit: isSabit,
+          ay: thisMonth,
+          tarih: new Date().toLocaleDateString('tr-TR')
+        });
+        eklendi++;
+      } else {
+        // Virgül yok → bölüm başlığı
+        var lower = line.toLowerCase();
+        isSabit = lower.indexOf('sabit') !== -1;
+      }
+    });
+
+    if (eklendi > 0) {
+      fSave();
+      document.getElementById('fin-gtoplu').value = '';
+      var sonucEl = document.getElementById('fin-gtoplu-sonuc');
+      if (sonucEl) {
+        sonucEl.textContent = eklendi + ' gider eklendi' + (hatalar.length ? ' (' + hatalar.length + ' satır atlandı)' : '') + ' ✓';
+        sonucEl.style.color  = '#4ade80';
+        sonucEl.style.display = '';
+        setTimeout(function() { sonucEl.style.display = 'none'; }, 3000);
+      }
+      fRenderGider();
+      finHesaplaOzet();
+    } else {
+      var sonucEl2 = document.getElementById('fin-gtoplu-sonuc');
+      if (sonucEl2) {
+        sonucEl2.textContent = 'Hiç gider eklenemedi — format: "Ad, Tutar TL"';
+        sonucEl2.style.color  = '#ff6b6b';
+        sonucEl2.style.display = '';
+      }
+    }
   };
 
   window.finGiderSil = function(id, tipSabit) {
