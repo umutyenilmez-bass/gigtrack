@@ -1722,7 +1722,7 @@
               <div id="fin-bfaiz-badge"></div>
             </div>
             <div style="margin-top:8px;">
-              <input class="fin-input" type="number" id="fin-basin" placeholder="Asgari Ödeme" min="0" max="100" step="0.1">
+              <input class="fin-input" type="number" id="fin-basin" placeholder="Asgari Oran (%)" min="0" max="100" step="0.1">
               <p style="font-size:10px;color:var(--text-3);margin-top:3px;">Banka kartlarında otomatik tespit edilir.</p>
             </div>
             <button class="fin-btn-primary" onclick="finBorcEkle()" style="margin-top:10px;">Ekle</button>
@@ -4937,6 +4937,8 @@
       asgariPct = 0;
     } else if (isNaN(asgariPct)) {
       asgariPct = faiz > 0 ? (bDdkBaz > 50000 ? 40 : 20) : 0;
+    } else if (asgariPct > 100) {
+      asgariPct = Math.min(100, (asgariPct / tutar) * 100);
     }
     
     fState.borclar.push({
