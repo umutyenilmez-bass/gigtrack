@@ -1549,6 +1549,23 @@
 
         <!-- ===== ÖZET ===== -->
         <div id="finpanel-ozet">
+          <!-- CANLI KURLAR -->
+          <div class="fin-card" id="kur-card" style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.05); margin-bottom:15px; padding:12px;">
+            <div>
+              <p class="fin-label" style="margin-bottom:4px; font-size:12px;">Güncel Kurlar</p>
+              <div style="font-size:11px; color:var(--text-3);" id="kur-durumu">Yükleniyor...</div>
+            </div>
+            <div style="display:flex; gap:16px;">
+              <div style="text-align:right;">
+                <div style="font-size:10px; color:var(--text-3); margin-bottom:2px;">USD/TRY</div>
+                <div style="font-size:14px; font-weight:700; color:#4ade80;" id="kur-usd">-</div>
+              </div>
+              <div style="text-align:right;">
+                <div style="font-size:10px; color:var(--text-3); margin-bottom:2px;">EUR/TRY</div>
+                <div style="font-size:14px; font-weight:700; color:#4ade80;" id="kur-eur">-</div>
+              </div>
+            </div>
+          </div>
           <div class="fin-card">
             <p class="fin-label">Gelir Kaynağı</p>
             <select class="fin-select" id="fin-period" onchange="finPeriodDegis()" style="margin-bottom:10px;">
@@ -2731,22 +2748,29 @@
         });
 
         let sumHtml = '';
+        let totalStrList = [];
         Object.keys(sums).forEach(c => {
           if (sums[c] !== 0) {
-            sumHtml += `<div class="unpaid-sum-item"><span style="color:var(--text-3); font-size:11px; font-family:'Syne',sans-serif;">${c}</span> <span>${SYM[c] || ''}${sums[c].toLocaleString('tr')}</span></div>`;
+            const formatted = `${SYM[c] || ''}${sums[c].toLocaleString('tr')}`;
+            totalStrList.push(formatted);
+            sumHtml += `<div class="unpaid-sum-item"><span style="color:var(--text-3); font-size:11px; font-family:'Syne',sans-serif;">${c}</span> <span style="font-weight:700; color:#fff;">${formatted}</span></div>`;
           }
         });
         if (sumHtml) {
           unpSummary.style.display = 'flex';
           unpSummary.style.flexDirection = 'column';
           unpSummary.style.alignItems = 'stretch';
-          unpSummary.style.padding = '10px 14px';
+          unpSummary.style.padding = '12px 16px';
           unpSummary.innerHTML = `
             <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" onclick="document.getElementById('unp-sum-details').classList.toggle('hidden')">
-              <div style="color:var(--text-2); font-size:11px; text-transform:uppercase; letter-spacing:0.5px; font-weight:700;">${T.totalUnpaid}</div>
-              <div style="font-size:10px; color:var(--text-3); opacity:0.8;">▼</div>
+              <div style="color:var(--accent); font-size:12px; text-transform:uppercase; letter-spacing:0.5px; font-weight:800; display:flex; align-items:center; gap:6px;">
+                <span>💰</span> <span>${T.totalUnpaid}</span>
+              </div>
+              <div style="font-size:16px; font-weight:800; color:#5CADFF; font-family:'Inter',sans-serif;">
+                ${totalStrList.join(' • ')}
+              </div>
             </div>
-            <div id="unp-sum-details" class="hidden" style="display:flex; gap:15px; flex-wrap:wrap; align-items:center; justify-content:center; margin-top:8px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
+            <div id="unp-sum-details" style="display:flex; gap:15px; flex-wrap:wrap; align-items:center; justify-content:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.08); padding-top:10px;">
               ${sumHtml}
             </div>
           `;
@@ -5014,12 +5038,42 @@
     if (!b) return;
     activeUpdateId = id;
     
+    var valForBankCheck = (b.ad||'').toLowerCase();
+    var isBank = KB_KEYWORDS.some(function(k) { return valForBankCheck.indexOf(k) !== -1; });
+    
+    document.getElementById('fin-up-limit-wrap').style.display = isBank ? 'block' : 'none';
+    var kurStr = b.kur === 'USD' ? '$ USD' : (b.kur === 'EUR' ? '€ EUR' : '₺ TL');
+    document.getElementById('fin-up-bakiye-label').innerHTML = 'Güncel Bakiye (' + kurStr + ')';
+    document.getElementById('fin-up-odeme-label').innerHTML = 'Bu Ay Yapılan Ödeme (' + kurStr + ')';
+    
     document.getElementById('fin-up-limit').value = b.limit || '';
     document.getElementById('fin-up-bakiye').value = b.tutar || '';
     document.getElementById('fin-up-odeme').value = '';
+    var tlEl = document.getElementById('fin-up-odeme-tl');
+    if (tlEl) tlEl.innerText = '';
     
     document.getElementById('fin-update-modal').style.display = 'flex';
   };
+  
+  window.finUpOdemeHesapla = function() {
+    var b = fState.borclar.find(function(x) { return x.id === activeUpdateId; });
+    var tlEl = document.getElementById('fin-up-odeme-tl');
+    if (!b || b.kur === 'TL' || !tlEl) {
+        if (tlEl) tlEl.innerText = '';
+        return;
+    }
+    var val = parseFloat(document.getElementById('fin-up-odeme').value) || 0;
+    if (val <= 0) {
+       tlEl.innerText = '';
+       return;
+    }
+    // toTL and fFmt are assumed to be in scope
+    var tlTutar = typeof toTL === 'function' ? toTL(val, b.kur) : 0;
+    if (tlTutar > 0 && typeof fFmt === 'function') {
+        tlEl.innerText = '≈ ' + fFmt(tlTutar, 'TL');
+    }
+  };
+
 
   window.finBorcUpdateSave = function() {
     var b = fState.borclar.find(function(x) { return x.id === activeUpdateId; });
@@ -5463,12 +5517,41 @@
     finStrateji(fState.borc_strat || 'avalanche');
   });
 
+  let kurlarYuklendi = false;
+  async function kurlariGetir() {
+    if (kurlarYuklendi) return;
+    var durumEl = document.getElementById('kur-durumu');
+    var usdEl = document.getElementById('kur-usd');
+    var eurEl = document.getElementById('kur-eur');
+    if (!durumEl || !usdEl || !eurEl) return;
+    
+    try {
+      durumEl.textContent = "Güncelleniyor...";
+      const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+      const data = await response.json();
+      
+      const usdKur = data.rates.TRY;
+      const eurKur = data.rates.TRY / data.rates.EUR;
+      
+      usdEl.textContent = "₺" + usdKur.toFixed(2);
+      eurEl.textContent = "₺" + eurKur.toFixed(2);
+      durumEl.textContent = "Canlı Veri";
+      kurlarYuklendi = true;
+    } catch (err) {
+      console.error("Kur hatası:", err);
+      durumEl.textContent = "Bağlantı Hatası";
+      usdEl.textContent = "⚠️";
+      eurEl.textContent = "⚠️";
+    }
+  }
+
   // ── SWITCH TAB HOOK ───────────────────────────────────────────────────────
   var _origSwitch = window.switchTab;
   window.switchTab = function(tab) {
     _origSwitch(tab);
     if (tab === 'finans') {
       finPeriodDegis();
+      kurlariGetir();
     }
   };
 
@@ -5587,20 +5670,21 @@ window.finRenderAsistan = function() {
         <button class="fin-btn-danger" onclick="document.getElementById('fin-update-modal').style.display='none'" style="background:transparent;color:var(--text-3);">✕</button>
       </div>
       
-      <div style="margin-bottom:12px;">
+      <div id="fin-up-limit-wrap" style="margin-bottom:12px;">
         <label style="font-size:11px;color:var(--text-3);margin-bottom:4px;display:block;">Kart Limiti (Opsiyonel)</label>
         <input type="number" id="fin-up-limit" class="fin-input" placeholder="Limiti düzelt">
       </div>
       <div style="margin-bottom:12px;">
-        <label style="font-size:11px;color:var(--text-3);margin-bottom:4px;display:block;">Güncel Bakiye (Ana Para)</label>
+        <label id="fin-up-bakiye-label" style="font-size:11px;color:var(--text-3);margin-bottom:4px;display:block;">Güncel Bakiye (Ana Para)</label>
         <input type="number" id="fin-up-bakiye" class="fin-input" placeholder="Bakiyeyi düzelt">
       </div>
       
       <div style="margin:16px 0;height:1px;background:var(--border);"></div>
       
       <div style="margin-bottom:12px;">
-        <label style="font-size:11px;color:#4ade80;margin-bottom:4px;display:block;font-weight:600;">Bu Ay Yapılan Ödeme (TL)</label>
-        <input type="number" id="fin-up-odeme" class="fin-input" placeholder="Ödeme girdiyseniz buraya yazın">
+        <label id="fin-up-odeme-label" style="font-size:11px;color:#4ade80;margin-bottom:4px;display:block;font-weight:600;">Bu Ay Yapılan Ödeme</label>
+        <input type="number" id="fin-up-odeme" class="fin-input" placeholder="Ödeme girdiyseniz buraya yazın" oninput="finUpOdemeHesapla()">
+        <div id="fin-up-odeme-tl" style="font-size:11px; color:var(--text-3); margin-top:4px; text-align:right;"></div>
       </div>
       
       <button class="fin-btn-primary" onclick="finBorcUpdateSave()" style="width:100%;margin-top:10px;">Kaydet</button>
