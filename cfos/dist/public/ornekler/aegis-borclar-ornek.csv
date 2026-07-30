@@ -1,0 +1,5 @@
+name,balance,apr,minPayment,dueDay,type,limit,prepayPenalty
+Kredi Kartı A,32000,54,1600,26,card,40000,0
+İhtiyaç Kredisi,85000,42,4200,5,loan,,0
+Telefon Taksidi,9000,0,1500,15,loan,,0
+Konut Kredisi,450000,21,9800,1,loan,,1

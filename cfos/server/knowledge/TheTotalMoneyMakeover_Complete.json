@@ -1,0 +1,1469 @@
+{
+  "metadata": {
+    "title": "The Total Money Makeover: A Proven Plan for Financial Fitness",
+    "subtitle": "A Proven Plan for Financial Fitness (Revised 3rd Edition)",
+    "author": "Dave Ramsey",
+    "publisher": "Thomas Nelson",
+    "publication_city": "Nashville, Tennessee",
+    "copyright_years": [
+      "2003",
+      "2007",
+      "2009"
+    ],
+    "isbn": {
+      "special_edition": "978-1-59555-216-7",
+      "2009_edition": "978-1-59555-078-1",
+      "2007_edition": "978-0-7852-8908-1"
+    },
+    "library_of_congress": "2003014115",
+    "dewey_decimal": "332.024'02",
+    "subject": "Finance, Personal",
+    "pages": 229,
+    "created_with": "calibre 3.39.1",
+    "creation_date": "2019-02-22",
+    "language": "English",
+    "motto": "IF YOU WILL LIVE LIKE NO ONE ELSE, LATER YOU CAN LIVE LIKE NO ONE ELSE"
+  },
+  "dedication": {
+    "text": "To my beautiful wife, Sharon, who walked arm in arm with me through a Total Money Makeover—I love you, honey. To the superstars all across America who have had the courage to face the person in the mirror, the culture, their family, and even their coworkers as they 'lived like no one else so later they could live like no one else.' You who have courageously had a Total Money Makeover of the heart and wallet are the real superstars. To the Dave Ramsey team and the Thomas Nelson team for tireless hours on this project to make this material available to everyone across this great land."
+  },
+  "other_books_by_author": [
+    "The Total Money Makeover Workbook",
+    "The Total Money Makeover Spanish Edition (La Transformación Total de su Dinero)",
+    "Financial Peace Revisited",
+    "Financial Peace Planner",
+    "Foundations in Personal Finance (High-school Curriculum)",
+    "Tranquilidad Financiera (Spanish edition of Financial Peace)",
+    "More Than Enough",
+    "More Than Enough Planner",
+    "Life Lessons with Junior (Children's Series)"
+  ],
+  "table_of_contents": [
+    {
+      "section": "Introduction",
+      "title": "Introduction"
+    },
+    {
+      "section": "Pre-Chapter",
+      "title": "What This Book Is NOT"
+    },
+    {
+      "section": "Pre-Chapter",
+      "title": "Flying Turkeys and Skinny Dipping"
+    },
+    {
+      "section": "Chapter 1",
+      "title": "The Total Money Makeover Challenge"
+    },
+    {
+      "section": "Chapter 2",
+      "title": "Denial: I'm Not That Out of Shape"
+    },
+    {
+      "section": "Chapter 3",
+      "title": "Debt Myths: Debt Is (Not) a Tool"
+    },
+    {
+      "section": "Chapter 4",
+      "title": "Money Myths: The (Non) Secrets of the Rich"
+    },
+    {
+      "section": "Chapter 5",
+      "title": "Two More Hurdles: Ignorance and Keeping Up with the Joneses"
+    },
+    {
+      "section": "Chapter 6",
+      "title": "Save $1,000 Fast: Walk Before You Run"
+    },
+    {
+      "section": "Chapter 7",
+      "title": "The Debt Snowball: Lose Weight Fast, Really"
+    },
+    {
+      "section": "Chapter 8",
+      "title": "Finish the Emergency Fund: Kick Murphy Out"
+    },
+    {
+      "section": "Chapter 9",
+      "title": "Maximize Retirement Investing: Be Financially Healthy for Life"
+    },
+    {
+      "section": "Chapter 10",
+      "title": "College Funding: Make Sure the Kids Are Fit Too"
+    },
+    {
+      "section": "Chapter 11",
+      "title": "Pay Off the Home Mortgage: Be Ultrafit"
+    },
+    {
+      "section": "Chapter 12",
+      "title": "Build Wealth Like Crazy: Arnold Schwarzedollar, Mr. Universe of Money"
+    },
+    {
+      "section": "Chapter 13",
+      "title": "Live Like No One Else"
+    },
+    {
+      "section": "Appendix",
+      "title": "Meet The Winners of The Total Money Makeover Challenge"
+    },
+    {
+      "section": "Appendix",
+      "title": "About the Author"
+    },
+    {
+      "section": "Appendix",
+      "title": "Budgeting Forms"
+    },
+    {
+      "section": "Appendix",
+      "title": "Index"
+    }
+  ],
+  "introduction": {
+    "title": "Introduction",
+    "core_philosophy": "Personal finance is 80 percent behavior and only 20 percent head knowledge.",
+    "key_statements": [
+      "The problem with my money is the guy in my mirror. If he will behave, he can make the money thing work.",
+      "The math of wealth building is not rocket science; it is simple—but you have to DO IT!",
+      "This proven plan is having a national impact because I have realized that to change your money thing, you have to change.",
+      "The principles are not mine. I stole them all from God and your grandmother.",
+      "I am positive that personal finance is 80 percent behavior and only 20 percent head knowledge."
+    ],
+    "author_background": {
+      "radio_show": "The Dave Ramsey Show",
+      "stations": "More than 450 radio stations",
+      "listeners": "Millions of listeners weekly",
+      "financial_peace_university": "Thirteen-week class with over 1 million families attending",
+      "personal_experience": "Went broke, rebuilt wealth twice; first time in real estate, second time debt-free"
+    },
+    "promise_to_reader": "If you will follow the guidelines of this proven system of sacrifice and discipline, you can be debt-free, begin saving, and give as you've never given before. You will build wealth."
+  },
+  "pre_chapters": {
+    "what_this_book_is_not": {
+      "title": "What This Book Is NOT",
+      "sections": [
+        {
+          "heading": "This Book Is NOT Sophisticated or Complicated",
+          "content": "Not a detailed, in-depth guide to investing. The most profound and life-changing truths are very simple. Millionaires keep their investing and money philosophies very uncomplicated."
+        },
+        {
+          "heading": "This Book Is NOT Something That Has Never Been Said",
+          "content": "Very little in this book is something that someone else has not written or said. The author has packaged time-honored information into a process that is doable and has inspired millions to act."
+        },
+        {
+          "heading": "This Book Is NOT Going to Mislead You on Investment Returns",
+          "content": "Recommends good growth stock-type mutual funds as long-term investment with 12% return. The S&P 500 has averaged 11.67% per year for the last 80+ years. This includes the big drop in the 2008 market."
+        },
+        {
+          "heading": "This Book Is NOT Written by Someone with No Academic Credentials",
+          "content": "Author has a degree in finance and is licensed in real estate, insurance, and investments. The biggest qualifier is personal experience: went broke and rebuilt wealth twice. 'Don't take financial advice from broke people.'"
+        },
+        {
+          "heading": "This Book Is NOT Politically Correct",
+          "content": "Openly discusses the spiritual aspects of money and behavior. Includes Bible verses as a Christian author. Behavior intelligently viewed takes into account emotional, relational, family history, socioeconomic impacts, and the spiritual."
+        },
+        {
+          "heading": "This Book Is NOT Wrong",
+          "content": "Extreme confidence based on millions of people who have benefited. The principles are responsible for changing lives. The same questions always get the same answers because the principles stand and work every time."
+        },
+        {
+          "heading": "This Book Is NOT the Same As My Other Books",
+          "content": "Financial Peace is 'what to do with money.' The Total Money Makeover is more than a 'what to do' book—it is a 'how to do it' plan. A process-driven work weaving inspiration and information into a step-by-step plan."
+        },
+        {
+          "heading": "This Book Is NOT Getting Any Complaints or Criticism",
+          "content": "...from people who do it. No one who has gotten on a budget, gotten out of debt, gotten on the same page with their spouse, and built wealth has said they HATE IT."
+        }
+      ]
+    },
+    "flying_turkeys_and_skinny_dipping": {
+      "title": "Flying Turkeys and Skinny Dipping",
+      "three_little_pigs_lesson": "Those who build on solid foundations survive economic storms. Those who build 'quick and dirty' find their lives blown apart.",
+      "2008_economic_crisis_analysis": {
+        "cause": "Broke people in serious financial trouble borrowed money from greedy bankers at horrible terms and high interest rates to buy homes. SUBprime loans were packaged together and sold as bonds.",
+        "effect": "Foreclosure numbers rose, home prices dropped, fear broke out on Wall Street, stock prices dropped, consumer spending stopped, businesses died, unemployment rose.",
+        "lesson": "Your financial process and principles must work in good times and in bad times—otherwise, they don't work.",
+        "flying_turkey_metaphor": "Even a turkey can fly in a tornado. When times are booming, you can do dumb things with money and seem to get away with it. When the storm hits, stupid comes up looking stupid.",
+        "skinny_dipping_metaphor": "When the tide goes out, you can tell who was skinny-dipping. The 2008 crisis revealed who had built on solid financial foundations."
+      },
+      "key_quote": "People were running around, buying things they couldn't afford with money they didn't have, to impress people they didn't even like."
+    }
+  },
+  "chapters": [
+    {
+      "chapter_number": 1,
+      "title": "The Total Money Makeover Challenge",
+      "subtitle": null,
+      "core_message": "The challenge is YOU. You are the problem with your money, and you are the solution.",
+      "key_concepts": [
+        {
+          "concept": "The Real Problem",
+          "explanation": "The financial channel or some DVD sets aren't your answer; you are. You are the king of your future. The Total Money Makeover plan works because it is simple and gets to the heart of your money problems: you."
+        },
+        {
+          "concept": "The Motto",
+          "explanation": "IF YOU WILL LIVE LIKE NO ONE ELSE, LATER YOU CAN LIVE LIKE NO ONE ELSE. If you will make the sacrifices now that most people aren't willing to make, later on you will be able to live as those folks will never be able to live."
+        },
+        {
+          "concept": "Personal Finance is 80% Behavior",
+          "explanation": "Most folks have a good idea of what to do with money but not how to do it. The problem with money is the guy in the mirror. If he will behave, he can make the money thing work."
+        },
+        {
+          "concept": "The Promise",
+          "explanation": "If you will follow the guidelines of this proven system of sacrifice and discipline, you can be debt-free, begin saving, and give as you've never given before. It is totally up to you."
+        }
+      ],
+      "shocking_stats": [
+        "90% of people in our culture buy things they can't afford."
+      ],
+      "success_stories": [
+        {
+          "names": "Mark and Kari Stolworthy",
+          "ages": "Both 43",
+          "occupations": "CPA/Systems Consultant; Stay-at-Home Mom",
+          "debt_paid": "$57,000 in six months (plus $7,000 given to church)",
+          "peak_debt": "$375,000 including mortgage",
+          "key_lesson": "The key to success was both of us getting on the same page at the same time. We now work together to plan our spending rather than racing to outspend each other."
+        }
+      ],
+      "dave_rants": [
+        "Savings without a mission is garbage. Your money needs to work for you, not lie around."
+      ]
+    },
+    {
+      "chapter_number": 2,
+      "title": "Denial: I'm Not That Out of Shape",
+      "subtitle": null,
+      "core_message": "Ninety percent of solving a problem is realizing there is one. Denial is one of the four major factors that keep people from winning with money.",
+      "key_concepts": [
+        {
+          "concept": "Financial Denial",
+          "explanation": "When you are physically fat, it is hard to be in denial, because there is the ever-widening belt line. When you are financially fat, you can fake it and look good for a while. Friends and family participate in your fantasy/denial."
+        },
+        {
+          "concept": "The Frog in Boiling Water",
+          "explanation": "If you put a frog in boiling water, it will jump out. But if you put it in cool water and slowly raise the temperature, it will stay until it dies. Many people slowly accumulate debt without realizing the danger."
+        },
+        {
+          "concept": "The Mirror Test",
+          "explanation": "Look in the mirror. Take a long look. Being financially mediocre in this country is pretty much okay by most folks' standards. But this is a book about winning, about really having something."
+        }
+      ],
+      "myths_vs_truth": [
+        {
+          "myth": "Debt consolidation saves interest, and you have one smaller payment.",
+          "truth": "Debt consolidation is dangerous because you treat only the symptom."
+        }
+      ],
+      "success_stories": [
+        {
+          "names": "Mark and Kelley Reep",
+          "ages": "40 and 39",
+          "occupations": "Civil Engineer; Nursing School Student",
+          "debt_paid": "$16,000 in consumer debt in ten months",
+          "key_lesson": "Dave helped us realize that we had to draw the line and stop living beyond our means."
+        }
+      ],
+      "case_studies": [
+        {
+          "name": "Sara and John",
+          "situation": "Combined income $75,000, small student loan, car loan, $5,000 credit card, new home. Sara lost her $45,000 job in September.",
+          "lesson": "If life isn't smacking you around at the moment, you are actually in greater danger. You are a real candidate for financial mediocrity or even a major crisis brought on by denial."
+        }
+      ],
+      "dave_rants": [
+        "For your own good, for the good of your family and your future, grow a backbone. When something is wrong, stand up and say it is wrong, and don't back down."
+      ]
+    },
+    {
+      "chapter_number": 3,
+      "title": "Debt Myths: Debt Is (Not) a Tool",
+      "subtitle": null,
+      "core_message": "Debt is not a tool; it is a method to make banks wealthy, not you. The borrower is slave to the lender.",
+      "myths_vs_truth": [
+        {
+          "myth": "Debt is a tool and should be used to create prosperity.",
+          "truth": "Debt is not a tool; it is a method to make banks wealthy, not you. The borrower is slave to the lender (Proverbs 22:7)."
+        },
+        {
+          "myth": "If I loan money to a friend or relative, I will help them out.",
+          "truth": "If you loan money to a friend or relative, you will likely damage or destroy the relationship."
+        },
+        {
+          "myth": "By cosigning a loan, I am helping out a friend or relative.",
+          "truth": "Cosigning is stupid. According to Proverbs 17:18, 'It's stupid to guarantee someone else's loan.'"
+        },
+        {
+          "myth": "Cash Advance, Payday Loans, Rent-to-Own, Title Pawning, and Tote-the-Note Car Lots are needed to help lower-income people get ahead.",
+          "truth": "These rip-off examples of predatory lending are designed to take advantage of lower-income people and benefit only the owners of the companies making the loans."
+        },
+        {
+          "myth": "'Ninety days same as cash' equals using other people's money for free.",
+          "truth": "Ninety days is not the same as cash. 88% of these contracts convert to debt at 24-38% interest, back-charged to date of purchase."
+        },
+        {
+          "myth": "Car payments are a way of life; you'll always have one.",
+          "truth": "Staying away from car payments by driving reliable used cars is what the average millionaire does; that is how he or she became a millionaire."
+        },
+        {
+          "myth": "Leasing a car is what sophisticated financial people do.",
+          "truth": "Leasing a car is the most expensive way to operate a vehicle. The average car lease payment is $495 per month. A car lease is 'fleecing.'"
+        }
+      ],
+      "key_statistics": [
+        "The Federal Reserve notes that the average car payment is $495 over sixty-four months.",
+        "If you invested $495 per month from age 25 to age 65 at 12% average, you would have $5,881,799.14 at age 65.",
+        "Payday loan interest rates are over 650% annually.",
+        "Rent-to-Own effective interest rates are over 1,800% on average (Federal Trade Commission).",
+        "88% of '90 days same as cash' contracts convert to debt.",
+        "Over 97% of people don't systematically pay extra on their mortgage."
+      ],
+      "predatory_lending_types": [
+        {
+          "type": "Payday Loans",
+          "description": "Write a hot check for $225, dated one week from now (payday). They give you $200 cash. The $25 service charge equates to over 650% interest annually.",
+          "verdict": "Legalized loan-sharking."
+        },
+        {
+          "type": "Tote-the-Note Car Lots",
+          "description": "Dealer purchases cheap cars and sells them with down payment equal to what he paid. Payments at 18-38% interest paid weekly. Cars repeatedly repo'd and resold.",
+          "verdict": "The down payment could have purchased the car if the buyer had been more savvy."
+        },
+        {
+          "type": "Rent-to-Own",
+          "description": "Effective interest rates over 1,800% on average. A washer/dryer costs $20/week for 90 weeks = $1,800 total, vs. $500 new retail or $200 used.",
+          "verdict": "The worst example of 'I want it now' mentality."
+        }
+      ],
+      "car_payment_math": {
+        "average_payment": "$495/month over 64 months",
+        "lifetime_cost_of_car_payments": "$5,881,799.14 if invested at 12% from age 25 to 65",
+        "alternative": "Save $495/month for 10 months = $5,000 cash car; trade up every 10 months",
+        "recommendation": "Drive reliable used cars. The average millionaire drives a used car."
+      },
+      "success_stories": [
+        {
+          "names": "Brian and Tammy McKinley",
+          "ages": "36 and 33",
+          "occupations": "Purchasing Agent; Agricultural Economist",
+          "key_lesson": "We now talk about our finances instead of just fighting about money. My wife and I have been debt-free since January of 2004, and life is so much easier now."
+        }
+      ]
+    },
+    {
+      "chapter_number": 4,
+      "title": "Money Myths: The (Non) Secrets of the Rich",
+      "subtitle": null,
+      "core_message": "There are no secrets to wealth. Get-rich-quick schemes don't work. The lottery is a tax on the poor. Real wealth is built through hard work, living on less than you make, and investing.",
+      "myths_vs_truth": [
+        {
+          "myth": "You can get rich quick if you just know the right secrets.",
+          "truth": "No one gets rich quick by using secret information. Energy, thrift, and diligence are how wealth is built, not dumb luck."
+        },
+        {
+          "myth": "Cash Value life insurance, like Whole Life, will help me retire wealthy.",
+          "truth": "Cash Value life insurance is one of the worst financial products available. Over 70% of life insurance policies sold today are Cash Value policies.",
+          "details": {
+            "whole_life_return": "2.6% per year average",
+            "universal_life_return": "4.2% per year average",
+            "variable_life_return": "7.4% per year average",
+            "industry_average_20_year": "6.29% (National Underwriter)",
+            "recommendation": "Buy 20-year level term insurance and invest the difference in mutual funds."
+          }
+        },
+        {
+          "myth": "Playing the lottery and other forms of gambling will make you rich.",
+          "truth": "The lottery is a tax on the poor and on people who can't do math. Zip codes that spend four times what anyone else does on lottery tickets are in lower-income parts of town."
+        },
+        {
+          "myth": "Mobile homes (trailers) will allow me to own something instead of renting, and that will help me become wealthy.",
+          "truth": "Trailers go down in value rapidly. A $25,000 double-wide home will be worth $8,000 in five years while you still owe $22,000."
+        },
+        {
+          "myth": "Prepaying my funeral or my kids' college expenses is a good way to invest and protect myself against inflation.",
+          "truth": "Plans for prepaid funerals and college expenses give low rates of return and put money in the other guy's pocket. Prepaying tuition = 8% return; mutual funds = 12% return."
+        },
+        {
+          "myth": "I don't have time to work on a budget, retirement plan, or estate plan.",
+          "truth": "You don't have time not to. A budget is people telling their money where to go instead of wondering where it went (John Maxwell)."
+        },
+        {
+          "myth": "The debt-management companies on TV, like AmeriDebt, will save me.",
+          "truth": "You may get out of debt, but only with your credit trashed. Using debt management companies is treated the same as filing Chapter 13 Bankruptcy for mortgage underwriting."
+        }
+      ],
+      "life_insurance_comparison": {
+        "cash_value_policy": {
+          "monthly_cost": "$100",
+          "coverage": "$125,000",
+          "return_after_expenses": "2.6% (Whole Life), 4.2% (Universal Life), 7.4% (Variable Life)",
+          "death_benefit": "Face value only ($125,000); savings do NOT go to family"
+        },
+        "term_insurance_alternative": {
+          "monthly_cost": "$7 for same $125,000 coverage (20-year level term)",
+          "remaining_$93": "Should be invested in mutual funds",
+          "advantage": "When 20-year term expires, if you've invested well, you are self-insured"
+        }
+      },
+      "dave_rants": [
+        "Whole Life insurance is a horrible product. Why would you pay someone interest on your own savings? That's backward, and it does not make you smart."
+      ]
+    },
+    {
+      "chapter_number": 5,
+      "title": "Two More Hurdles: Ignorance and Keeping Up with the Joneses",
+      "subtitle": null,
+      "core_message": "Two final obstacles before climbing the mountain: financial ignorance and peer pressure (keeping up with the Joneses). The Joneses are broke.",
+      "key_concepts": [
+        {
+          "concept": "Financial Ignorance",
+          "explanation": "Ignorance is not lack of intelligence; it is simply 'not knowing.' Many intelligent but ignorant people make terrible financial decisions. The cure for ignorance is education and action."
+        },
+        {
+          "concept": "Keeping Up with the Joneses",
+          "explanation": "We buy things we don't need with money we don't have in order to impress people we don't like. The Joneses are broke. Quit trying to keep up with them."
+        },
+        {
+          "concept": "The Weak Spot",
+          "explanation": "Everyone has a weak spot—something they spend money on to impress others. Until you recognize that weak area, you will always be prone to financial stupidity on that subject. The author's weak spot was cars (Jaguar)."
+        },
+        {
+          "concept": "The Jaguar Story",
+          "explanation": "Author went broke while keeping his Jaguar, even having his electricity cut off while the Jaguar sat in the driveway. Eventually sold the Jaguar on a Thursday because the bank would repo it on Friday. Lesson: Don't let image drive financial decisions."
+        }
+      ],
+      "key_quotes": [
+        "We buy things we don't need with money we don't have in order to impress people we don't like.",
+        "The Joneses are broke.",
+        "Looking good is when your broke friends are impressed by what you drive, and being good is having more money than they have."
+      ],
+      "success_stories": [
+        {
+          "names": "Brian and Tammy McKinley",
+          "ages": "36 and 33",
+          "key_lesson": "My wife and I have been debt-free since January of 2004, and life is so much easier now."
+        }
+      ],
+      "transition": "Past the Obstacle Course and Up the Mountain: Having overcome denial, debt myths, money myths, ignorance, and peer pressure, you are now ready to climb the mountain using the Baby Steps."
+    },
+    {
+      "chapter_number": 6,
+      "title": "Save $1,000 Fast: Walk Before You Run",
+      "subtitle": "Baby Step 1",
+      "baby_step_number": 1,
+      "baby_step_title": "Save $1,000 in a Starter Emergency Fund",
+      "core_message": "The Baby Steps work because of the power of focus and the power of priority. Do one step at a time, in order.",
+      "baby_steps_overview": [
+        {
+          "step": 1,
+          "title": "Save $1,000 Fast (Starter Emergency Fund)",
+          "description": "Walk before you run. Build a small emergency fund to prevent new debt when unexpected expenses arise."
+        },
+        {
+          "step": 2,
+          "title": "The Debt Snowball",
+          "description": "Pay off all debt (except the house) using the Debt Snowball method."
+        },
+        {
+          "step": 3,
+          "title": "Finish the Emergency Fund",
+          "description": "Save 3-6 months of expenses."
+        },
+        {
+          "step": 4,
+          "title": "Invest 15% of Income in Retirement",
+          "description": "Invest 15% of household income into Roth IRAs and pre-tax retirement plans."
+        },
+        {
+          "step": 5,
+          "title": "College Funding",
+          "description": "Save for children's college using ESAs and 529 plans."
+        },
+        {
+          "step": 6,
+          "title": "Pay Off the Home Mortgage",
+          "description": "Pay off the home early."
+        },
+        {
+          "step": 7,
+          "title": "Build Wealth and Give",
+          "description": "Build wealth and give generously."
+        }
+      ],
+      "why_baby_steps_work": [
+        "Power of Focus: When you try to do everything at once, progress is very slow. Focused intensity causes things to happen.",
+        "Power of Priority: Each step builds on the one before. Done out of order, they do not work.",
+        "Quick Wins: Paying off small debts first fires you up and keeps you motivated.",
+        "Behavior Modification: The steps address behavior change, not just math."
+      ],
+      "how_to_save_1000_fast": [
+        "Sell things around the house",
+        "Take a part-time job temporarily",
+        "Cut all non-essential spending immediately",
+        "Have a garage sale",
+        "Sell a car",
+        "Work overtime"
+      ],
+      "key_concepts": [
+        {
+          "concept": "The Elephant Metaphor",
+          "explanation": "The way you eat an elephant is one bite at a time. Find something to do and do that with vigor until it is complete; then and only then do you move to the next step."
+        },
+        {
+          "concept": "Walk Before You Run",
+          "explanation": "A 350-pound person beginning marathon training with a quick ten-mile run would have a heart attack. Build up gradually. The $1,000 emergency fund is your base camp."
+        }
+      ],
+      "shocking_stats": [
+        "90% of airline miles 'rewarded' are never redeemed."
+      ]
+    },
+    {
+      "chapter_number": 7,
+      "title": "The Debt Snowball: Lose Weight Fast, Really",
+      "subtitle": "Baby Step 2",
+      "baby_step_number": 2,
+      "baby_step_title": "Pay Off All Debt (Except the House) Using the Debt Snowball",
+      "core_message": "List debts smallest to largest. Pay minimum payments on all except the smallest. Attack the smallest with every dollar you can find. When it's paid off, roll that payment to the next. Gazelle intensity required.",
+      "debt_snowball_method": {
+        "step_1": "List all debts from smallest to largest by total payoff amount (not interest rate).",
+        "step_2": "Pay minimum payments on all debts except the smallest.",
+        "step_3": "Attack the smallest debt with every extra dollar you can find.",
+        "step_4": "When the smallest is paid off, take that payment and add it to the minimum payment on the next smallest debt.",
+        "step_5": "Repeat until all debts (except the house) are paid off.",
+        "key_rule": "Do NOT list by interest rate. List by balance. The quick wins are more important than the math.",
+        "why_smallest_first": "Behavior modification over math. Quick wins keep you motivated. If you go on a diet and lose weight the first week, you will stay on that diet."
+      },
+      "gazelle_intensity": {
+        "definition": "Total, sold-out, focused intensity. To the exclusion of virtually everything else, getting out of debt.",
+        "biblical_reference": "Proverbs 6:1 and 5: 'Deliver yourself like the bird from the hand of the fowler and the gazelle from the hand of the hunter.'",
+        "cheetah_vs_gazelle": "The cheetah (fastest mammal) only catches its prey 1 in 19 chases because the gazelle outmaneuvers it. The way out of debt is to outmaneuver the enemy and run for your life.",
+        "practical_application": "Stop all non-essential spending. Cut up credit cards NOW. Sell things. Take extra jobs. Attack debt with everything you have."
+      },
+      "how_to_get_snowball_rolling": [
+        "Sell items around the house",
+        "Take a part-time job",
+        "Work overtime",
+        "Cut all non-essential expenses",
+        "Use the Pro Rata plan if you can't make minimum payments",
+        "Stop borrowing immediately—draw a line in the sand"
+      ],
+      "elements_of_success": [
+        "Using a budget",
+        "Getting current before you start",
+        "Smallest-to-largest payoff (no cheating)",
+        "Sacrifice",
+        "Focused intensity"
+      ],
+      "key_quotes": [
+        "To the exclusion of virtually everything else, I'm getting out of debt!",
+        "The way out of debt is to outmaneuver the enemy and run for your life.",
+        "You can't get out of a hole by digging out the bottom."
+      ],
+      "success_stories": [
+        {
+          "names": "Steven and Amanda Farrar",
+          "ages": "32 and 31",
+          "occupations": "eBay Store Owner; Pharmacist",
+          "debt_paid": "$95,000+ in student loans, cars, and credit cards in 35 months",
+          "key_lesson": "We literally changed our family tree—all because we bothered and cared enough to do something about it."
+        },
+        {
+          "names": "Josh and Amy Hopkins",
+          "ages": "26 and 25",
+          "occupations": "Mortgage Loan Officer; Stay-at-Home Mom",
+          "debt_paid": "$169,000+ in 6 months (sold rental property, BMW, everything)",
+          "key_lesson": "The most important part of this whole process was learning to delay pleasure."
+        },
+        {
+          "names": "DeLisa Dangerfield",
+          "age": 42,
+          "occupation": "Registered Nurse",
+          "key_lesson": "The ability to become debt-free isn't contingent upon a certain income. It is all about changing behavior and being intense about getting rid of that nasty debt!"
+        }
+      ]
+    },
+    {
+      "chapter_number": 8,
+      "title": "Finish the Emergency Fund: Kick Murphy Out",
+      "subtitle": "Baby Step 3",
+      "baby_step_number": 3,
+      "baby_step_title": "Save 3-6 Months of Expenses in a Fully Funded Emergency Fund",
+      "core_message": "Murphy's Law: Whatever can go wrong will go wrong. An emergency fund is insurance against life's unexpected events. It transforms emergencies into mere inconveniences.",
+      "emergency_fund_details": {
+        "amount": "3 to 6 months of expenses",
+        "where_to_keep": "Money Market account with check-writing privileges",
+        "purpose": "Not for investments, not for planned purchases—only for true emergencies",
+        "what_counts_as_emergency": [
+          "Job loss",
+          "Medical emergency",
+          "Major car repair",
+          "Home repair emergency",
+          "Helping a sick relative"
+        ],
+        "what_does_not_count": [
+          "Christmas (not an emergency—it comes every year)",
+          "Vacation",
+          "New furniture",
+          "Sale items"
+        ]
+      },
+      "murphy_metaphor": {
+        "description": "Murphy's Law says if something can go wrong, it will. Murphy visits everyone. The emergency fund kicks Murphy out of your house.",
+        "transformation": "What used to be a huge, life-altering event will become a mere inconvenience when you have an emergency fund."
+      },
+      "clarifications": [
+        {
+          "situation": "Twins due in 6 months / Plant closing in 4 months / Received $25,000 severance",
+          "action": "Temporarily stop the Debt Snowball and concentrate on the emergency fund because storm clouds are visible and real."
+        },
+        {
+          "situation": "Guaranteed income (military pension, etc.)",
+          "action": "Still need an emergency fund. Even if income is guaranteed, you might need to help a sick relative, replace your heating system, or get a new transmission."
+        },
+        {
+          "situation": "Don't own a home yet",
+          "action": "Save for down payment or cash purchase after completing Baby Steps 2 and 3. This is Baby Step 3(b). Do NOT buy a home while still broke."
+        }
+      ],
+      "timeline": "Getting to the end of this step if you are gazelle-intense takes the typical family 24 to 30 months from starting the Total Money Makeover.",
+      "result": "Debt-free except for the house, with 3-6 months of expenses saved (approximately $10,000+). No payments except the house payment.",
+      "success_stories": [
+        {
+          "names": "Autumn Key",
+          "age": 29,
+          "occupation": "Owner of Southern Comfort Cleaning",
+          "situation": "Single mom of two, started business at 23, reached $100,000 in debt",
+          "result": "Debt-free except house, $2M term life insurance, $3,000/month savings for education, emergency fund, and investments",
+          "key_lesson": "Goal is to be completely debt-free, including the house, by age 35."
+        }
+      ]
+    },
+    {
+      "chapter_number": 9,
+      "title": "Maximize Retirement Investing: Be Financially Healthy for Life",
+      "subtitle": "Baby Step 4",
+      "baby_step_number": 4,
+      "baby_step_title": "Invest 15% of Household Income into Roth IRAs and Pre-Tax Retirement Plans",
+      "core_message": "Invest 15% of before-tax gross income annually toward retirement. The magic of compound interest works for you. Start now—you can't get that time back.",
+      "the_15_percent_rule": {
+        "amount": "15% of before-tax gross income annually",
+        "why_not_more": "You need some income left for college saving (Step 5) and paying off the home (Step 6).",
+        "why_not_less": "Kids' college degrees won't feed you at retirement. You need retirement investing before college saving and mortgage payoff."
+      },
+      "retirement_reality_check": {
+        "stats": [
+          "More than 70% of Americans do not believe they will be able to retire with dignity (Bankrate.com).",
+          "40% of people making less than $35,000/year say the best way to have $500,000 at retirement is to win the Lotto (Consumer Federation of America).",
+          "80% of Americans believe their standard of living will go up at retirement (Wealth Builder magazine).",
+          "Out of 100 people age 65: 97 can't write a check for $600, 54 are still working, only 3 are financially secure (USA Today).",
+          "Bankruptcies among those 65 and older went up 244% in a ten-year period."
+        ]
+      },
+      "investment_order": [
+        {
+          "priority": 1,
+          "vehicle": "401(k) or 403(b) up to employer match",
+          "reason": "The employer match is a 100% return on investment—always take the free money first."
+        },
+        {
+          "priority": 2,
+          "vehicle": "Roth IRA (up to maximum contribution)",
+          "reason": "Grows tax-FREE. Best long-term investment vehicle available."
+        },
+        {
+          "priority": 3,
+          "vehicle": "Back to 401(k)/403(b) to reach 15%",
+          "reason": "Pre-tax growth. Complete the 15% with pre-tax contributions."
+        }
+      ],
+      "mutual_fund_types": [
+        {
+          "type": "Growth and Income",
+          "description": "Large-cap stocks. More stable. Lower growth.",
+          "allocation": "25% of retirement portfolio"
+        },
+        {
+          "type": "Growth",
+          "description": "Mid-cap stocks. Moderate growth.",
+          "allocation": "25% of retirement portfolio"
+        },
+        {
+          "type": "Aggressive Growth",
+          "description": "Small-cap stocks. Higher risk, higher potential return.",
+          "allocation": "25% of retirement portfolio"
+        },
+        {
+          "type": "International",
+          "description": "Foreign stocks. Diversification.",
+          "allocation": "25% of retirement portfolio"
+        }
+      ],
+      "what_retirement_means": {
+        "traditional_view": "Save enough money so I can quit the job I hate.",
+        "ramsey_view": "Security means choices. Work is an option. You can choose to write a book, design churches, or spend time with grandkids.",
+        "harold_fisher_example": "100 years old, worked five days a week at the architectural firm he founded. 'People who retire early, die early.'"
+      },
+      "key_quotes": [
+        "Simple maintenance will keep your money muscles maintained.",
+        "If you hate your career path, change it.",
+        "This is not the time to give yourself a raise!"
+      ],
+      "success_stories": [
+        {
+          "names": "Jim and Kay Robinson",
+          "ages": "64 and 60",
+          "occupations": "Technical specialist for natural gas pipeline (retired); Nurse and stay-at-home mom (retired)",
+          "result": "Retired at age 58 (7 years early) with approximately $1,000,000 in retirement accounts on never more than $60,000/year income",
+          "key_lesson": "Always put 10% of check into stock purchase plan. At first didn't think could afford it, but figured in the long run couldn't afford not to."
+        }
+      ]
+    },
+    {
+      "chapter_number": 10,
+      "title": "College Funding: Make Sure the Kids Are Fit Too",
+      "subtitle": "Baby Step 5",
+      "baby_step_number": 5,
+      "baby_step_title": "Save for Children's College Using ESAs and 529 Plans",
+      "core_message": "Save for college tax-free using Educational Savings Accounts (ESAs) and 529 plans. Avoid student loans. College is possible without debt through creativity and resourcefulness.",
+      "college_savings_reality": {
+        "stats": [
+          "Only 9% of families use college savings funds like ESAs and 529 plans (2008 SallieMae/Gallup study).",
+          "91% have saved nothing or close to nothing toward college.",
+          "College tuition inflation averages about 8% per year vs. 4% general inflation.",
+          "37% of the few who save for college do so in a simple savings account yielding less than 3%."
+        ]
+      },
+      "savings_vehicles": [
+        {
+          "vehicle": "Educational Savings Account (ESA / Education IRA)",
+          "annual_contribution": "$2,000 per child per year",
+          "income_limit": "Household income under $220,000/year",
+          "tax_treatment": "Grows tax-FREE when used for higher education",
+          "flexibility": "Can invest anywhere, in any fund or mix of funds, change at will",
+          "recommendation": "First choice. Most flexible, most control.",
+          "example": "$166.67/month ($2,000/year) from birth to age 18 at 12% = $126,000 tax-free"
+        },
+        {
+          "vehicle": "529 Plan (Flexible Type Only)",
+          "types_to_avoid": [
+            "Life phase plans (8% return, very conservative)",
+            "Fixed portfolio plans (locked in, can't move money)"
+          ],
+          "recommended_type": "Flexible plan allowing movement within a family of funds",
+          "advantage": "Can save in any state's plan and use at any institution of higher learning",
+          "recommendation": "Second choice after ESA. Only use the flexible type."
+        },
+        {
+          "vehicle": "Prepaid Tuition Plans",
+          "return": "8% (matches tuition inflation)",
+          "vs_mutual_funds": "Mutual funds average 12% long-term",
+          "verdict": "Not recommended. You simply break even with tuition inflation."
+        },
+        {
+          "vehicle": "Baby Life Insurance (Gerber, etc.)",
+          "return": "Less than 2%",
+          "verdict": "A joke. Do not use for college savings."
+        },
+        {
+          "vehicle": "Savings Bonds",
+          "return": "About 5%",
+          "verdict": "Won't work for college savings. Below tuition inflation rate."
+        }
+      ],
+      "monthly_college_planning_factors": {
+        "description": "To determine monthly savings needed at 12% interest (8% net after 4% inflation)",
+        "factors_by_age": [
+          {
+            "child_age": 0,
+            "years_to_save": 18,
+            "factor": 0.002083
+          },
+          {
+            "child_age": 2,
+            "years_to_save": 16,
+            "factor": 0.002583
+          },
+          {
+            "child_age": 4,
+            "years_to_save": 14,
+            "factor": 0.003247
+          },
+          {
+            "child_age": 6,
+            "years_to_save": 12,
+            "factor": 0.004158
+          },
+          {
+            "child_age": 8,
+            "years_to_save": 10,
+            "factor": 0.005466
+          },
+          {
+            "child_age": 10,
+            "years_to_save": 8,
+            "factor": 0.00747
+          },
+          {
+            "child_age": 12,
+            "years_to_save": 6,
+            "factor": 0.010867
+          },
+          {
+            "child_age": 14,
+            "years_to_save": 4,
+            "factor": 0.017746
+          }
+        ],
+        "example": "Multiply annual college cost (today's dollars) by factor to get monthly savings needed"
+      },
+      "creative_college_funding_strategies": [
+        "Start at community college (much cheaper) then transfer to 4-year school",
+        "Apply for scholarships (hundreds of millions available annually, not just academic/athletic)",
+        "Work-study programs (e.g., UPS pays tuition for 20 hours/week work)",
+        "Military service (4 years = free college education)",
+        "National Guard (boot camp + tuition and books)",
+        "High-rejection, high-paying summer sales jobs",
+        "Employer tuition reimbursement programs",
+        "Underserved areas programs (government pays for school or pays off student loans)",
+        "Live at home, eat cafeteria food, drive 20 miles each way if needed"
+      ],
+      "student_loans_stance": "Student loans are off-limits. A legacy of debt should not be passed down your family tree.",
+      "success_stories": [
+        {
+          "names": "Craig and Karen Seymour",
+          "ages": "55 and 52",
+          "occupations": "Optician; Police Department Records",
+          "result": "Daughter graduated with no student loans using community college, scholarships, and teamwork",
+          "key_lesson": "With a little creativity and a lot of hard work, we really could pay cash for our daughter's education."
+        },
+        {
+          "names": "Vaneesa and Jared Smith",
+          "ages": "30 and 28",
+          "occupations": "Server; Chef",
+          "result": "Paid off cars and $36,000 in student loans before marriage, saved $9,000 for wedding",
+          "key_lesson": "It's a great feeling to be planning for what's ahead of you instead of having to pay off your past."
+        },
+        {
+          "names": "Shelley Hogenhout",
+          "age": 31,
+          "occupation": "Business Process Improvement Analyst",
+          "result": "Paid off $35,000 in debt on $35,000 income by working 2-3 jobs simultaneously",
+          "key_lesson": "Having a plan for my money changed my life!"
+        }
+      ]
+    },
+    {
+      "chapter_number": 11,
+      "title": "Pay Off the Home Mortgage: Be Ultrafit",
+      "subtitle": "Baby Step 6",
+      "baby_step_number": 6,
+      "baby_step_title": "Pay Off Your Home Mortgage",
+      "core_message": "Become completely debt-free. No payments. The grass feels different under your feet when you own it. Don't settle for 'The Good Enough' at the 18-mile mark of the marathon.",
+      "mortgage_myths_debunked": [
+        {
+          "myth": "It is wise to keep my home mortgage to get the tax deduction.",
+          "truth": "Tax deductions are no bargain. If you pay $10,000 in interest to get a $3,000 tax deduction, you've lost $7,000. 'I will personally pay $3,000 of your taxes as soon as your check for $10,000 clears into my bank account.'"
+        },
+        {
+          "myth": "It is wise to borrow all I can on my home (or continually refinance for cash out) because of the great interest rates; then I can invest the money.",
+          "truth": "You really don't make anything when the smoke clears. After adjusting for taxes (30% bracket = $2,400-$3,600 tax on gains) and risk (debt increases risk), the debt-free person comes out ahead.",
+          "math": "Borrow $100,000 at 8% = $8,000 interest. Invest at 12% = $12,000 return. Minus 30% taxes = $8,400-$9,600 net. Net gain: $400-$1,600. Not worth the risk."
+        },
+        {
+          "myth": "Take out a thirty-year mortgage and promise yourself to pay it like a fifteen-year, so if something goes wrong you have wiggle room.",
+          "truth": "Something will go wrong. You don't have that kind of discipline. Put systems in place that make you do smart things. Get a 15-year fixed-rate mortgage."
+        },
+        {
+          "myth": "The home-equity loan is good to have instead of an emergency fund.",
+          "truth": "Emergencies are precisely when you don't need debt. HELs (Home Equity Loans) are very dangerous. An unbelievable amount end in foreclosure."
+        },
+        {
+          "myth": "You can't pay cash for a home!",
+          "truth": "Paying cash for a home is possible, very possible. What's hard to find is people willing to pay the price in sacrificed lifestyle."
+        }
+      ],
+      "mortgage_guidelines": {
+        "maximum_term": "15-year fixed-rate mortgage",
+        "maximum_payment": "No more than 25% of take-home pay",
+        "recommendation": "Never take more than a 15-year fixed-rate loan",
+        "100_percent_down_plan": "Pay cash for a home. Luke and his wife saved $50,000/year for 3 years on $80,000 household income and paid cash for a $150,000 home at age 26."
+      },
+      "mortgage_payment_table": {
+        "description": "Monthly payment per $1,000 borrowed",
+        "rates_and_terms": {
+          "15_year": {
+            "5%": 7.91,
+            "5.5%": 8.17,
+            "6%": 8.44,
+            "6.5%": 8.71,
+            "7%": 8.99,
+            "7.5%": 9.27,
+            "8%": 9.56,
+            "8.5%": 9.85,
+            "9%": 10.14,
+            "9.5%": 10.44,
+            "10%": 10.75,
+            "10.5%": 11.05,
+            "11%": 11.37,
+            "11.5%": 11.68,
+            "12%": 12.0
+          },
+          "30_year": {
+            "5%": 5.37,
+            "5.5%": 5.68,
+            "6%": 6.0,
+            "6.5%": 6.32,
+            "7%": 6.66,
+            "7.5%": 7.0,
+            "8%": 7.34,
+            "8.5%": 7.69,
+            "9%": 8.05,
+            "9.5%": 8.41,
+            "10%": 8.78,
+            "10.5%": 9.15,
+            "11%": 9.52,
+            "11.5%": 9.9,
+            "12%": 10.29
+          }
+        },
+        "example": "Sale Price $150,000, 15 years at 6%: $150,000 / $1,000 = 150 × 8.44 = $1,266 monthly payment"
+      },
+      "refinancing_guide": {
+        "formula": "Current payment - New payment = Monthly savings. Closing costs / Monthly savings = Months to break even.",
+        "example": "$1,434 current - $1,307 new = $127 savings. $2,300 closing costs / $127 = 18 months to break even.",
+        "rule": "If you will stay in your home longer than the break-even period, you are a candidate for refinancing.",
+        "estimated_closing_costs": {
+          "$30,000": 1500,
+          "$35,000": 1550,
+          "$40,000": 1600,
+          "$45,000": 1650,
+          "$50,000": 1700,
+          "$55,000": 1725,
+          "$60,000": 1775,
+          "$65,000": 1800,
+          "$70,000": 1825,
+          "$75,000": 1850,
+          "$80,000": 1900,
+          "$85,000": 1925,
+          "$90,000": 1950,
+          "$95,000": 1975,
+          "$100,000": 2000,
+          "$150,000": 2300,
+          "$200,000": 2600,
+          "$250,000": 2900
+        }
+      },
+      "arm_guide": {
+        "description": "How to Figure the Change in Your Adjustable Rate Mortgage",
+        "formula": "Index + Margin = New Rate",
+        "common_indexes": [
+          "Treasury Bill (T-Bill)",
+          "LIBOR",
+          "11th District Cost of Funds"
+        ],
+        "typical_margin": 2.59,
+        "example": "T-Bill 4.41% + Margin 2.59% = 7% new interest rate",
+        "warning": "Almost all ARMs start below margin the first year, guaranteeing a payment increase at anniversary unless rates DROP."
+      },
+      "timeline": "Families who stay gazelle-intense pay off the mortgage about seven years from the date they declared war on the culture.",
+      "success_stories": [
+        {
+          "names": "Carla and Joe Schubeck",
+          "ages": "38 and 43",
+          "occupations": "Designer/Minister; Press Operator",
+          "result": "Started with $3,000 home equity loan, credit card bills, $30,000 mortgage on $45,000 income. Paid off house in September 2005. Completely DEBT-FREE.",
+          "key_lesson": "It's unbelievable the feeling of freedom that comes when you don't have the weight of payments hanging over your head."
+        },
+        {
+          "names": "Sabrina and Doug Howerton",
+          "ages": "42 and 52",
+          "occupations": "Aluminum-mill Worker; Retail-Store Manager",
+          "result": "Paid off house a year and a half ahead of schedule",
+          "key_lesson": "The peace we have from being debt-free is worth the small sacrifices."
+        },
+        {
+          "name": "Alicia (Al)",
+          "situation": "Started Total Money Makeover at age 25 with $118,000 in total debt on $70,000 household income",
+          "result": "Paid off every red cent in six years. Debt-free at 31.",
+          "key_lesson": "The grass really does feel different under my bare feet in the backyard now that there is no mortgage and we are DEBT-FREE!"
+        }
+      ]
+    },
+    {
+      "chapter_number": 12,
+      "title": "Build Wealth Like Crazy: Arnold Schwarzedollar, Mr. Universe of Money",
+      "subtitle": "Baby Step 7",
+      "baby_step_number": 7,
+      "baby_step_title": "Build Wealth and Give",
+      "core_message": "You have entered the top 2% of Americans. Totally debt-free. Now build wealth intentionally for three purposes: FUN, INVESTING, and GIVING.",
+      "three_uses_of_money": [
+        {
+          "use": "FUN",
+          "description": "Money is good for fun. After all the sacrifice, enjoy the rewards. Buy the Harley, take the cruise, buy the diamond. The problem is people buy these things when they can't afford them.",
+          "example": "Michael: $550,000/year average income, $20 million in investments. 'Buy the Harley, dude!'"
+        },
+        {
+          "use": "INVESTING",
+          "description": "Investing is how you keep on winning. It becomes like Monopoly—'a little bit like Monopoly.' Keep investing simple: mutual funds and debt-free real estate.",
+          "advice": [
+            "Always manage your own money—surround yourself with advisors but you make the decisions.",
+            "Keep investing very simple until you have over $10 million.",
+            "Use simple mutual funds and debt-free real estate.",
+            "Ride out market fluctuations—stay in for the long term.",
+            "Never cash out at the bottom of the market."
+          ]
+        },
+        {
+          "use": "GIVING",
+          "description": "Giving is possibly the most fun you will ever have with money. The thing the healthy wealthy ones share in common is a love of GIVING.",
+          "examples": [
+            "Friend buys 75 brand-new bikes for inner-city ministry every Christmas",
+            "Seeds of Kindness: $50,000 given away $100 at a time, human to human",
+            "Secret Santa (Larry Stewart): Gave away over $1.3 million in $100 bills on the streets"
+          ],
+          "monkey_trap_metaphor": "Monkeys trapped by heavy glass bottles with nuts inside—can't remove fist without dropping nuts. Don't let greed trap you."
+        }
+      ],
+      "pinnacle_point": {
+        "definition": "The point at which your money works harder than you do. When your money makes more than you do, you are officially wealthy.",
+        "calculation": "Multiply nest egg by 0.08 (8%). If you can live on that number, you have reached the Pinnacle Point.",
+        "description": "Like reaching the top of a hill on a bike—the glorious ride down begins. Money takes on a life of its own. Wealth will find its way to you.",
+        "bike_hill_metaphor": "The switchback technique: painfully going side to side, taking small bites at a time of the mountain. Then the perfect moment at the top before the glorious ride down."
+      },
+      "wealth_team": [
+        "Estate-planning attorney",
+        "CPA or tax expert",
+        "Insurance professional",
+        "Investment professional",
+        "Good realtor"
+      ],
+      "wealth_team_criteria": [
+        "Heart of a teacher, not a salesman or 'expert'",
+        "Can explain complex issues in ways you can understand",
+        "Will not just say 'because I say so'",
+        "Be aware of possible conflicts of interest (commission-based advisors)"
+      ],
+      "key_quotes": [
+        "Wealth is not an escape mechanism. It is instead a tremendous responsibility.",
+        "When your money makes more than you do, you are officially wealthy.",
+        "Always manage your own money.",
+        "Money is a hard worker, harder than you. Money never gets sick, never gets pregnant, and is never disabled."
+      ],
+      "success_stories": [
+        {
+          "names": "Keith and Karen McGinty",
+          "ages": "40 and 42",
+          "occupations": "Math Teacher; Stay-at-Home Mom",
+          "result": "Paid off $50,000 mortgage in less than 4 years on teacher's salary (under $40,000). Adopted two girls from China. Now give freely.",
+          "key_lesson": "We give like never before; we save like never before; and, most important, we live life the way God intended us to like never before."
+        },
+        {
+          "names": "Ron and Teresa Brewer",
+          "ages": "44 and 46",
+          "occupations": "Sales; Staff Children's Clinic",
+          "result": "Paid off $50,000. Debt-free except house. Paid daughter's friend's private school tuition for a year.",
+          "key_lesson": "Buying things may feel good, but giving always feels right."
+        },
+        {
+          "names": "Luke and Laura Lokietek",
+          "ages": "36 and 34",
+          "occupations": "Senior Programmer Analyst; Homemaker",
+          "result": "Debt-free including house. $100,000 in retirement funds, $90,000 in savings, house worth $450,000, paid cash for two newer cars.",
+          "key_lesson": "My status symbol of choice is the paid-off home mortgage AND the BMW in the driveway."
+        }
+      ]
+    },
+    {
+      "chapter_number": 13,
+      "title": "Live Like No One Else",
+      "subtitle": null,
+      "core_message": "The Total Money Makeover is more than a discussion on money. It makes you face the man or woman in the mirror. The danger of wealth is becoming enamored with it. Wealth is a tool and a responsibility, not the answer to life's questions.",
+      "warnings_about_wealth": [
+        {
+          "warning": "Affluenza",
+          "description": "A malady affecting the affluent who seek happiness, solace, and fulfillment in the consuming of stuff. They come up empty and end up depressed. 'He who dies with the most toys is still dead.'"
+        },
+        {
+          "warning": "Wealth as a Walled City",
+          "description": "Proverbs 10:15: A rich man's wealth can become his walled city. If all you get from your wealth is the wrong view of it, wealth will destroy your peace."
+        },
+        {
+          "warning": "Wealth Amplifies Character",
+          "description": "Wealth will make you more of what you are. If you are a jerk and become wealthy, you will be king of the jerks. If you are generous and become wealthy, you will be most generous."
+        }
+      ],
+      "wealth_and_spirituality": {
+        "misconception": "Some political and religious groups have decided that wealth is evil.",
+        "truth": "Many heroes of biblical faith were very wealthy: King David, Solomon, Job, most Founding Fathers.",
+        "dallas_willard_quote": "To use riches is to cause them to be consumed, to trust in riches is to count upon them for things they cannot provide, but to possess riches is to have the right to say how they will or will not be used.",
+        "ramsey_position": "If you are a good person, it is your spiritual duty to possess riches for the good of mankind. Good people must get wealth to keep it from the bad people, because the good people will do good with it."
+      },
+      "final_message": {
+        "hope": "Hope is what I want you to walk away with from this book. Hope that you can be like the people whose stories I told. Hope that you can retire with dignity. Hope that you can change your family tree. Hope that you can give money in a way you have never given before.",
+        "call_to_action": "It is time for you to become a gazelle. It is time for you to leave the reading and the classroom behind and apply these principles. They are age-old principles, and they work.",
+        "encouragement": "Tens of thousands of ordinary people just like you and me have become debt-free and even wealthy using this plan. It isn't magic; it is common sense. The exciting thing is, anyone can do this—anyone. Are you next?"
+      },
+      "key_quotes": [
+        "The Total Money Makeover makes you face the man or woman in the mirror.",
+        "Wealth is not the answer to life's questions.",
+        "The LOVE of Money, Not Money, Is the Root of All Evil.",
+        "It is time for you to become a gazelle."
+      ]
+    }
+  ],
+  "winners_section": {
+    "title": "Meet The Winners of The Total Money Makeover Challenge",
+    "contest_description": "When The Total Money Makeover first released, a contest was held to see who could have the greatest change in financial position in a six-month period. Hundreds entered. Ten finalists went to Atlantis (Bahamas). One family won the $50,000 grand prize.",
+    "grand_prize_winners": {
+      "names": "Chance and Kimberly Morrow",
+      "ages": "Both 40",
+      "occupations": "Stay-at-Home Mom; Cable Technician",
+      "children": 5,
+      "starting_situation": {
+        "credit_card_debt": "$56,000+",
+        "income": "$35,000",
+        "minimum_payments": "$1,200/month",
+        "financial_planner_estimate": "40 years to pay off debt"
+      },
+      "actions_taken": [
+        "Stopped using all 10 credit cards",
+        "Lived on written budget for first time",
+        "Cut every expense possible",
+        "Chance worked overtime",
+        "Had two garage sales selling almost everything",
+        "Chance took second job delivering pizzas 5 nights/week",
+        "Sold their home (used equity to become debt-free)",
+        "Put up old 'Charlie Brown' Christmas tree instead of buying fancy one"
+      ],
+      "results": {
+        "first_year": "Paid off $14,000 (surpassed $10,000 goal)",
+        "total_debt_paid": "All consumer debt + full 6-month emergency fund",
+        "prize_won": "$50,000 grand prize",
+        "four_years_later": "Debt-free including new house (36 years earlier than financial planner estimated)",
+        "non_financial_blessings": [
+          "Chance became a Christian",
+          "Chance was reunited with a 21-year-old son he had not seen since infancy",
+          "Marriage strengthened incredibly"
+        ]
+      },
+      "key_lesson": "What's bigger than the big check we received is the change in our lives. Once upon a time if we had won $50,000, we would have just spent it foolishly and then wondered where the money went.",
+      "symbol": "Still use the old Charlie Brown Christmas tree as a symbol of what they've accomplished and how they've changed their family tree."
+    }
+  },
+  "about_the_author": {
+    "name": "Dave Ramsey",
+    "description": "Best-selling author of More Than Enough and the enormously successful Financial Peace.",
+    "radio_show": "The Dave Ramsey Show",
+    "stations": "More than 450 radio stations throughout the U.S.",
+    "listeners": "Nearly 4.5 million listeners each week",
+    "programs": [
+      "Financial Peace University",
+      "LIVE Events"
+    ],
+    "reach": "Many national corporations as well as hundreds of thousands of individuals have benefited from his programs."
+  },
+  "budgeting_forms": {
+    "title": "Budgeting Forms",
+    "forms_included": [
+      {
+        "form": "Major Components of a Healthy Financial Plan",
+        "components": [
+          "Written Cash-Flow Plan",
+          "Will and/or Estate Plan",
+          "Debt-Reduction Plan",
+          "Tax-Reduction Plan",
+          "Emergency Funding",
+          "Retirement Funding",
+          "College Funding",
+          "Charitable Giving",
+          "Teach My Children",
+          "Life Insurance",
+          "Health Insurance",
+          "Disability Insurance",
+          "Auto Insurance",
+          "Homeowner's Insurance"
+        ],
+        "pledge": "I (We) __________, (a) responsible adult(s), do hereby promise to take the above-stated actions by the above-stated dates to financially secure the well-being of my (our) family and myself (ourselves)."
+      },
+      {
+        "form": "Consumer Equity Sheet",
+        "description": "Lists all assets (real estate, cars, cash, checking, savings, money market, mutual funds, retirement plan, stocks/bonds, cash value insurance, household items, jewelry, antiques, boat) minus liabilities (unsecured debt, credit card debt) to calculate total equity."
+      },
+      {
+        "form": "Income Sources",
+        "categories": [
+          "Salary 1",
+          "Salary 2",
+          "Salary 3",
+          "Bonus",
+          "Self-Employment",
+          "Interest Income",
+          "Dividend Income",
+          "Royalty Income",
+          "Rents",
+          "Notes",
+          "Alimony",
+          "Child Support",
+          "AFDC",
+          "Unemployment",
+          "Social Security",
+          "Pension",
+          "Annuity",
+          "Disability Income",
+          "Cash Gifts",
+          "Trust Fund",
+          "Other"
+        ]
+      },
+      {
+        "form": "Monthly Cash-Flow Plan",
+        "instructions": "Every dollar of your income should be allocated to some category on this sheet. Money 'left over' should be put back into a category. Almost every category (except debt) should have some dollar amount in it. This is a 'zero-based budget.'",
+        "notes": [
+          "Fill in Subtotal for each subcategory and Total for each main category.",
+          "Fill in 'Actually Spent' column after the month.",
+          "Calculate '% of Take-Home Pay' for each category.",
+          "An * beside an item means use the 'envelope system.'",
+          "Emergency Fund should get ALL savings until 3-6 months of expenses saved.",
+          "Three copies of the form are provided for one quarter."
+        ]
+      },
+      {
+        "form": "Recommended Percentages",
+        "categories": [
+          {
+            "item": "Charitable Gifts",
+            "recommended": "10-15%"
+          },
+          {
+            "item": "Saving",
+            "recommended": "5-10%"
+          },
+          {
+            "item": "Housing",
+            "recommended": "25-35%"
+          },
+          {
+            "item": "Utilities",
+            "recommended": "5-10%"
+          },
+          {
+            "item": "Food",
+            "recommended": "5-15%"
+          },
+          {
+            "item": "Transportation",
+            "recommended": "10-15%"
+          },
+          {
+            "item": "Clothing",
+            "recommended": "2-7%"
+          },
+          {
+            "item": "Medical/Health",
+            "recommended": "5-10%"
+          },
+          {
+            "item": "Personal",
+            "recommended": "5-10%"
+          },
+          {
+            "item": "Recreation",
+            "recommended": "5-10%"
+          },
+          {
+            "item": "Debt",
+            "recommended": "5-10%"
+          }
+        ],
+        "note": "These are only recommended percentages and will change dramatically if you have a very high or very low income."
+      },
+      {
+        "form": "Allocated Spending Plan",
+        "description": "Implements the Monthly Cash-Flow Plan into real life. Four columns for up to four different pay periods per month. Each paycheck is fully allocated before received. Last entry should have '0' remaining, showing whole check is allocated.",
+        "instructions": [
+          "Date the pay-period columns.",
+          "Enter income for that period.",
+          "As you allocate paycheck to an item, put remaining balance to the right of the slash.",
+          "Allocate ALL of your paycheck before you get paid.",
+          "Emergency Fund gets ALL savings until 3-6 months of expenses saved."
+        ]
+      },
+      {
+        "form": "Irregular Income Planning",
+        "for": "Self-employed, commission, or royalty income earners",
+        "instructions": [
+          "Prioritize expenses by importance (not urgency).",
+          "Ask: If I only have enough money to pay one thing, what would that be?",
+          "Move through the list in order of importance.",
+          "Saving should be a high priority.",
+          "The 'Cumulative Amount' column shows how far down the priority list a given check will reach."
+        ]
+      },
+      {
+        "form": "Breakdown of Savings",
+        "description": "Tracks committed savings balances by category to prevent impulsive spending of savings.",
+        "categories": [
+          "Emergency Fund (1) $1,000",
+          "Emergency Fund (2) 3-6 months",
+          "Retirement Fund",
+          "College Fund",
+          "Real-Estate Taxes",
+          "Homeowner's Insurance",
+          "Repairs or Maintenance Fee",
+          "Replace Furniture",
+          "Car Insurance",
+          "Car Replacement",
+          "Disability Insurance",
+          "Health Insurance",
+          "Doctor",
+          "Dentist",
+          "Optometrist",
+          "Life Insurance",
+          "School Tuition",
+          "School Supplies",
+          "Gifts (including Christmas)",
+          "Vacation",
+          "Other"
+        ]
+      },
+      {
+        "form": "The Debt Snowball",
+        "description": "COUNTDOWN TO FREEDOM!! Lists debts in order from smallest to largest payoff balance.",
+        "columns": [
+          "Item",
+          "Total Payoff",
+          "Minimum Payment",
+          "New Payment (snowball amount)",
+          "Payments Remaining",
+          "Cumulative Payments"
+        ],
+        "instructions": [
+          "List debts smallest to largest by total payoff amount.",
+          "Redo this sheet each time you pay off a debt.",
+          "Keep old sheets to 'wallpaper the bathroom in your new debt-free house.'",
+          "New Payment = all payments on debts above + current minimum payment.",
+          "Cumulative Payments = running total of Payments Remaining."
+        ]
+      },
+      {
+        "form": "Pro Rata Debts",
+        "description": "For when you cannot pay creditors what they request. Treat all creditors fairly and equally. Pay even the ones who haven't called.",
+        "instructions": "List all debts. Calculate each debt as a percentage of total debt. Pay that percentage of available income to each creditor."
+      }
+    ]
+  },
+  "key_concepts_summary": {
+    "seven_baby_steps": [
+      {
+        "step": 1,
+        "title": "Save $1,000 Fast (Starter Emergency Fund)",
+        "description": "Build a $1,000 baby emergency fund before doing anything else. This prevents new debt when unexpected expenses arise while paying off debt.",
+        "when_complete": "When you have $1,000 in a savings account dedicated only to emergencies."
+      },
+      {
+        "step": 2,
+        "title": "The Debt Snowball",
+        "description": "List all debts (except the house) smallest to largest. Pay minimums on all except the smallest. Attack the smallest with every extra dollar. Roll payments to next debt when paid off.",
+        "when_complete": "When all debt except the home mortgage is paid off."
+      },
+      {
+        "step": 3,
+        "title": "Finish the Emergency Fund",
+        "description": "Save 3-6 months of expenses in a Money Market account. This is your fully funded emergency fund.",
+        "when_complete": "When you have 3-6 months of expenses saved."
+      },
+      {
+        "step": 4,
+        "title": "Invest 15% of Income in Retirement",
+        "description": "Invest 15% of before-tax gross income into Roth IRAs and pre-tax retirement plans (401k/403b). Order: 1) 401k to employer match, 2) Roth IRA to max, 3) Back to 401k to reach 15%.",
+        "when_complete": "When you are consistently investing 15% of gross income toward retirement."
+      },
+      {
+        "step": 5,
+        "title": "College Funding",
+        "description": "Save for children's college using ESAs (Education Savings Accounts) and/or 529 plans. Goal: $166.67/month per child from birth = enough for virtually any college.",
+        "when_complete": "When you have a college savings plan funded and on track for each child."
+      },
+      {
+        "step": 6,
+        "title": "Pay Off the Home Mortgage",
+        "description": "Pay off the home early. Put every extra dollar above living, retirement, and college toward the mortgage. Attack with gazelle intensity.",
+        "when_complete": "When the home mortgage is paid off. You are completely debt-free."
+      },
+      {
+        "step": 7,
+        "title": "Build Wealth and Give",
+        "description": "Build wealth intentionally. Use money for FUN, INVESTING, and GIVING. Reach the Pinnacle Point where your money makes more than you do (nest egg × 8% > annual expenses).",
+        "when_complete": "Never—this is a lifelong step. Keep building wealth and giving generously."
+      }
+    ],
+    "key_financial_principles": [
+      "Personal finance is 80% behavior and 20% knowledge.",
+      "The borrower is slave to the lender (Proverbs 22:7).",
+      "Live like no one else so later you can live like no one else.",
+      "Gazelle intensity: total, sold-out, focused intensity to get out of debt.",
+      "The Debt Snowball: smallest to largest, not by interest rate—behavior modification over math.",
+      "Never borrow money for anything except possibly a 15-year fixed-rate mortgage.",
+      "Drive reliable used cars; never have a car payment.",
+      "Cut up credit cards immediately.",
+      "Build an emergency fund before investing.",
+      "Invest 15% of gross income in retirement.",
+      "Save for college tax-free using ESAs and 529 plans.",
+      "Pay off the home mortgage early.",
+      "The three uses of money: FUN, INVESTING, and GIVING.",
+      "Always manage your own money—gather counsel but you make decisions.",
+      "Wealth amplifies character—be a good person first.",
+      "Giving is the most fun you will ever have with money."
+    ],
+    "myths_debunked_complete_list": [
+      "Debt is a tool",
+      "Debt consolidation saves money",
+      "Loaning money to friends/relatives helps them",
+      "Cosigning loans helps loved ones",
+      "Payday loans/rent-to-own help lower-income people",
+      "90 days same as cash = free money",
+      "Car payments are a way of life",
+      "Leasing a car is sophisticated",
+      "Get-rich-quick schemes work",
+      "Cash value life insurance builds wealth",
+      "The lottery can make you rich",
+      "Mobile homes are good investments",
+      "Prepaying college/funeral is smart investing",
+      "You don't have time for a budget",
+      "Debt management companies will save you",
+      "Keep mortgage for tax deduction",
+      "Borrow on home to invest (arbitrage)",
+      "30-year mortgage with promise to pay like 15-year",
+      "Home equity loan as emergency fund",
+      "You can't pay cash for a home"
+    ],
+    "shocking_statistics": [
+      "90% of people in our culture buy things they can't afford.",
+      "Over 97% of people don't systematically pay extra on their mortgage.",
+      "90% of airline miles 'rewarded' are never redeemed.",
+      "70% of Americans live paycheck to paycheck (Wall Street Journal).",
+      "More than 70% of Americans do not believe they will be able to retire with dignity.",
+      "40% of people making less than $35,000/year say the best way to have $500,000 at retirement is to win the Lotto.",
+      "80% of Americans believe their standard of living will go up at retirement.",
+      "Out of 100 people age 65: 97 can't write a check for $600, 54 are still working, only 3 are financially secure.",
+      "Bankruptcies among those 65 and older went up 244% in a ten-year period.",
+      "Only 9% of families use college savings funds like ESAs and 529 plans.",
+      "91% of families have saved nothing or close to nothing toward college.",
+      "19% of people who filed for bankruptcy in 2002 were college students.",
+      "Over 70% of life insurance policies sold today are Cash Value policies.",
+      "The S&P 500 has averaged 11.67% per year for the last 80+ years.",
+      "The average car payment is $495 over 64 months (Federal Reserve).",
+      "88% of '90 days same as cash' contracts convert to debt.",
+      "Rent-to-Own effective interest rates are over 1,800% on average (FTC).",
+      "Payday loan interest rates exceed 650% annually."
+    ]
+  },
+  "full_text_excerpt": {
+    "note": "The complete raw text of the book (229 pages, 448,944 characters, 7,809 lines) has been extracted and structured into this JSON. Key passages, all chapter content, success stories, myths vs. truth sections, statistics, and appendices are included above.",
+    "raw_text_file": "book_full_text.txt",
+    "total_characters": 448944,
+    "total_lines": 7809
+  }
+}

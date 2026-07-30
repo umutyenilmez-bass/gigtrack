@@ -1,0 +1,41 @@
+{
+  "cashOnHand": 60000,
+  "income": 45000,
+  "essentials": 24000,
+  "extraIncome": 0,
+  "safeReturn": 35,
+  "alertWindowDays": 5,
+  "currency": "TRY",
+  "debts": [
+    {
+      "id": "d-1", "name": "Kredi Kartı A", "type": "card",
+      "balance": 32000, "apr": 54, "monthlyInterest": 1440, "minPayment": 1600,
+      "dueDay": 26, "limit": 40000, "stmtDay": 16, "prepayPenalty": false
+    },
+    {
+      "id": "d-2", "name": "İhtiyaç Kredisi", "type": "loan",
+      "balance": 85000, "apr": 42, "monthlyInterest": 0, "minPayment": 4200,
+      "dueDay": 5, "limit": 0, "stmtDay": null, "prepayPenalty": false
+    },
+    {
+      "id": "d-3", "name": "Telefon Taksidi", "type": "loan",
+      "balance": 9000, "apr": 0, "monthlyInterest": 0, "minPayment": 1500,
+      "dueDay": 15, "limit": 0, "stmtDay": null, "prepayPenalty": false
+    },
+    {
+      "id": "d-4", "name": "Konut Kredisi", "type": "loan",
+      "balance": 450000, "apr": 21, "monthlyInterest": 0, "minPayment": 9800,
+      "dueDay": 1, "limit": 0, "stmtDay": null, "prepayPenalty": true
+    }
+  ],
+  "receivables": [
+    { "id": "r-1", "name": "Serbest iş ödemesi", "amount": 6000, "certain": true },
+    { "id": "r-2", "name": "Arkadaşa verilen borç", "amount": 3000, "certain": false }
+  ],
+  "goals": [
+    { "id": "g-1", "name": "Yeni telefon", "cost": 40000, "priority": 1 },
+    { "id": "g-2", "name": "Tatil", "cost": 60000, "priority": 2 },
+    { "id": "g-3", "name": "Araba peşinatı", "cost": 250000, "priority": 3 }
+  ],
+  "history": []
+}

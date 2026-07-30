@@ -12,6 +12,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@400;500;600;700&family=Cinzel:wght@400;600&display=swap"
     rel="stylesheet">
+  <!-- CfOS (Finans Yönetim Sistemi) Stylesheet -->
+  <link rel="stylesheet" href="./cfos/dist/public/assets/index-B9geOnW8.css">
   <style>
     @font-face {
       font-family: 'FrizQuadrata';
@@ -1534,6 +1536,13 @@
         <div id="analysisList"></div>
       </div>
     </div>
+
+    <!-- TAB: CfOS (Finans Yönetim Sistemi) -->
+    <div id="tab-cfos" class="tab-page">
+      <div class="content" style="padding: 0; max-width: 100%; height: 100%; overflow-y: auto;">
+        <div id="cfos-app-root" style="min-height: 100%;"></div>
+      </div>
+    </div>
   </div>
 
   <!-- SETTINGS OVERLAY -->
@@ -1572,6 +1581,7 @@
     <div class="nav-item" id="nav-unpaid" onclick="switchTab('unpaid')" data-i18n="tabUnpaid">Ödenmemiş</div>
     <div class="nav-item" id="nav-paid" onclick="switchTab('paid')" data-i18n="tabPaid">Ödenmiş</div>
     <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')" data-i18n="tabAnalysis">Analiz</div>
+    <div class="nav-item" id="nav-cfos" onclick="switchTab('cfos')" data-i18n="tabCfos">CfOS</div>
   </nav>
 
   <!-- ADD / EDIT MODAL -->
@@ -1997,6 +2007,7 @@
       localStorage.setItem('gigtrack_active_year', activeYear);
       localStorage.setItem('gigtrack_manual_years', JSON.stringify(manualYears));
       updateUndoBtn();
+      window.dispatchEvent(new CustomEvent('gigtrack-data-changed'));
     }
 
     function pushHistory() {
@@ -2136,7 +2147,7 @@
     // Swipe Senkronizasyonu
     function initSwipeSync() {
       const viewport = document.getElementById('tabViewport');
-      const tabs = ['gigs', 'unpaid', 'paid', 'analysis'];
+      const tabs = ['gigs', 'unpaid', 'paid', 'analysis', 'cfos'];
 
       let isScrolling;
       viewport.addEventListener('scroll', () => {
@@ -2165,7 +2176,7 @@
         return;
       }
 
-      const tabs = ['gigs', 'unpaid', 'paid', 'analysis'];
+      const tabs = ['gigs', 'unpaid', 'paid', 'analysis', 'cfos'];
       const currentIndex = tabs.indexOf(activeTab);
 
       if (e.key === 'ArrowRight' && currentIndex < tabs.length - 1) {
@@ -4053,6 +4064,9 @@
       });
     }
   </script>
+  <script src="./cfosBridge.js"></script>
+  <!-- CfOS (Finans Yönetim Sistemi) Bundle -->
+  <script type="module" src="./cfos/dist/public/assets/index-ilmM0lTO.js"></script>
 </body>
 
 </html>
