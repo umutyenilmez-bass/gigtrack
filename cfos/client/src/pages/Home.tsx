@@ -1023,7 +1023,7 @@ export default function Home() {
       </header>
 
       {/* ── SEKMELER ──────────────────────────────────────────────────────────── */}
-      <main className="container mx-auto px-4 pt-6 pb-20">
+      <main className="container mx-auto px-4 pt-6 pb-56 mb-12">
         {/* Canlı Döviz Kurları Kartı */}
         {rates && (
           <div className="mb-6 p-4 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md flex flex-wrap items-center justify-between gap-4">
@@ -1475,7 +1475,7 @@ export default function Home() {
 
       {/* ── ÖDEME VE TAHSİLAT MODALI ────────────────────────────────────────── */}
       <Dialog open={paymentModalOpen} onOpenChange={setPaymentModalOpen}>
-        <DialogContent className="sm:max-w-md" style={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto pb-10" style={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.1)' }}>
           <DialogHeader>
             <DialogTitle className="text-white font-semibold">
               {selectedDebt?.type === 'receivable' ? 'Tahsilat Yap' : 'Ödeme Yap'}
@@ -1569,7 +1569,7 @@ export default function Home() {
 
       {/* Edit Debt Modal */}
       <Dialog open={!!editingDebt} onOpenChange={(open) => !open && setEditingDebt(null)}>
-        <DialogContent className="bg-[#0f172a] text-white border-white/10">
+        <DialogContent className="bg-[#0f172a] text-white border-white/10 max-h-[85vh] overflow-y-auto pb-10">
           <DialogHeader>
             <DialogTitle>Ekstre Düzenle</DialogTitle>
           </DialogHeader>
@@ -1597,7 +1597,7 @@ export default function Home() {
 
       {/* Rollover Modal */}
       <Dialog open={!!rolloverDebt} onOpenChange={(open) => !open && setRolloverDebt(null)}>
-        <DialogContent className="bg-[#0f172a] text-white border-white/10">
+        <DialogContent className="bg-[#0f172a] text-white border-white/10 max-h-[85vh] overflow-y-auto pb-10">
           <DialogHeader>
             <DialogTitle>Yeni Dönem Başlat</DialogTitle>
           </DialogHeader>
