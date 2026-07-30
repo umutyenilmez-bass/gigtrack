@@ -9,32 +9,22 @@ import Auth from "./pages/Auth";
 import { useEffect } from "react";
 
 function Router() {
-  const [location, setLocation] = useLocation();
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    
-    if (isLocalhost) {
-      if (!token) {
-        localStorage.setItem("token", "local_bypass_jwt_token");
-        localStorage.setItem("username", "local_user");
-        window.location.reload();
-      }
-    } else {
-      if (!token && location !== "/auth") {
-        setLocation("/auth");
-      }
+    if (!token) {
+      localStorage.setItem("token", "local_bypass_jwt_token");
+      localStorage.setItem("username", "Kullanıcı");
     }
-  }, [token, location, setLocation]);
+  }, [token]);
 
   return (
     <Switch>
-      <Route path="/auth" component={Auth} />
+      <Route path="/auth" component={Home} />
       <Route path="/" component={Home} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
-      <Route component={NotFound} />
+      <Route component={Home} />
     </Switch>
   );
 }

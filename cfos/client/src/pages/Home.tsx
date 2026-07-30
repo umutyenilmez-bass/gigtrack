@@ -266,14 +266,10 @@ export default function Home() {
 
   // ── Profil Yükle ─────────────────────────────────────────────────────────
   const fetchProfileData = useCallback(() => {
-    if (!token) { setLocation('/auth'); return; }
+    if (!token) return;
     fetch('/api/profile', { headers: { 'Authorization': `Bearer ${token}` } })
       .then(res => {
-        if (res.status === 401 || res.status === 403) {
-          localStorage.removeItem('token');
-          setLocation('/auth');
-          throw new Error('Oturum süresi doldu.');
-        }
+        if (!res.ok) return {};
         return res.json();
       })
       .then(data => {
