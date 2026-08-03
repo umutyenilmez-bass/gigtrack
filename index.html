@@ -2617,12 +2617,22 @@
       });
 
       // Aynı yılın ödenmemiş işlerini aylara göre grupla
+      const monthlyUnpaidTotal = {};
+      for (let i = 1; i <= 12; i++) monthlyUnpaidTotal[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+
       let thisYearUnpaid = gigs.filter(g => !g.paid && g.date && g.date.startsWith(currentYear.toString()));
       if (filterArtist) thisYearUnpaid = thisYearUnpaid.filter(g => g.artist === filterArtist);
       if (filterVenue) thisYearUnpaid = thisYearUnpaid.filter(g => g.venue === filterVenue);
       thisYearUnpaid.forEach(g => {
         const month = parseInt(g.date.split('-')[1], 10);
-        if (month >= 1 && month <= 12) monthlyUnpaidGigs[month].push(g);
+        if (month >= 1 && month <= 12) {
+          monthlyUnpaidGigs[month].push(g);
+          const feeVal = parseFee(g.fee);
+          if (feeVal !== null) {
+            const c = g.currency || 'TRY';
+            monthlyUnpaidTotal[month][c] += feeVal;
+          }
+        }
       });
 
       let statsHtml = '';
@@ -2674,19 +2684,45 @@
       let listHtml = `<div class="section-label">${T.sumMonthly}</div>`;
       for (let i = 12; i >= 1; i--) {
         let monthHtml = '';
+        // Ödenmiş net toplamlar (sol)
+        let paidSummaryHtml = '';
         Object.keys(monthlyNet[i]).forEach(c => {
           if (monthlyGross[i][c] !== 0 || monthlyExp[i][c] !== 0) {
             let isNeg = monthlyNet[i][c] < 0;
-            monthHtml += `
-          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 8px;">
-            <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: var(--text-2);">
+            paidSummaryHtml += `
+          <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 4px;">
+            <div style="font-size: 10px; color: var(--text-3); font-weight: 600; letter-spacing:0.04em; margin-bottom:2px;">ÖDENDİ</div>
+            <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: #5CADFF;">
                ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}
             </div>
-            ${monthlyExp[i][c] > 0 ? `<div style="font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); margin-top:2px;">Brüt: ${SYM[c] || ''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:var(--red)">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>` : ''}
+            ${monthlyExp[i][c] > 0 ? `<div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); margin-top:2px;">Brüt: ${SYM[c] || ''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:var(--red)">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>` : ''}
           </div>
         `;
           }
         });
+
+        // Ödenmemiş toplamlar (sağ)
+        let unpaidSummaryHtml = '';
+        const unpaidTotals = monthlyUnpaidTotal[i] || {};
+        Object.keys(unpaidTotals).forEach(c => {
+          if (unpaidTotals[c] > 0) {
+            unpaidSummaryHtml += `
+          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 4px;">
+            <div style="font-size: 10px; color: rgba(255,120,120,0.7); font-weight: 600; letter-spacing:0.04em; margin-bottom:2px;">ÖDENMEMİŞ</div>
+            <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: #FF9F9F;">
+               ${SYM[c] || ''}${unpaidTotals[c].toLocaleString('tr')}
+            </div>
+          </div>
+        `;
+          }
+        });
+
+        if (paidSummaryHtml !== '' || unpaidSummaryHtml !== '') {
+          monthHtml = `<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+            <div>${paidSummaryHtml}</div>
+            <div style="text-align:right;">${unpaidSummaryHtml}</div>
+          </div>`;
+        }
 
         const unpaidGigsThisMonth = monthlyUnpaidGigs[i] || [];
         const hasUnpaid = unpaidGigsThisMonth.length > 0;
