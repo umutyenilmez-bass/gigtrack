@@ -2695,7 +2695,6 @@
             <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: #5CADFF;">
                ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}
             </div>
-            ${monthlyExp[i][c] > 0 ? `<div style="font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-3); margin-top:2px;">Brüt: ${SYM[c] || ''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:var(--red)">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>` : ''}
           </div>
         `;
           }
