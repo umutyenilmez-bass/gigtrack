@@ -2584,11 +2584,13 @@
       const monthlyExp = {};
       const monthlyNet = {};
       const monthlyGigs = {};
+      const monthlyUnpaidGigs = {};
       for (let i = 1; i <= 12; i++) {
         monthlyGross[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
         monthlyExp[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
         monthlyNet[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
         monthlyGigs[i] = [];
+        monthlyUnpaidGigs[i] = [];
       }
 
       let hasEarningsOrExpenses = false;
@@ -2612,6 +2614,15 @@
           monthlyGigs[month].push(g);
           hasEarningsOrExpenses = true;
         }
+      });
+
+      // Aynı yılın ödenmemiş işlerini aylara göre grupla
+      let thisYearUnpaid = gigs.filter(g => !g.paid && g.date && g.date.startsWith(currentYear.toString()));
+      if (filterArtist) thisYearUnpaid = thisYearUnpaid.filter(g => g.artist === filterArtist);
+      if (filterVenue) thisYearUnpaid = thisYearUnpaid.filter(g => g.venue === filterVenue);
+      thisYearUnpaid.forEach(g => {
+        const month = parseInt(g.date.split('-')[1], 10);
+        if (month >= 1 && month <= 12) monthlyUnpaidGigs[month].push(g);
       });
 
       let statsHtml = '';
@@ -2677,13 +2688,15 @@
           }
         });
 
-        if (monthHtml !== '') {
+        const unpaidGigsThisMonth = monthlyUnpaidGigs[i] || [];
+        const hasUnpaid = unpaidGigsThisMonth.length > 0;
+
+        if (monthHtml !== '' || hasUnpaid) {
           const gList = monthlyGigs[i].map(g => {
             const feeStr = g.fee ? (SYM[g.currency] || '') + g.fee : T.chipFeeNone;
-            const textColor = g.paid ? '#5CADFF' : '#fff';
             const df = formatDate(g.date);
             const dateStr = `${String(df.day).padStart(2, '0')} ${df.month}`;
-            return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid var(--border); margin-top:4px; color:${textColor}; align-items:center;">
+            return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid var(--border); margin-top:4px; color:#5CADFF; align-items:center;">
           <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
             <span style="font-family:'DM Mono',monospace; font-size:11px; opacity:0.6; flex-shrink:0;">${dateStr}</span>
             <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500;">
@@ -2694,17 +2707,45 @@
         </div>`;
           }).join('');
 
+          const unpaidList = unpaidGigsThisMonth.map(g => {
+            const feeStr = g.fee ? (SYM[g.currency] || '') + g.fee : T.chipFeeNone;
+            const df = formatDate(g.date);
+            const dateStr = `${String(df.day).padStart(2, '0')} ${df.month}`;
+            return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid rgba(255,100,100,0.2); margin-top:4px; color:#FF9F9F; align-items:center;">
+          <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
+            <span style="font-family:'DM Mono',monospace; font-size:11px; opacity:0.6; flex-shrink:0;">${dateStr}</span>
+            <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500;">
+              ${g.venue || T.valNoVenue} · ${g.artist || T.valNoArtist}
+            </span>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:12px;">
+            <span style="font-size:10px; background:rgba(255,100,100,0.18); color:#FF9F9F; border-radius:4px; padding:1px 5px; font-weight:600;">Ödenmedi</span>
+            <span style="font-family:'DM Mono',monospace; font-weight:500;">${feeStr}</span>
+          </div>
+        </div>`;
+          }).join('');
+
+          const unpaidBadge = hasUnpaid
+            ? `<span style="font-size:10px; background:rgba(255,100,100,0.2); color:#FF9F9F; border-radius:4px; padding:1px 6px; font-weight:600; margin-left:6px;">${unpaidGigsThisMonth.length} ödenmemiş</span>`
+            : '';
+
+          const unpaidSection = hasUnpaid
+            ? `<div style="margin-top:8px; padding-top:6px; border-top: 1px dashed rgba(255,100,100,0.3);">
+                 <div style="font-size:11px; color:rgba(255,100,100,0.7); font-weight:600; margin-bottom:2px; letter-spacing:0.04em;">ÖDENMEMIŞ</div>
+                 ${unpaidList}
+               </div>`
+            : '';
+
           listHtml += `
-        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
+        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid ${hasUnpaid && monthHtml === '' ? 'rgba(255,100,100,0.5)' : 'var(--accent)'}; cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
            <div style="display: flex; justify-content: space-between; align-items: center;">
-             <div style="font-weight: 600; font-size: 13px; color: #AEAEB2; letter-spacing:-0.01em;">${MONTHS_FULL[i - 1]}</div>
+             <div style="font-weight: 600; font-size: 13px; color: #AEAEB2; letter-spacing:-0.01em; display:flex; align-items:center;">${MONTHS_FULL[i - 1]}${unpaidBadge}</div>
              <div style="font-size: 10px; color: #AEAEB2; opacity: 0.6;">▼</div>
            </div>
            <div id="m-details-${i}" class="hidden" style="margin-top: 10px; padding-top: 4px;">
-             <div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">
-               ${monthHtml}
-             </div>
+             ${monthHtml !== '' ? `<div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">${monthHtml}</div>` : ''}
              ${gList}
+             ${unpaidSection}
            </div>
         </div>
       `;
