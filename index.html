@@ -2645,7 +2645,7 @@
           if (monthlyGross[i][c] !== 0 || monthlyExp[i][c] !== 0) {
             let isNeg = monthlyNet[i][c] < 0;
             paidSummaryHtml += `
-          <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 4px;">
+          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 4px;">
             <div style="font-size: 10px; color: var(--text-3); font-weight: 600; letter-spacing:0.04em; margin-bottom:2px;">ÖDENDİ</div>
             <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: #5CADFF;">
                ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}
@@ -2661,7 +2661,7 @@
         Object.keys(unpaidTotals).forEach(c => {
           if (unpaidTotals[c] > 0) {
             unpaidSummaryHtml += `
-          <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 4px;">
+          <div style="display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 4px;">
             <div style="font-size: 10px; color: rgba(255,120,120,0.7); font-weight: 600; letter-spacing:0.04em; margin-bottom:2px;">ÖDENMEMİŞ</div>
             <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: #FF9F9F;">
                ${SYM[c] || ''}${unpaidTotals[c].toLocaleString('tr')}
