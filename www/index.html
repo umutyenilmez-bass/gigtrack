@@ -2596,7 +2596,28 @@
         : `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">${T.noPaid}</div><div class="empty-text">${T.noPaidYet}</div></div>`;
     }
 
+    const openAnalysisMonths = new Set();
+
+    function toggleAnalysisMonth(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const isCurrentlyOpen = !el.classList.contains('hidden');
+      if (isCurrentlyOpen) {
+        openAnalysisMonths.delete(id);
+        el.classList.add('hidden');
+      } else {
+        openAnalysisMonths.add(id);
+        el.classList.remove('hidden');
+      }
+    }
+
     function renderAnalysis() {
+      // Açık olan analiz aylarını koru
+      document.querySelectorAll('[id^="m-details-"]').forEach(el => {
+        if (!el.classList.contains('hidden')) {
+          openAnalysisMonths.add(el.id);
+        }
+      });
       const currentYear = activeYear || new Date().getFullYear().toString();
 
       let yearGigs = gigs.filter(g => g.date && g.date.startsWith(currentYear.toString()));
@@ -2749,7 +2770,7 @@
             const feeStr = g.fee ? (SYM[g.currency] || '') + g.fee : T.chipFeeNone;
             const textColor = g.paid ? '#5CADFF' : '#fff';
             const df = formatDate(g.date);
-            const dateStr = `${String(df.day).padStart(2, '0')} ${df.month}`;
+            const dateStr = String(df.day).padStart(2, '0');
             return `<div style="display:flex; justify-content:space-between; font-size:13px; padding: 6px 0; border-top: 1px solid var(--border); margin-top:4px; color:${textColor}; align-items:center;">
           <div style="display:flex; align-items:center; gap:8px; min-width:0; flex:1;">
             <span style="font-family:'DM Mono',monospace; font-size:11px; opacity:0.6; flex-shrink:0;">${dateStr}</span>
@@ -2759,18 +2780,20 @@
           </div>
           <div style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:12px;">
             <span style="font-family:'DM Mono',monospace; font-weight:500;">${feeStr}</span>
-            ${!g.paid ? `<span style="font-size:10px; color:var(--red); font-weight:500;">(Ödenmedi)</span>` : ''}
           </div>
         </div>`;
           }).join('');
 
+          const mId = `m-details-${i}`;
+          const isMOpen = openAnalysisMonths.has(mId);
+
           listHtml += `
-        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid ${borderColor}; cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
+        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid ${borderColor}; cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="toggleAnalysisMonth('${mId}')">
            <div style="display: flex; justify-content: space-between; align-items: center;">
              <div style="font-weight: 600; font-size: 13px; color: #AEAEB2; letter-spacing:-0.01em;">${MONTHS_FULL[i - 1]}</div>
              <div style="font-size: 10px; color: #AEAEB2; opacity: 0.6;">▼</div>
            </div>
-           <div id="m-details-${i}" class="hidden" style="margin-top: 10px; padding-top: 4px;">
+           <div id="${mId}" class="${isMOpen ? '' : 'hidden'}" style="margin-top: 10px; padding-top: 4px;">
              ${monthHtml ? `<div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">${monthHtml}</div>` : ''}
              ${gList}
            </div>
@@ -4012,6 +4035,23 @@
       let years = [...new Set([curYear, ...safeManualYears, ...safeGigs.map(g => (g.date || '').split('-')[0])])];
       years = years.filter(y => y && y.length === 4).sort().reverse();
 
+      const syncStatus = (typeof FirebaseSync !== 'undefined') ? FirebaseSync.status : 'offline';
+      let syncText = 'Bağlı';
+      let syncColor = '#30D158';
+      if (syncStatus === 'offline' || !navigator.onLine) {
+        syncText = 'Çevrimdışı';
+        syncColor = '#8E8E93';
+      } else if (syncStatus === 'error') {
+        syncText = 'Bağlantı Kesildi';
+        syncColor = '#FF453A';
+      } else if (syncStatus === 'syncing') {
+        syncText = 'Eşitleniyor...';
+        syncColor = '#0A84FF';
+      } else if (syncStatus === 'connecting') {
+        syncText = 'Bağlanıyor...';
+        syncColor = '#FFA000';
+      }
+
       body.innerHTML = `
     <div style="margin-bottom: 24px;">
       <div class="section-label" style="margin-top:0;">${T.archiveTitle}</div>
@@ -4056,10 +4096,10 @@
     <!-- CLOUD SYNC -->
     <div style="margin-top: 24px; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; display:flex; justify-content:space-between; align-items:center;">
       <div class="section-label" style="margin:0; font-size:13px; display:flex; align-items:center; gap:8px;">
-        <span id="cloudSyncDot" style="width:8px; height:8px; border-radius:50%; background:#30D158; display:inline-block;"></span>
+        <span id="cloudSyncDot" style="width:8px; height:8px; border-radius:50%; background:${syncColor}; display:inline-block;"></span>
         Bulut Senkronizasyonu
       </div>
-      <span id="cloudSyncStatusBadge" style="font-size:12px; font-weight:600; color:#30D158;">Bağlı</span>
+      <span id="cloudSyncStatusBadge" style="font-size:12px; font-weight:600; color:${syncColor};">${syncText}</span>
     </div>
 
     <!-- TEK BAŞINA GÜVENLİ SIFIRLAMA ALANI -->
@@ -4070,7 +4110,10 @@
     </div>
   `;
       overlay.classList.add('open');
-      if (typeof FirebaseSync !== 'undefined') FirebaseSync.updateStatusBadge();
+      if (typeof FirebaseSync !== 'undefined') {
+        FirebaseSync.updateStatusBadge();
+        FirebaseSync.checkConnection();
+      }
       history.pushState({ modal: 'settings' }, '', '#settings');
     }
 

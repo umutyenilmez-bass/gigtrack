@@ -30,6 +30,8 @@ const FirebaseSync = {
     return id;
   })(),
 
+  heartbeatTimer: null,
+
   init() {
     this.updateStatusBadge();
 
@@ -57,6 +59,37 @@ const FirebaseSync = {
       this.status = 'offline';
       this.updateStatusBadge();
     }
+
+    // Canlı bağlantı nabzı (25 saniyede bir gerçek durum kontrolü)
+    if (this.heartbeatTimer) clearInterval(this.heartbeatTimer);
+    this.heartbeatTimer = setInterval(() => {
+      if (navigator.onLine) {
+        this.checkConnection();
+      } else {
+        this.status = 'offline';
+        this.updateStatusBadge();
+      }
+    }, 25000);
+  },
+
+  async checkConnection() {
+    if (!navigator.onLine) {
+      this.status = 'offline';
+      this.updateStatusBadge();
+      return false;
+    }
+    try {
+      const res = await fetch(`${this.endpoint}?shallow=true`, { cache: 'no-store' });
+      if (res && res.ok) {
+        this.status = 'connected';
+      } else {
+        this.status = 'error';
+      }
+    } catch (e) {
+      this.status = navigator.onLine ? 'error' : 'offline';
+    }
+    this.updateStatusBadge();
+    return this.status === 'connected';
   },
 
   updateStatusBadge() {
@@ -79,7 +112,7 @@ const FirebaseSync = {
       text = 'Çevrimdışı';
       color = '#8E8E93'; // Gray
     } else if (this.status === 'error') {
-      text = 'Bağlantı Hatası';
+      text = 'Bağlantı Kesildi';
       color = '#FF453A'; // Red
     }
 
@@ -151,7 +184,7 @@ const FirebaseSync = {
       this.updateStatusBadge();
     } catch (err) {
       console.warn('[FirebaseSync] Initial sync warning:', err);
-      this.status = 'connected';
+      this.status = navigator.onLine ? 'error' : 'offline';
       this.updateStatusBadge();
     }
   },
@@ -300,8 +333,15 @@ const FirebaseSync = {
     try {
       this.eventSource = new EventSource(this.endpoint);
 
+      this.eventSource.onopen = () => {
+        this.status = 'connected';
+        this.updateStatusBadge();
+      };
+
       this.eventSource.addEventListener('put', (e) => {
         try {
+          this.status = 'connected';
+          this.updateStatusBadge();
           const parsed = JSON.parse(e.data);
           if (parsed && parsed.data && parsed.path === '/') {
             const incoming = parsed.data;
@@ -322,10 +362,13 @@ const FirebaseSync = {
       });
 
       this.eventSource.onerror = () => {
-        // EventSource will auto retry
+        this.status = navigator.onLine ? 'error' : 'offline';
+        this.updateStatusBadge();
       };
     } catch (err) {
       console.warn('[FirebaseSync] EventSource not available or blocked:', err);
+      this.status = navigator.onLine ? 'error' : 'offline';
+      this.updateStatusBadge();
     }
   }
 };
