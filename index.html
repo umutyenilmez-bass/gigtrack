@@ -50,6 +50,8 @@
       --text-3: #8A8A8F;
       --paid-bg: #2A5246;
       --paid-text: #DFF5EA;
+      --red: #CF6666;
+      --red-dim: rgba(207, 102, 102, 0.15);
       --radius: 16px;
       --radius-sm: 12px;
       --nav-height: 72px;
@@ -839,6 +841,7 @@
       -webkit-backdrop-filter: blur(6px);
       display: flex;
       align-items: flex-end;
+      justify-content: center;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.25s;
@@ -851,6 +854,8 @@
 
     .modal {
       width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
       max-height: 93dvh;
       background: var(--surface);
       border-radius: 22px 22px 0 0;
@@ -876,13 +881,23 @@
     /* TOP MODAL (Takvim için) */
     .modal-overlay.top {
       align-items: flex-start;
+      justify-content: center;
     }
 
     .modal-overlay.top .modal {
+      max-width: 440px;
+      margin: 0 auto;
       border-radius: 0 0 24px 24px;
+      border: 1px solid var(--border);
       border-top: none;
-      border-bottom: 1px solid var(--border);
       transform: translateY(-100%);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+    }
+
+    .calendar-container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
     }
 
     .modal-overlay.top.open .modal {
@@ -2559,54 +2574,76 @@
     }
 
     function renderAnalysis() {
-      const currentYear = new Date().getFullYear();
+      const currentYear = activeYear || new Date().getFullYear().toString();
 
-      let thisYearPaid = gigs.filter(g => g.paid && g.date.startsWith(currentYear.toString()));
-      if (filterArtist) thisYearPaid = thisYearPaid.filter(g => g.artist === filterArtist);
-      if (filterVenue) thisYearPaid = thisYearPaid.filter(g => g.venue === filterVenue);
+      let yearGigs = gigs.filter(g => g.date && g.date.startsWith(currentYear.toString()));
+      if (filterArtist) yearGigs = yearGigs.filter(g => g.artist === filterArtist);
+      if (filterVenue) yearGigs = yearGigs.filter(g => g.venue === filterVenue);
 
       const yearlyGross = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
       const yearlyExp = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
       const yearlyNet = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+      const yearlyUnpaid = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
 
       const monthlyGross = {};
       const monthlyExp = {};
       const monthlyNet = {};
+      const monthlyUnpaid = {};
       const monthlyGigs = {};
       for (let i = 1; i <= 12; i++) {
         monthlyGross[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
         monthlyExp[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
         monthlyNet[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
+        monthlyUnpaid[i] = { TRY: 0, EUR: 0, USD: 0, GBP: 0 };
         monthlyGigs[i] = [];
       }
 
       let hasEarningsOrExpenses = false;
 
-      thisYearPaid.forEach(g => {
+      yearGigs.forEach(g => {
+        const month = parseInt(g.date.split('-')[1], 10);
+        if (isNaN(month) || month < 1 || month > 12) return;
+
+        monthlyGigs[month].push(g);
+        const c = g.currency || 'TRY';
+        if (!yearlyGross[c]) {
+          yearlyGross[c] = 0; yearlyExp[c] = 0; yearlyNet[c] = 0; yearlyUnpaid[c] = 0;
+          for (let m = 1; m <= 12; m++) {
+            if (!monthlyGross[m][c]) {
+              monthlyGross[m][c] = 0; monthlyExp[m][c] = 0; monthlyNet[m][c] = 0; monthlyUnpaid[m][c] = 0;
+            }
+          }
+        }
+
         let feeVal = parseFee(g.fee);
         let expVal = parseFloat(g.expenseAmount);
         if (isNaN(expVal)) expVal = 0;
 
-        if (feeVal !== null || expVal > 0) {
-          if (feeVal === null) feeVal = 0;
-          const netVal = feeVal - expVal;
-          const c = g.currency || 'TRY';
-          yearlyGross[c] += feeVal;
-          yearlyExp[c] += expVal;
-          yearlyNet[c] += netVal;
-          const month = parseInt(g.date.split('-')[1], 10);
-          monthlyGross[month][c] += feeVal;
-          monthlyExp[month][c] += expVal;
-          monthlyNet[month][c] += netVal;
-          monthlyGigs[month].push(g);
-          hasEarningsOrExpenses = true;
+        if (g.paid) {
+          if (feeVal !== null || expVal > 0) {
+            if (feeVal === null) feeVal = 0;
+            const netVal = feeVal - expVal;
+            yearlyGross[c] += feeVal;
+            yearlyExp[c] += expVal;
+            yearlyNet[c] += netVal;
+            monthlyGross[month][c] += feeVal;
+            monthlyExp[month][c] += expVal;
+            monthlyNet[month][c] += netVal;
+            hasEarningsOrExpenses = true;
+          }
+        } else {
+          if (feeVal !== null && feeVal > 0) {
+            yearlyUnpaid[c] += feeVal;
+            monthlyUnpaid[month][c] += feeVal;
+          }
         }
       });
 
       let statsHtml = '';
       Object.keys(yearlyNet).forEach(c => {
-        const gigCount = thisYearPaid.filter(g => g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
-        if (yearlyGross[c] !== 0 || yearlyExp[c] !== 0 || gigCount > 0) {
+        const gigCount = yearGigs.filter(g => g.paid && g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
+        const unpaidCount = yearGigs.filter(g => !g.paid && g.currency === c && parseFee(g.fee) !== null).length;
+        if (yearlyGross[c] !== 0 || yearlyExp[c] !== 0 || yearlyUnpaid[c] !== 0 || gigCount > 0 || unpaidCount > 0) {
           statsHtml += `
       <div class="stat-card accent" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px; cursor: pointer;" onclick="document.getElementById('yr-details-${c}').classList.toggle('hidden')">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -2622,12 +2659,18 @@
             <div style="color: var(--text-2);">+Brüt: ${SYM[c] || ''}${yearlyGross[c].toLocaleString('tr')}</div>
             <div style="color: var(--red);">-Masraf: ${SYM[c] || ''}${yearlyExp[c].toLocaleString('tr')}</div>
           </div>
+          ${yearlyUnpaid[c] > 0 ? `
+          <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--red); border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
+            <div>Ödenmedi:</div>
+            <div>${SYM[c] || ''}${yearlyUnpaid[c].toLocaleString('tr')}</div>
+          </div>` : ''}
         </div>
       </div>`;
         }
       });
 
-      if (!hasEarningsOrExpenses) {
+      const hasAnyRecords = hasEarningsOrExpenses || Object.values(yearlyUnpaid).some(v => v > 0);
+      if (!hasAnyRecords) {
         statsHtml = `
       <div class="stat-card accent" style="grid-column: span 2; cursor: pointer;" onclick="document.getElementById('yr-details-empty').classList.toggle('hidden')">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -2644,8 +2687,8 @@
       document.getElementById('statsGrid').innerHTML = statsHtml;
 
       const el = document.getElementById('analysisList');
-      if (!hasEarningsOrExpenses) {
-        el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Kayıt Bulunamadı</div><div class="empty-text">${currentYear} yılına ait ödenmiş işin veya masrafın yok.</div></div>`;
+      if (yearGigs.length === 0 && !hasAnyRecords) {
+        el.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Kayıt Bulunamadı</div><div class="empty-text">${currentYear} yılına ait işin veya masrafın yok.</div></div>`;
         return;
       }
 
@@ -2653,20 +2696,32 @@
       for (let i = 12; i >= 1; i--) {
         let monthHtml = '';
         Object.keys(monthlyNet[i]).forEach(c => {
-          if (monthlyGross[i][c] !== 0 || monthlyExp[i][c] !== 0) {
+          const hasNet = monthlyGross[i][c] !== 0 || monthlyExp[i][c] !== 0;
+          const hasUnp = monthlyUnpaid[i][c] > 0;
+          if (hasNet || hasUnp) {
             let isNeg = monthlyNet[i][c] < 0;
             monthHtml += `
           <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 8px;">
+            ${hasNet ? `
             <div style="font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 600; color: var(--text-2);">
                ${isNeg ? '-' : ''}${SYM[c] || ''}${Math.abs(monthlyNet[i][c]).toLocaleString('tr')}
             </div>
             ${monthlyExp[i][c] > 0 ? `<div style="font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-3); margin-top:2px;">Brüt: ${SYM[c] || ''}${monthlyGross[i][c].toLocaleString('tr')} / Masraf: <span style="color:var(--red)">-${monthlyExp[i][c].toLocaleString('tr')}</span></div>` : ''}
+            ` : ''}
+            ${hasUnp ? `
+            <div style="font-family: 'DM Mono', monospace; font-size: 12px; color: var(--red); font-weight: 600; margin-top: 2px;">
+              Ödenmedi: ${SYM[c] || ''}${monthlyUnpaid[i][c].toLocaleString('tr')}
+            </div>` : ''}
           </div>
         `;
           }
         });
 
-        if (monthHtml !== '') {
+        if (monthlyGigs[i].length > 0 || monthHtml !== '') {
+          monthlyGigs[i].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+          const hasUnpaidInMonth = monthlyGigs[i].some(g => !g.paid);
+          const borderColor = hasUnpaidInMonth ? 'var(--red)' : 'var(--accent)';
+
           const gList = monthlyGigs[i].map(g => {
             const feeStr = g.fee ? (SYM[g.currency] || '') + g.fee : T.chipFeeNone;
             const textColor = g.paid ? '#5CADFF' : '#fff';
@@ -2679,20 +2734,21 @@
               ${g.venue || T.valNoVenue} · ${g.artist || T.valNoArtist}
             </span>
           </div>
-          <span style="font-family:'DM Mono',monospace; flex-shrink:0; font-weight:500; margin-left:12px;">${feeStr}</span>
+          <div style="display:flex; align-items:center; gap:6px; flex-shrink:0; margin-left:12px;">
+            <span style="font-family:'DM Mono',monospace; font-weight:500;">${feeStr}</span>
+            ${!g.paid ? `<span style="font-size:10px; color:var(--red); font-weight:500;">(Ödenmedi)</span>` : ''}
+          </div>
         </div>`;
           }).join('');
 
           listHtml += `
-        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
+        <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid ${borderColor}; cursor: pointer; font-family:'Inter', sans-serif; margin-bottom: 6px;" onclick="document.getElementById('m-details-${i}').classList.toggle('hidden')">
            <div style="display: flex; justify-content: space-between; align-items: center;">
              <div style="font-weight: 600; font-size: 13px; color: #AEAEB2; letter-spacing:-0.01em;">${MONTHS_FULL[i - 1]}</div>
              <div style="font-size: 10px; color: #AEAEB2; opacity: 0.6;">▼</div>
            </div>
            <div id="m-details-${i}" class="hidden" style="margin-top: 10px; padding-top: 4px;">
-             <div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">
-               ${monthHtml}
-             </div>
+             ${monthHtml ? `<div style="border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 8px;">${monthHtml}</div>` : ''}
              ${gList}
            </div>
         </div>
@@ -3940,14 +3996,13 @@
       ${years.map(y => {
         const isActive = activeYear === y;
         const yearGigs = safeGigs.filter(g => (g.date || '').startsWith(y));
+        const paidGigs = yearGigs.filter(g => g.paid);
         const sums = {};
-        yearGigs.forEach(g => {
-          if (g.paid) {
-            const f = parseFee(g.fee);
-            if (f !== null) {
-              const c = g.currency || 'TRY';
-              sums[c] = (sums[c] || 0) + (f - (parseFloat(g.expenseAmount) || 0));
-            }
+        paidGigs.forEach(g => {
+          const f = parseFee(g.fee);
+          if (f !== null) {
+            const c = g.currency || 'TRY';
+            sums[c] = (sums[c] || 0) + (f - (parseFloat(g.expenseAmount) || 0));
           }
         });
         const incomeStr = Object.keys(sums).map(c => `${SYM[c] || ''}${sums[c].toLocaleString('tr')}`).join(' · ');
@@ -3957,7 +4012,7 @@
             <div style="display:flex; flex-direction:column; gap:4px;">
               <span style="font-size:18px; font-weight:800; color:${isActive ? 'var(--accent)' : 'var(--text-3)'}">${y}</span>
               <div style="display:flex; align-items:center; gap:8px;">
-                <span style="font-size:11px; color:var(--text-3); font-weight:500;">${yearGigs.length} iş</span>
+                <span style="font-size:11px; color:var(--text-3); font-weight:500;">${paidGigs.length} iş</span>
                 ${incomeStr ? `<span style="font-size:11px; color:var(--green); font-family:'DM Mono',monospace; font-weight:700;">${incomeStr}</span>` : ''}
               </div>
             </div>
@@ -3970,29 +4025,12 @@
     </div>
 
     <!-- CLOUD SYNC -->
-    <div style="margin-top: 30px; padding: 18px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 16px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
-        <div class="section-label" style="margin:0; font-size:13px; display:flex; align-items:center; gap:8px;">
-          <span id="cloudSyncDot" style="width:10px; height:10px; border-radius:50%; background:#FFA000; display:inline-block;"></span>
-          Bulut Senkronizasyonu (Firebase)
-        </div>
-        <span id="cloudSyncStatusBadge" style="font-size:11px; font-weight:700; color:var(--text-2);">Bağlanıyor...</span>
+    <div style="margin-top: 24px; padding: 14px 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; display:flex; justify-content:space-between; align-items:center;">
+      <div class="section-label" style="margin:0; font-size:13px; display:flex; align-items:center; gap:8px;">
+        <span id="cloudSyncDot" style="width:8px; height:8px; border-radius:50%; background:#30D158; display:inline-block;"></span>
+        Bulut Senkronizasyonu
       </div>
-      <div id="cloudSyncLastTime" style="font-size:12px; color:var(--text-3); margin-bottom:14px;">
-        ${typeof FirebaseSync !== 'undefined' && FirebaseSync.lastSyncTime ? 'Son yedekleme: ' + new Date(FirebaseSync.lastSyncTime).toLocaleString('tr') : 'Henüz bulut yedeklemesi yapılmadı'}
-      </div>
-      
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-        <button onclick="FirebaseSync.pushToCloudManual()" style="background:var(--surface); color:var(--accent); border:1px solid var(--accent); padding:10px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <span>☁️</span> Buluta Yedekle
-        </button>
-        <button onclick="FirebaseSync.pullFromCloudManual()" style="background:var(--surface); color:var(--text); border:1px solid var(--border); padding:10px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-          <span>🔄</span> Buluttan Al
-        </button>
-      </div>
-      <div style="font-size:11px; color:var(--text-3); margin-top:12px; line-height:1.4;">
-        ✓ İşleriniz ve notlarınız otomatik olarak Firebase bulutuna yedeklenir. Cihaz değiştirseniz bile verileriniz kaybolmaz.
-      </div>
+      <span id="cloudSyncStatusBadge" style="font-size:12px; font-weight:600; color:#30D158;">Bağlı</span>
     </div>
 
     <!-- TEK BAŞINA GÜVENLİ SIFIRLAMA ALANI -->

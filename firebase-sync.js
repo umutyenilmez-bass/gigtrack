@@ -70,20 +70,23 @@ const FirebaseSync = {
     let color = '#FFA000'; // Amber
 
     if (this.status === 'connected') {
-      text = 'Buluta Bağlı (Güvende)';
+      text = 'Bağlı';
       color = '#30D158'; // Green
     } else if (this.status === 'syncing') {
       text = 'Eşitleniyor...';
       color = '#0A84FF'; // Blue
     } else if (this.status === 'offline') {
-      text = 'Çevrimdışı (Yerel Mod)';
+      text = 'Çevrimdışı';
       color = '#8E8E93'; // Gray
     } else if (this.status === 'error') {
       text = 'Bağlantı Hatası';
       color = '#FF453A'; // Red
     }
 
-    if (badge) badge.innerText = text;
+    if (badge) {
+      badge.innerText = text;
+      badge.style.color = color;
+    }
     if (dot) dot.style.backgroundColor = color;
     if (timeText) {
       if (this.lastSyncTime) {
