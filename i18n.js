@@ -66,7 +66,7 @@ const T = {
     monthsFull: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
     monthsShort: ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'],
     days: ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'],
-    unpaidWait: "○ Bekliyor", paidDone: "✓ Ödendi",
+    unpaidWait: "○ Öde", paidDone: "✓ Ödendi",
     gigEdit: "✏️ Düzenle", gigCalendar: "📅 Takvim", gigDelete: "🗑 Sil",
     sumMonthly: "Aylık Kazançlar", sumYearly: "Yıllık Toplamlar",
     toastPaid: "✓ Ödendi olarak işaretlendi", toastUnpaid: "○ Ödenmemiş olarak işaretlendi",

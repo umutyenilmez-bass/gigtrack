@@ -1870,7 +1870,7 @@
         monthsFull: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-        unpaidWait: "Pending", paidDone: "Paid",
+        unpaidWait: "Pay", paidDone: "Paid",
         gigEdit: "Edit", gigCalendar: "Cal", gigDelete: "Delete",
         sumMonthly: "Monthly Earnings", sumYearly: "Yearly Totals",
         toastPaid: "Marked as paid", toastUnpaid: "Marked as unpaid",
@@ -1916,7 +1916,7 @@
         monthsFull: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
         monthsShort: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara'],
         days: ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'],
-        unpaidWait: "Bekliyor", paidDone: "Ödendi",
+        unpaidWait: "Öde", paidDone: "Ödendi",
         gigEdit: "Düzenle", gigCalendar: "Takvim", gigDelete: "Sil",
         sumMonthly: "Aylık Kazançlar", sumYearly: "Yıllık Toplamlar",
         toastPaid: "Ödendi olarak işaretlendi", toastUnpaid: "Ödenmemiş olarak işaretlendi",
@@ -2469,21 +2469,44 @@
       return groups;
     }
 
+    const openMonthGroups = new Set();
+
+    function toggleMonthGroup(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const isCurrentlyOpen = !el.classList.contains('hidden');
+      if (isCurrentlyOpen) {
+        openMonthGroups.delete(id);
+        el.classList.add('hidden');
+      } else {
+        openMonthGroups.add(id);
+        el.classList.remove('hidden');
+      }
+    }
+
     function renderGroups(arr, tabName) {
       if (!arr.length) return '';
+      // Mevcut DOM'da açık olan ay gruplarını koru
+      document.querySelectorAll('.gig-card-group > div[id^="details-"]').forEach(el => {
+        if (!el.classList.contains('hidden')) {
+          openMonthGroups.add(el.id);
+        }
+      });
+
       const groups = groupByMonth(arr);
       return Object.keys(groups).sort().reverse().map(k => {
         const [y, m] = k.split('-');
         const groupGigsHtml = groups[k].map(g => gigCard(g)).join('');
         const id = `details-${tabName}-${k}`;
+        const isOpen = openMonthGroups.has(id);
         
         return `
         <div class="gig-card-group" style="margin-bottom:10px;">
-          <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;" onclick="document.getElementById('${id}').classList.toggle('hidden')">
+          <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;" onclick="toggleMonthGroup('${id}')">
             <span style="font-weight:600; color:#AEAEB2; font-size:13px; letter-spacing:-0.01em;">${MONTHS_FULL[+m - 1]} ${y}</span>
             <span style="font-size:10px; color:#AEAEB2; opacity:0.6;">▼</span>
           </div>
-          <div id="${id}" class="hidden">
+          <div id="${id}" class="${isOpen ? '' : 'hidden'}">
             ${groupGigsHtml}
           </div>
         </div>
@@ -3008,6 +3031,12 @@
       const gig = gigs.find(g => String(g.id) === String(id));
       if (!gig) return;
       gig.paid = !gig.paid;
+      // Kartın ve bulunduğu ay grubunun kapanmamasını sağla
+      expandedCards.add(String(id));
+      const k = monthKey(gig.date);
+      ['gigs', 'unpaid', 'paid'].forEach(tab => {
+        openMonthGroups.add(`details-${tab}-${k}`);
+      });
       save(); render();
       showToast(gig.paid ? T.toastPaid : T.toastUnpaid);
     }

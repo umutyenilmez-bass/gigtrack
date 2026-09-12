@@ -7,7 +7,7 @@ const i18nScript = `// ===== i18n =====
 const userLang = (navigator.language || navigator.userLanguage || "en").substring(0,2) === "tr" ? "tr" : "en";
 const T = {
   en: {
-    addGigBtn: "<span style=\\"font-size:16px;line-height:1\\">＋</span> Add Gig", exportData: "⬇ Export", importData: "⬆ Import",
+    addGigBtn: "<span style=\\"font-size:16px;line-height:1\\">＋</span> Add Gig", exportData: "⬆ Export", importData: "⬇ Import",
     tabGigs: "Gigs", tabUnpaid: "Unpaid", tabPaid: "Paid", tabAnalysis: "Analysis",
     modalTitle: "New Gig",
     lblVenue: "Venue", plcVenue: "Venue Name",
@@ -66,7 +66,7 @@ const T = {
     monthsFull: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
     monthsShort: ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'],
     days: ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'],
-    unpaidWait: "○ Bekliyor", paidDone: "✓ Ödendi",
+    unpaidWait: "○ Öde", paidDone: "✓ Ödendi",
     gigEdit: "✏️ Düzenle", gigCalendar: "📅 Takvim", gigDelete: "🗑 Sil",
     sumMonthly: "Aylık Kazançlar", sumYearly: "Yıllık Toplamlar",
     toastPaid: "✓ Ödendi olarak işaretlendi", toastUnpaid: "○ Ödenmemiş olarak işaretlendi",
