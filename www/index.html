@@ -1532,16 +1532,6 @@
       <div class="content" id="gigsList"></div>
     </div>
 
-    <!-- TAB: Ödenmemiş -->
-    <div id="tab-unpaid" class="tab-page">
-      <div class="content" id="unpaidList"></div>
-    </div>
-
-    <!-- TAB: Ödenmiş -->
-    <div id="tab-paid" class="tab-page">
-      <div class="content" id="paidList"></div>
-    </div>
-
     <!-- TAB: Analiz -->
     <div id="tab-analysis" class="tab-page">
       <div class="content">
@@ -1583,9 +1573,7 @@
 
   <!-- BOTTOM NAV -->
   <nav class="nav-tabs">
-    <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')" data-i18n="tabGigs">Tümü</div>
-    <div class="nav-item" id="nav-unpaid" onclick="switchTab('unpaid')" data-i18n="tabUnpaid">Ödenmemiş</div>
-    <div class="nav-item" id="nav-paid" onclick="switchTab('paid')" data-i18n="tabPaid">Ödenmiş</div>
+    <div class="nav-item active" id="nav-gigs" onclick="switchTab('gigs')" data-i18n="tabGigs">İşlerim</div>
     <div class="nav-item" id="nav-analysis" onclick="switchTab('analysis')" data-i18n="tabAnalysis">Analiz</div>
   </nav>
 
@@ -2158,7 +2146,7 @@
     // Swipe Senkronizasyonu
     function initSwipeSync() {
       const viewport = document.getElementById('tabViewport');
-      const tabs = ['gigs', 'unpaid', 'paid', 'analysis'];
+      const tabs = ['gigs', 'analysis'];
 
       let isScrolling;
       viewport.addEventListener('scroll', () => {
@@ -2187,7 +2175,7 @@
         return;
       }
 
-      const tabs = ['gigs', 'unpaid', 'paid', 'analysis'];
+      const tabs = ['gigs', 'analysis'];
       const currentIndex = tabs.indexOf(activeTab);
 
       if (e.key === 'ArrowRight' && currentIndex < tabs.length - 1) {
@@ -2580,6 +2568,7 @@
       }
 
       const el = document.getElementById('unpaidList');
+      if (!el) return;
       el.innerHTML = unpaid.length
         ? renderGroups(unpaid, 'unpaid')
         : `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">${T.noUnpaid}</div><div class="empty-text">${T.noUnpaidYet}</div></div>`;
@@ -2591,6 +2580,7 @@
       if (filterVenue) paidGigs = paidGigs.filter(g => g.venue === filterVenue);
 
       const el = document.getElementById('paidList');
+      if (!el) return;
       el.innerHTML = paidGigs.length
         ? renderGroups(paidGigs, 'paid')
         : `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-title">${T.noPaid}</div><div class="empty-text">${T.noPaidYet}</div></div>`;
@@ -2685,8 +2675,8 @@
 
       let statsHtml = '';
       Object.keys(yearlyNet).forEach(c => {
-        const gigCount = yearGigs.filter(g => g.paid && g.currency === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
-        const unpaidCount = yearGigs.filter(g => !g.paid && g.currency === c && parseFee(g.fee) !== null).length;
+        const gigCount = yearGigs.filter(g => g.paid && (g.currency || 'TRY') === c && (parseFee(g.fee) !== null || (parseFloat(g.expenseAmount) > 0))).length;
+        const unpaidCount = yearGigs.filter(g => !g.paid && (g.currency || 'TRY') === c && parseFee(g.fee) !== null && parseFee(g.fee) > 0).length;
         if (yearlyGross[c] !== 0 || yearlyExp[c] !== 0 || yearlyUnpaid[c] !== 0 || gigCount > 0 || unpaidCount > 0) {
           statsHtml += `
       <div class="stat-card accent" style="grid-column: span 2; display: flex; flex-direction: column; gap: 8px; cursor: pointer;" onclick="document.getElementById('yr-details-${c}').classList.toggle('hidden')">
@@ -2705,7 +2695,7 @@
           </div>
           ${yearlyUnpaid[c] > 0 ? `
           <div style="display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 13px; color: var(--red); border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 6px;">
-            <div>Ödenmedi:</div>
+            <div>${unpaidCount} ${userLang === 'tr' ? 'ödenmedi' : 'unpaid'}:</div>
             <div>${SYM[c] || ''}${yearlyUnpaid[c].toLocaleString('tr')}</div>
           </div>` : ''}
         </div>
@@ -2744,6 +2734,7 @@
           const hasUnp = monthlyUnpaid[i][c] > 0;
           if (hasNet || hasUnp) {
             let isNeg = monthlyNet[i][c] < 0;
+            const monthUnpaidCount = monthlyGigs[i].filter(g => !g.paid && (g.currency || 'TRY') === c && parseFee(g.fee) !== null && parseFee(g.fee) > 0).length;
             monthHtml += `
           <div style="display: flex; flex-direction: column; align-items: flex-end; margin-bottom: 8px;">
             ${hasNet ? `
@@ -2754,7 +2745,7 @@
             ` : ''}
             ${hasUnp ? `
             <div style="font-family: 'DM Mono', monospace; font-size: 12px; color: var(--red); font-weight: 600; margin-top: 2px;">
-              Ödenmedi: ${SYM[c] || ''}${monthlyUnpaid[i][c].toLocaleString('tr')}
+              ${monthUnpaidCount} ${userLang === 'tr' ? 'ödenmedi' : 'unpaid'}: ${SYM[c] || ''}${monthlyUnpaid[i][c].toLocaleString('tr')}
             </div>` : ''}
           </div>
         `;
@@ -3041,9 +3032,7 @@
       const unpSum = document.getElementById('unpaidSummary');
       if (unpSum) unpSum.classList.toggle('hidden', activeTab !== 'unpaid');
 
-      if (activeTab === 'gigs') renderGigs();
-      renderUnpaid();
-      renderPaid();
+      renderGigs();
       renderAnalysis();
       renderCalendar();
     }
@@ -3057,9 +3046,7 @@
       // Kartın ve bulunduğu ay grubunun kapanmamasını sağla
       expandedCards.add(String(id));
       const k = monthKey(gig.date);
-      ['gigs', 'unpaid', 'paid'].forEach(tab => {
-        openMonthGroups.add(`details-${tab}-${k}`);
-      });
+      openMonthGroups.add(`details-gigs-${k}`);
       save(); render();
       showToast(gig.paid ? T.toastPaid : T.toastUnpaid);
     }
