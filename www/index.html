@@ -1798,10 +1798,16 @@
           <div class="form-group">
             <label class="form-label" data-i18n="lblDate">Tarih</label>
             <input type="date" class="form-input" id="fDate" onclick="this.showPicker()">
+            <input type="hidden" id="fTime" value="">
           </div>
           <div class="form-group">
-            <label class="form-label" data-i18n="lblTime">Saat (opsiyonel)</label>
-            <input type="time" class="form-input" id="fTime" onclick="this.showPicker()">
+            <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
+            <select class="form-select" id="fRepeat">
+              <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
+              <option value="weekly" data-i18n="optRepeatWeekly">Her hafta</option>
+              <option value="next_month" data-i18n="optRepeatNextMonth">Bir sonraki ay</option>
+            </select>
+            <input type="hidden" id="fRepeatUntil" value="">
           </div>
         </div>
 
@@ -1870,16 +1876,6 @@
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
-          <select class="form-select" id="fRepeat">
-            <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
-            <option value="weekly" data-i18n="optRepeatWeekly">Her hafta</option>
-            <option value="next_month" data-i18n="optRepeatNextMonth">Bir sonraki ay</option>
-          </select>
-          <input type="hidden" id="fRepeatUntil" value="">
         </div>
 
         <div class="form-group">
