@@ -1035,32 +1035,31 @@
 
     .quick-fill-list {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
       gap: 6px;
-      margin-bottom: 16px;
-      max-height: 160px;
-      overflow-y: auto;
-      padding-right: 4px;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
     }
 
     .quick-fill-list::-webkit-scrollbar {
-      width: 4px;
-    }
-    .quick-fill-list::-webkit-scrollbar-thumb {
-      background: var(--border);
-      border-radius: 2px;
+      display: none;
     }
 
     .quick-fill-chip {
       flex-shrink: 0;
-      padding: 7px 12px;
-      border-radius: var(--radius-sm);
+      padding: 5px 11px;
+      border-radius: 20px;
       background: var(--surface-2);
       border: 1px solid var(--border);
       cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      display: inline-flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 7px;
       -webkit-tap-highlight-color: transparent;
       transition: all 0.15s;
     }
@@ -1071,19 +1070,37 @@
 
     .quick-fill-chip:hover {
       border-color: var(--accent);
+      background: rgba(244, 196, 48, 0.08);
     }
 
     .quick-fill-title {
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 600;
       color: var(--text);
+      white-space: nowrap;
     }
 
     .quick-fill-sub {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 500;
-      color: var(--text-3);
+      color: var(--accent);
       font-family: 'DM Mono', monospace;
+      white-space: nowrap;
+    }
+
+    .quick-fill-delete {
+      font-size: 14px;
+      line-height: 1;
+      color: var(--text-3);
+      opacity: 0.5;
+      padding: 0 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .quick-fill-delete:hover {
+      opacity: 1;
+      color: var(--red);
     }
 
     .form-row {
@@ -1618,12 +1635,12 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" data-i18n="lblVenue">Mekan</label>
-            <input type="text" class="form-input" id="fVenue" placeholder="Mekan Adı" data-i18n="plcVenue"
+            <input type="text" class="form-input" id="fVenue" placeholder="" data-i18n="plcVenue"
               autocomplete="off">
           </div>
           <div class="form-group">
             <label class="form-label" data-i18n="lblArtist">Sanatçı</label>
-            <input type="text" class="form-input" id="fArtist" placeholder="Sahne adı" data-i18n="plcArtist"
+            <input type="text" class="form-input" id="fArtist" placeholder="" data-i18n="plcArtist"
               autocomplete="off">
           </div>
         </div>
@@ -1644,9 +1661,12 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label" data-i18n="lblFee">Ücret</label>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+            <label class="form-label" style="margin-bottom: 0;" data-i18n="lblFee">Ücret</label>
+            <span onclick="toggleFeeHint(event)" title="Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür." style="cursor: pointer; color: var(--text-3); font-size: 13px; padding: 0 4px; line-height: 1;">ⓘ</span>
+          </div>
           <div class="fee-row">
-            <input type="text" class="form-input fee-input" id="fFee" placeholder="1500 · ? · TBD · ~2000"
+            <input type="text" class="form-input fee-input" id="fFee" placeholder="1500"
               data-i18n="plcFee" autocomplete="off">
             <select class="form-select fee-currency" id="fCurrency">
               <option value="TRY">₺ TRY</option>
@@ -1655,46 +1675,59 @@
               <option value="GBP">£ GBP</option>
             </select>
           </div>
-          <div class="form-hint"><span data-i18n="hintFee">Sayı, soru işareti veya metin girebilirsiniz. Yalnızca
-              sayısal değer girildiğinde Analiz sekmesinde görünür.</span></div>
+          <div class="form-hint hidden" id="feeHint" style="margin-top: 6px;"><span data-i18n="hintFee">Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür.</span></div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" data-i18n="lblExpenseName">Masraf Adı (opsiyonel)</label>
-            <input type="text" class="form-input" id="fExpenseName" placeholder="örn. Taksi" data-i18n="plcExpenseName"
-              autocomplete="off">
-          </div>
-          <div class="form-group">
-            <label class="form-label" data-i18n="lblExpenseAmount">Masraf Tutarı</label>
-            <input type="number" class="form-input" id="fExpenseAmount" placeholder="Tutar" data-i18n="plcExpenseAmount"
-              autocomplete="off" step="any">
-          </div>
-        </div>
+        <!-- COLLAPSIBLE EXPENSE & FUEL SECTION -->
+        <div style="margin-bottom: 14px;">
+          <button type="button" id="expenseToggleBtn" onclick="toggleExpenseSection()"
+            style="width: 100%; display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 9px 12px; color: var(--text-2); font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; transition: background 0.15s;">
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <span>💸</span>
+              <span id="expenseToggleTitle" data-i18n="lblExpenseToggle">Masraf & Yakıt Ekle (opsiyonel)</span>
+            </span>
+            <span id="expenseToggleArrow" style="font-size: 10px; color: var(--text-3); transition: transform 0.2s;">▼</span>
+          </button>
 
-        <div
-          style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 13px;">
-          <div
-            style="font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;"
-            data-i18n="lblAutoFuel">
-            Otomatik Yakıt Hesaplama
-          </div>
-          <div class="form-row">
-            <div class="form-group" style="margin-bottom: 6px;">
-              <label class="form-label" data-i18n="lblDistance">Gidilen Mesafe (KM)</label>
-              <input type="number" class="form-input" id="fDistance" placeholder="Örn. 50" data-i18n="plcDistance"
-                oninput="calculateFuel()">
+          <div id="expenseCollapseContent" class="hidden" style="margin-top: 10px;">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" data-i18n="lblExpenseName">Masraf Adı (opsiyonel)</label>
+                <input type="text" class="form-input" id="fExpenseName" placeholder="" data-i18n="plcExpenseName"
+                  autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label class="form-label" data-i18n="lblExpenseAmount">Masraf Tutarı</label>
+                <input type="number" class="form-input" id="fExpenseAmount" placeholder="" data-i18n="plcExpenseAmount"
+                  autocomplete="off" step="any">
+              </div>
             </div>
-            <div class="form-group" style="margin-bottom: 6px;">
-              <label class="form-label" data-i18n="lblFuelRate">Litre Fiyatı (TL)</label>
-              <input type="number" class="form-input" id="fFuelRate" placeholder="Örn. 43.5" data-i18n="plcFuelRate"
-                step="any" oninput="calculateFuel()">
+
+            <div
+              style="background: rgba(255,255,255,0.02); border: 1px dashed var(--border); border-radius: var(--radius-sm); padding: 10px; margin-top: 8px;">
+              <div
+                style="font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;"
+                data-i18n="lblAutoFuel">
+                Otomatik Yakıt Hesaplama
+              </div>
+              <div class="form-row">
+                <div class="form-group" style="margin-bottom: 6px;">
+                  <label class="form-label" data-i18n="lblDistance">Gidilen Mesafe (KM)</label>
+                  <input type="number" class="form-input" id="fDistance" placeholder="" data-i18n="plcDistance"
+                    oninput="calculateFuel()">
+                </div>
+                <div class="form-group" style="margin-bottom: 6px;">
+                  <label class="form-label" data-i18n="lblFuelRate">Litre Fiyatı (TL)</label>
+                  <input type="number" class="form-input" id="fFuelRate" placeholder="" data-i18n="plcFuelRate"
+                    step="any" oninput="calculateFuel()">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" data-i18n="lblFuelCons">Tüketim (L/100km) - Varsayılan: 7</label>
+                <input type="number" class="form-input" id="fFuelCons" value="7" placeholder="" data-i18n="plcFuelCons"
+                  step="any" oninput="calculateFuel()">
+              </div>
             </div>
-          </div>
-          <div class="form-group" style="margin-bottom: 0;">
-            <label class="form-label" data-i18n="lblFuelCons">Tüketim (L/100km) - Varsayılan: 7</label>
-            <input type="number" class="form-input" id="fFuelCons" value="7" placeholder="7" data-i18n="plcFuelCons"
-              step="any" oninput="calculateFuel()">
           </div>
         </div>
 
@@ -1872,6 +1905,7 @@
         lblAutoFuel: "Auto Fuel Calculation", lblDistance: "Distance (KM)", plcDistance: "e.g. 50",
         lblFuelRate: "Fuel Price/L", plcFuelRate: "e.g. 43.5",
         lblFuelCons: "Consumption (L/100km) - Default: 7", plcFuelCons: "7",
+        lblExpenseToggle: "Add Expense & Fuel (optional)",
         calcTitle: "Calculator",
         totalUnpaid: "Total Unpaid:",
         tabSingle: "Single Gig",
@@ -1918,6 +1952,7 @@
         lblAutoFuel: "Otomatik Yakıt Hesaplama", lblDistance: "Gidilen Mesafe (KM)", plcDistance: "Örn. 50",
         lblFuelRate: "Litre Fiyatı (TL)", plcFuelRate: "Örn. 43.5",
         lblFuelCons: "Tüketim (L/100km) - Varsayılan: 7", plcFuelCons: "7",
+        lblExpenseToggle: "Masraf & Yakıt Ekle (opsiyonel)",
         calcTitle: "Hesap Makinesi",
         totalUnpaid: "Toplam Bekleyen:",
         tabSingle: "Tek İş",
@@ -3368,6 +3403,27 @@
       showToast(userLang === 'tr' ? `✓ ${createdGigs.length} iş oluşturuldu` : `✓ ${createdGigs.length} gigs created`);
     }
 
+    function toggleFeeHint(e) {
+      if (e) e.stopPropagation();
+      const el = document.getElementById('feeHint');
+      if (el) el.classList.toggle('hidden');
+    }
+
+    function toggleExpenseSection(forceOpen) {
+      const content = document.getElementById('expenseCollapseContent');
+      const arrow = document.getElementById('expenseToggleArrow');
+      if (!content || !arrow) return;
+
+      const shouldOpen = (typeof forceOpen === 'boolean') ? forceOpen : content.classList.contains('hidden');
+      if (shouldOpen) {
+        content.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+      } else {
+        content.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+      }
+    }
+
     function openAddModal(preDate) {
       editingId = null;
       const overlay = document.getElementById('modalOverlay');
@@ -3389,12 +3445,16 @@
       document.getElementById('fExpenseName').value = '';
       document.getElementById('fExpenseAmount').value = '';
       document.getElementById('fDistance').value = '';
-      document.getElementById('fFuelRate').value = '';
+      const savedFuelRate = localStorage.getItem('gigtrack_last_fuel_rate');
+      document.getElementById('fFuelRate').value = savedFuelRate || '';
       document.getElementById('fRepeat').value = 'none';
       document.getElementById('fRepeatUntil').value = '';
       document.getElementById('fNotes').value = '';
       paidState = false;
       updatePaidUI(); toggleRepeatUntil();
+      toggleExpenseSection(false);
+      const fh = document.getElementById('feeHint');
+      if (fh) fh.classList.add('hidden');
 
       // Reset Batch Add form elements
       document.getElementById('batchSlotsContainer').innerHTML = '';
@@ -3439,12 +3499,10 @@
           const title = t.venue && t.artist ? `${t.venue} · ${t.artist}` : (t.venue || t.artist);
           const feeTxt = t.fee ? `${SYM[t.currency] || ''}${t.fee}` : T.chipFeeNone;
           return `<div class="quick-fill-chip" onclick='fillTemplate(${enc(t.artist)}, ${enc(t.venue)}, ${enc(t.fee)}, "${t.currency}", "${t.repeat}", "${t.date}")'>
-        <div style="display:flex; justify-content:space-between; align-items:center; width:100%">
           <span class="quick-fill-title">${escHtml(title)}</span>
-          <span class="filter-chip-delete" onclick="event.stopPropagation(); hideTemplate(${enc(t.k)})">×</span>
-        </div>
-        <span class="quick-fill-sub">${escHtml(feeTxt)}${t.repeat !== 'none' ? ' ↻' : ''}</span>
-      </div>`;
+          <span class="quick-fill-sub">${escHtml(feeTxt)}${t.repeat !== 'none' ? ' ↻' : ''}</span>
+          <span class="quick-fill-delete" onclick="event.stopPropagation(); hideTemplate(${enc(t.k)})">×</span>
+        </div>`;
         }).join('');
       } else {
         qfl.classList.add('hidden');
@@ -3480,6 +3538,8 @@
       document.getElementById('fNotes').value = gig.notes || '';
       paidState = !!gig.paid;
       updatePaidUI(); toggleRepeatUntil();
+      const hasExp = !!(gig.expenseName || (gig.expenseAmount && parseFloat(gig.expenseAmount) > 0));
+      toggleExpenseSection(hasExp);
       document.getElementById('modalOverlay').classList.add('open');
       history.pushState({ modal: 'edit' }, '', '#modal');
     }
@@ -3506,6 +3566,10 @@
       const rate = parseFloat(document.getElementById('fFuelRate').value);
       let cons = parseFloat(document.getElementById('fFuelCons').value);
       if (isNaN(cons) || cons <= 0) cons = 7;
+
+      if (!isNaN(rate) && rate > 0) {
+        try { localStorage.setItem('gigtrack_last_fuel_rate', rate.toString()); } catch(e){}
+      }
 
       if (!isNaN(dist) && !isNaN(rate)) {
         const total = (dist / 100) * cons * rate;
