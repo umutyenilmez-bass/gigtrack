@@ -1864,20 +1864,14 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
-            <select class="form-select" id="fRepeat" onchange="toggleRepeatUntil()">
-              <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
-              <option value="weekly" data-i18n="optRepeatWeekly">Her hafta</option>
-              <option value="biweekly" data-i18n="optRepeatBiweekly">2 haftada bir</option>
-              <option value="monthly" data-i18n="optRepeatMonthly">Her ay</option>
-            </select>
-          </div>
-          <div class="form-group" id="repeatUntilGroup" style="display:none">
-            <label class="form-label" data-i18n="lblUntil">Son tarih</label>
-            <input type="date" class="form-input" id="fRepeatUntil" onclick="this.showPicker()">
-          </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="lblRepeat">Tekrar</label>
+          <select class="form-select" id="fRepeat">
+            <option value="none" data-i18n="optRepeatNone">Tekrar yok</option>
+            <option value="weekly" data-i18n="optRepeatWeekly">Her hafta</option>
+            <option value="next_month" data-i18n="optRepeatNextMonth">Bir sonraki ay</option>
+          </select>
+          <input type="hidden" id="fRepeatUntil" value="">
         </div>
 
         <div class="form-group">
@@ -2012,7 +2006,7 @@
         lblFee: "Fee", plcFee: "1500 · ? · TBD · ~2000",
         hintFee: "Enter number, text, or ?. Only numeric values will show up in Analysis.",
         lblRepeat: "Repeat", optRepeatNone: "No repeat",
-        optRepeatWeekly: "Weekly", optRepeatBiweekly: "Bi-weekly", optRepeatMonthly: "Monthly",
+        optRepeatWeekly: "Weekly", optRepeatNextMonth: "Through next month", optRepeatMonthly: "Through next month",
         lblUntil: "Until", lblNotes: "Notes (opt)", plcNotes: "Any notes...",
         lblPaid: "Paid?", btnSave: "Save",
         confirmTitle: "Are you sure?", confirmText: "This action cannot be undone.",
@@ -2060,7 +2054,7 @@
         lblFee: "Ücret", plcFee: "1500 · ? · TBD · ~2000",
         hintFee: "Sayı, soru işareti veya metin girebilirsiniz. Yalnızca sayısal değer girildiğinde Analiz sekmesinde görünür.",
         lblRepeat: "Tekrar", optRepeatNone: "Tekrar yok",
-        optRepeatWeekly: "Her hafta", optRepeatBiweekly: "2 haftada bir", optRepeatMonthly: "Her ay",
+        optRepeatWeekly: "Her hafta", optRepeatNextMonth: "Bir sonraki ay", optRepeatMonthly: "Bir sonraki ay",
         lblUntil: "Son tarih", lblNotes: "Notlar (opsiyonel)", plcNotes: "Eklemek istediğin notlar...",
         lblPaid: "Ödendi mi?", btnSave: "Kaydet",
         confirmTitle: "Emin misin?", confirmText: "Bu işlemi geri alamazsın.",
@@ -2258,25 +2252,38 @@
 
     // ===== REPEAT GENERATION =====
     function generateRepeats(base) {
-      const list = [{ ...base, parentId: null }];
+      const list = [{ ...base, id: base.id || uid(), parentId: null }];
       if (base.repeat === 'none') return list;
-      
-      let until = base.repeatUntil;
-      if (!until) {
-        const [y, m] = base.date.split('-');
-        const lastDay = new Date(parseInt(y), parseInt(m), 0);
-        until = toLocalDateString(lastDay);
+
+      const parts = base.date.split('-').map(Number);
+      const year = parts[0];
+      const month = parts[1]; // 1-12
+
+      let endYear = year;
+      let endMonth = month;
+      if (base.repeat === 'next_month' || base.repeat === 'monthly') {
+        endMonth = month + 1;
+        if (endMonth > 12) {
+          endMonth = 1;
+          endYear++;
+        }
       }
-      
+
+      const lastDay = new Date(endYear, endMonth, 0).getDate();
+      const until = `${endYear}-${String(endMonth).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+
       let cur = base.date;
       while (true) {
-        let next;
-        if (base.repeat === 'weekly') next = addDays(cur, 7);
-        else if (base.repeat === 'biweekly') next = addDays(cur, 14);
-        else if (base.repeat === 'monthly') next = addMonths(cur, 1);
-        else break;
+        const next = addDays(cur, 7);
         if (next > until) break;
-        list.push({ ...base, id: uid(), date: next, parentId: base.id, repeat: 'none', repeatUntil: null });
+        list.push({
+          ...base,
+          id: uid(),
+          date: next,
+          parentId: base.id,
+          repeat: 'none',
+          repeatUntil: ''
+        });
         cur = next;
       }
       return list;
@@ -3781,6 +3788,7 @@
     }
 
     function closeModal() {
+      editingId = null;
       document.getElementById('modalOverlay').classList.remove('open');
       if (window.location.hash === '#modal') history.back();
     }
@@ -3793,8 +3801,8 @@
     function updatePaidUI() { document.getElementById('paidToggle').classList.toggle('on', paidState); }
 
     function toggleRepeatUntil() {
-      const r = document.getElementById('fRepeat').value;
-      document.getElementById('repeatUntilGroup').style.display = r === 'none' ? 'none' : 'block';
+      const el = document.getElementById('repeatUntilGroup');
+      if (el) el.style.display = 'none';
     }
 
     function calculateFuel() {
@@ -3823,7 +3831,6 @@
       if (!date) { showToast('⚠️ Tarih seçmelisin'); return; }
 
       const repeat = document.getElementById('fRepeat').value;
-      const repeatUntil = document.getElementById('fRepeatUntil').value;
 
       pushHistory();
       const data = {
@@ -3836,7 +3843,7 @@
         expenseName: document.getElementById('fExpenseName').value.trim(),
         expenseAmount: document.getElementById('fExpenseAmount').value,
         repeat,
-        repeatUntil,
+        repeatUntil: '',
         notes: document.getElementById('fNotes').value.trim(),
         paid: paidState
       };
@@ -3845,23 +3852,23 @@
         const idx = gigs.findIndex(g => String(g.id) === String(editingId));
         if (idx !== -1) {
           const oldGig = gigs[idx];
-          gigs[idx] = { ...oldGig, ...data };
-          
-          // If this is a parent gig (meaning parentId is null/falsy), update/regenerate repeats
-          if (!oldGig.parentId) {
-            const base = gigs[idx];
-            // Delete old repeats
-            gigs = gigs.filter(g => String(g.parentId) !== String(editingId));
-            // Generate new repeats
+          const targetParentId = oldGig.parentId || oldGig.id;
+
+          if (data.repeat !== 'none') {
+            gigs = gigs.filter(g => String(g.id) !== String(editingId) && String(g.parentId) !== String(targetParentId));
+            const base = { id: editingId, parentId: null, ...data };
             const list = generateRepeats(base);
-            // Push only the children (the base parent is already updated in gigs[idx])
-            const children = list.filter(g => g.parentId !== null);
-            gigs.push(...children);
+            gigs.push(...list);
+          } else {
+            gigs[idx] = { ...oldGig, ...data, parentId: null };
+            gigs = gigs.filter(g => String(g.parentId) !== String(editingId));
           }
         }
         showToast('✓ İş güncellendi');
+        editingId = null;
       } else {
-        const base = { id: uid(), parentId: null, ...data };
+        const newId = uid();
+        const base = { id: newId, parentId: null, ...data };
         const list = generateRepeats(base);
         gigs.push(...list);
         showToast(list.length > 1 ? `✓ ${list.length} iş oluşturuldu` : '✓ İş eklendi');
