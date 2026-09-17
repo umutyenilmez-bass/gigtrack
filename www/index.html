@@ -2487,10 +2487,12 @@
         const groupGigsHtml = groups[k].map(g => gigCard(g)).join('');
         const id = `details-${tabName}-${k}`;
         const isOpen = openMonthGroups.has(id);
+        const hasUnpaid = groups[k].some(g => !g.paid);
+        const borderColor = hasUnpaid ? 'var(--red)' : 'var(--accent)';
         
         return `
         <div class="gig-card-group" style="margin-bottom:10px;">
-          <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid var(--accent); cursor: pointer; font-family:'Inter', sans-serif; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;" onclick="toggleMonthGroup('${id}')">
+          <div class="gig-card" style="padding: 9px 12px; border-left: 2px solid ${borderColor}; cursor: pointer; font-family:'Inter', sans-serif; display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;" onclick="toggleMonthGroup('${id}')">
             <span style="font-weight:600; color:#AEAEB2; font-size:13px; letter-spacing:-0.01em;">${MONTHS_FULL[+m - 1]} ${y}</span>
             <span style="font-size:10px; color:#AEAEB2; opacity:0.6;">▼</span>
           </div>
