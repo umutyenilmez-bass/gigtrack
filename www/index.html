@@ -3062,17 +3062,6 @@
         document.getElementById('fCurrency').value = currency || 'TRY';
         document.getElementById('fRepeat').value = repeat || 'none';
         toggleRepeatUntil();
-        
-        if (lastDate) {
-          const baseDate = new Date(lastDate + 'T12:00:00');
-          const targetDay = baseDate.getDay();
-          const todayObj = new Date();
-          todayObj.setHours(12, 0, 0, 0);
-          let daysToAdd = (targetDay - todayObj.getDay() + 7) % 7;
-          const resultDate = new Date(todayObj);
-          resultDate.setDate(todayObj.getDate() + daysToAdd);
-          document.getElementById('fDate').value = resultDate.toISOString().slice(0, 10);
-        }
       } else {
         const container = document.getElementById('batchSlotsContainer');
         const cards = container.querySelectorAll('.slot-card');
