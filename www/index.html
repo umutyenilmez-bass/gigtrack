@@ -1325,11 +1325,22 @@
       border-radius: var(--radius-sm);
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .paid-toggle.paid-active {
+      border-color: rgba(92, 173, 255, 0.35);
+      background: rgba(92, 173, 255, 0.05);
     }
 
     .paid-toggle-label {
       font-size: 14px;
       font-weight: 600;
+      transition: color 0.2s ease;
+    }
+
+    .paid-toggle.paid-active .paid-toggle-label {
+      color: #5CADFF;
     }
 
     .toggle-switch {
@@ -1338,11 +1349,12 @@
       border-radius: 11px;
       background: var(--border);
       position: relative;
-      transition: background 0.2s;
+      transition: background 0.2s, box-shadow 0.2s;
     }
 
     .toggle-switch.on {
-      background: var(--green);
+      background: #5CADFF;
+      box-shadow: 0 0 10px rgba(92, 173, 255, 0.35);
     }
 
     .toggle-knob {
@@ -3798,7 +3810,14 @@
     }
 
     function togglePaid() { paidState = !paidState; updatePaidUI(); }
-    function updatePaidUI() { document.getElementById('paidToggle').classList.toggle('on', paidState); }
+    function updatePaidUI() {
+      const toggle = document.getElementById('paidToggle');
+      if (toggle) {
+        toggle.classList.toggle('on', paidState);
+        const parent = toggle.closest('.paid-toggle');
+        if (parent) parent.classList.toggle('paid-active', paidState);
+      }
+    }
 
     function toggleRepeatUntil() {
       const el = document.getElementById('repeatUntilGroup');
