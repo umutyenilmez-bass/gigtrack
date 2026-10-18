@@ -3058,13 +3058,43 @@
           ? `<div style="display:flex;justify-content:center;gap:2px;margin-top:3px;">${dotList.join('')}</div>`
           : '';
 
+        let bg = 'transparent';
+        let color = 'var(--text-3)';
+        let border = 'none';
+        let fontWeight = '400';
+        let boxShadow = 'none';
+
+        if (isSelected) {
+          bg = 'var(--accent)';
+          color = '#000';
+          fontWeight = '800';
+          if (isToday) {
+            border = '2px solid #fff';
+            boxShadow = '0 0 16px var(--accent-glow)';
+          } else {
+            boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+          }
+        } else if (isToday) {
+          bg = 'rgba(255, 179, 0, 0.18)';
+          color = 'var(--accent)';
+          fontWeight = '800';
+          border = '2px solid var(--accent)';
+          boxShadow = '0 0 12px rgba(255, 179, 0, 0.35)';
+        } else if (hasGigs || hasNote) {
+          bg = 'var(--surface-2)';
+          color = 'var(--text)';
+          fontWeight = '500';
+          border = '1px solid var(--border)';
+        }
+
         cells += `<div onclick="calendarDayClick('${dateStr}')" style="
       text-align:center;padding:8px 2px;border-radius:10px;cursor:pointer;
-      background:${isSelected ? 'var(--accent)' : isToday ? 'rgba(255,255,255,0.08)' : (hasGigs || hasNote) ? 'var(--surface-2)' : 'transparent'};
-      color:${isSelected ? '#000' : isToday ? 'var(--text)' : (hasGigs || hasNote) ? 'var(--text)' : 'var(--text-3)'};
-      font-weight:${isSelected || isToday || hasGigs || hasNote ? '500' : '400'};
+      background:${bg};
+      color:${color};
+      font-weight:${fontWeight};
       font-size:14px; font-family:'Inter', sans-serif;
-      border:${(isToday && !isSelected) ? '1px solid var(--border)' : (hasGigs || hasNote) && !isSelected ? '1px solid var(--border)' : 'none'};
+      border:${border};
+      box-shadow:${boxShadow};
       transition:all 0.15s;
     ">${d}${dotHtml}</div>`;
       }
@@ -3109,8 +3139,13 @@
           <textarea oninput="saveDayNote('${selectedCalDay}', this.value)" onblur="renderCalendar()" placeholder="${userLang === 'tr' ? 'Bu güne ait bir not yazın...' : 'Write a note for this day...'}" style="width:100%; background:transparent; border:none; color:var(--text); font-size:13px; font-family:inherit; resize:none; outline:none; height:45px; padding:0; margin:0; line-height:1.4;">${noteVal}</textarea>
         </div>`;
 
+        const isTodaySelected = selectedCalDay === todayStr;
+        const todayBadge = isTodaySelected
+          ? ` <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;background:rgba(255,179,0,0.18);color:var(--accent);border:1px solid rgba(255,179,0,0.4);margin-left:6px;vertical-align:middle;display:inline-block;letter-spacing:0.5px;">${userLang === 'tr' ? 'BUGÜN' : 'TODAY'}</span>`
+          : '';
+
         html += `<div style="margin-top:20px;">
-      <div class="section-label">${df.day} ${df.monthFull} ${df.year}</div>
+      <div class="section-label" style="display:flex;align-items:center;">${df.day} ${df.monthFull} ${df.year}${todayBadge}</div>
       ${noteCardHtml}
       <button class="btn-add" style="width:100%; justify-content:center; margin-bottom:12px; padding:12px;" onclick="openAddModal('${selectedCalDay}')">
         <span style="font-size:16px;line-height:1">＋</span> ${T.addGigBtn}
@@ -3142,7 +3177,7 @@
     function calToday() {
       calendarDate = new Date();
       calendarYearPicker = false;
-      selectedCalDay = null;
+      selectedCalDay = today();
       renderCalendar();
     }
     function toggleCalYearPicker() {
@@ -3194,6 +3229,10 @@
     }
 
     function openCalendarModal() {
+      calendarDate = new Date();
+      if (!selectedCalDay) {
+        selectedCalDay = today();
+      }
       document.getElementById('calendarModalOverlay').classList.add('open');
       history.pushState({ modal: 'calendar' }, '', '#calendar');
       renderCalendar();
@@ -3759,13 +3798,13 @@
       document.getElementById('modalTabs').style.display = 'none';
       switchModalTab('single');
 
-      const qfc = document.getElementById('quickFillContainer');
-      if (qfc) qfc.classList.add('hidden');
+      toggleTemplateSection(false);
+      populateTemplates();
 
       editingId = id;
-      document.getElementById('modalTitle').textContent = 'İşi Düzenle';
+      document.getElementById('modalTitle').textContent = userLang === 'tr' ? 'İşi Düzenle' : 'Edit Gig';
       document.getElementById('submitBtn').classList.remove('hidden');
-      document.getElementById('submitBtn').textContent = 'Güncelle';
+      document.getElementById('submitBtn').textContent = userLang === 'tr' ? 'Güncelle' : 'Update';
       document.getElementById('fArtist').value = gig.artist || '';
       document.getElementById('fVenue').value = gig.venue || '';
       document.getElementById('fDate').value = gig.date || '';
@@ -3777,6 +3816,10 @@
       document.getElementById('fRepeat').value = gig.repeat || 'none';
       document.getElementById('fRepeatUntil').value = gig.repeatUntil || '';
       document.getElementById('fNotes').value = gig.notes || '';
+      const fDist = document.getElementById('fDistance');
+      if (fDist) fDist.value = '';
+      const fFuel = document.getElementById('fFuelRate');
+      if (fFuel) fFuel.value = localStorage.getItem('gigtrack_last_fuel_rate') || '';
       paidState = !!gig.paid;
       updatePaidUI(); toggleRepeatUntil();
       const hasExp = !!(gig.expenseName || (gig.expenseAmount && parseFloat(gig.expenseAmount) > 0));
@@ -3986,25 +4029,41 @@
         let bg = 'transparent';
         let color = 'var(--text-3)';
         let border = 'none';
+        let fontWeight = '400';
+        let boxShadow = 'none';
         
         if (isGig) {
           bg = 'var(--accent)';
           color = '#000';
+          fontWeight = '800';
+          if (isTod) {
+            border = '2px solid #fff';
+            boxShadow = '0 0 12px var(--accent-glow)';
+          }
         } else if (isRelated) {
           bg = 'rgba(244, 196, 48, 0.15)';
           color = 'var(--text)';
           border = '1px dashed rgba(244, 196, 48, 0.4)';
+          fontWeight = '600';
+          if (isTod) {
+            border = '2px solid var(--accent)';
+            boxShadow = '0 0 10px rgba(255, 179, 0, 0.35)';
+          }
         } else if (isTod) {
-          bg = 'rgba(255, 255, 255, 0.08)';
-          color = 'var(--text)';
-          border = '1px solid var(--border)';
+          bg = 'rgba(255, 179, 0, 0.18)';
+          color = 'var(--accent)';
+          border = '2px solid var(--accent)';
+          fontWeight = '800';
+          boxShadow = '0 0 10px rgba(255, 179, 0, 0.35)';
         }
 
         cells += `<div style="text-align:center;padding:6px 2px;border-radius:8px;font-size:13px;
       background:${bg};
       color:${color};
-      font-weight:${isGig || isRelated || isTod ? '700' : '400'};
+      font-weight:${fontWeight};
       border:${border};
+      box-shadow:${boxShadow};
+      transition:all 0.15s;
     ">${d}</div>`;
       }
 
