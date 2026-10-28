@@ -320,7 +320,13 @@ TALİMATLAR:
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 18000); // 18 saniye zaman aşımı
 
-      let activeModel = await this.detectModel(apiKey);
+      // Sohbet anında ListModels için fazladan ağ beklemesi yapma; önbellek veya varsayılan modeli anında kullan
+      const storage = getStorage();
+      let activeModel = (storage && storage.getItem(STORAGE_KEY_MODEL)) || DEFAULT_GEMINI_MODEL;
+      if (activeModel === 'gemini-1.5-flash' || activeModel === 'gemini-2.5-flash') {
+        activeModel = DEFAULT_GEMINI_MODEL;
+      }
+
       let url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
       let response;
@@ -347,7 +353,6 @@ TALİMATLAR:
           ) {
             console.warn(`[AiAssistant] Model '${activeModel}' geçersiz, '${DEFAULT_GEMINI_MODEL}' ile yeniden deneniyor...`);
             activeModel = DEFAULT_GEMINI_MODEL;
-            const storage = getStorage();
             if (storage) {
               storage.setItem(STORAGE_KEY_MODEL, DEFAULT_GEMINI_MODEL);
             }
@@ -373,60 +378,39 @@ TALİMATLAR:
         clearTimeout(timeoutId);
       }
 
-        if (!response.ok) {
-          let errBody = {};
-          try { errBody = await response.json(); } catch (e) {}
+      if (!response.ok) {
+        let errBody = {};
+        try { errBody = await response.json(); } catch (e) {}
 
-          const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
+        const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
 
-          // Eğer sunucu geçici aşırı yoğunluk (high demand / 503) yaşıyorsa, alternatif havuzları ve modelleri otomatik dene:
-          if (
-            errMsg.includes('high demand') ||
-            errMsg.includes('Spikes in demand') ||
-            errMsg.includes('overloaded') ||
-            response.status === 503
-          ) {
-            console.warn('[AiAssistant] Google sunucusu geçici yoğunlukta (high demand). Alternatif modeller otomatik deneniyor...');
-            await new Promise(r => setTimeout(r, 1200));
+        // Eğer sunucu geçici aşırı yoğunluk (high demand / 503) yaşıyorsa, alternatif havuzları hızlıca dene:
+        if (
+          errMsg.includes('high demand') ||
+          errMsg.includes('Spikes in demand') ||
+          errMsg.includes('overloaded') ||
+          response.status === 503
+        ) {
+          console.warn('[AiAssistant] gemini-3.8-flash geçici yoğunlukta (high demand). gemini-flash-latest havuzu deneniyor...');
+          try {
+            return await this.callInteractionsApi(apiKey, 'gemini-flash-latest', userPrompt, history, context, controller.signal);
+          } catch (e1) {}
+        }
 
-            const candidateModels = ['gemini-flash-latest', 'gemini-3.7-flash', 'gemini-3.5-flash'];
-            for (const cand of candidateModels) {
-              try {
-                return await this.callInteractionsApi(apiKey, cand, userPrompt, history, context, controller.signal);
-              } catch (e1) {}
-
-              try {
-                const candUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cand)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-                const candRes = await fetch(candUrl, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(payload),
-                  signal: controller.signal
-                });
-                if (candRes.ok) {
-                  const cdata = await candRes.json();
-                  if (cdata.candidates && cdata.candidates[0] && cdata.candidates[0].content && cdata.candidates[0].content.parts) {
-                    return cdata.candidates[0].content.parts[0].text;
-                  }
-                }
-              } catch (e2) {}
-            }
+        // Eğer generateContent desteklenmiyorsa veya Interactions API öneriliyorsa (modern Google GenAI):
+        if (
+          errMsg.includes('Interactions API') ||
+          errMsg.includes('not supported for generateContent') ||
+          response.status === 404
+        ) {
+          try {
+            console.warn('[AiAssistant] generateContent desteklenmiyor, modern Google Interactions API çağrılıyor...');
+            return await this.callInteractionsApi(apiKey, activeModel, userPrompt, history, context, controller.signal);
+          } catch (interactionErr) {
+            console.error('[AiAssistant] Interactions API hatası:', interactionErr);
+            throw interactionErr;
           }
-
-          // Eğer generateContent desteklenmiyorsa veya Interactions API öneriliyorsa (modern Google GenAI):
-          if (
-            errMsg.includes('Interactions API') ||
-            errMsg.includes('not supported for generateContent') ||
-            response.status === 404
-          ) {
-            try {
-              console.warn('[AiAssistant] generateContent desteklenmiyor, modern Google Interactions API çağrılıyor...');
-              return await this.callInteractionsApi(apiKey, activeModel, userPrompt, history, context, controller.signal);
-            } catch (interactionErr) {
-              console.error('[AiAssistant] Interactions API hatası:', interactionErr);
-              throw interactionErr;
-            }
-          }
+        }
 
           if (response.status === 400 || response.status === 403) {
             if (errMsg.includes('API key not valid') || errMsg.includes('API_KEY_INVALID')) {

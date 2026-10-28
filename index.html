@@ -2131,8 +2131,8 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
-  <script src="ai-logger.js?v=1.3.2"></script>
-  <script src="ai-assistant.js?v=1.3.2"></script>
+  <script src="ai-logger.js?v=1.3.3"></script>
+  <script src="ai-assistant.js?v=1.3.3"></script>
   <script src="firebase-sync.js"></script>
   <script>
     // ===== i18n =====
@@ -4980,9 +4980,15 @@
 
       const loadingBubble = document.createElement('div');
       loadingBubble.className = 'ai-msg assistant';
-      loadingBubble.innerHTML = '<span style="opacity:0.6;">Düşünüyor ve hafıza taranıyor...</span>';
+      loadingBubble.innerHTML = '<span style="opacity:0.6;">Konserler ve hafıza taranıyor...</span>';
       container.appendChild(loadingBubble);
       container.scrollTop = container.scrollHeight;
+
+      const stageTimer = setTimeout(() => {
+        if (loadingBubble && loadingBubble.parentNode && loadingBubble.innerHTML.includes('taranıyor')) {
+          loadingBubble.innerHTML = '<span style="opacity:0.6;">Hafıza yüklendi, Gemini yanıtı bekleniyor...</span>';
+        }
+      }, 1500);
 
       aiChatHistory.push({ role: 'user', text: text });
 
@@ -4993,9 +4999,11 @@
           activeYear: activeYear || new Date().getFullYear().toString()
         });
 
+        clearTimeout(stageTimer);
         loadingBubble.innerHTML = renderAiMarkdown(answer);
         aiChatHistory.push({ role: 'assistant', text: answer });
       } catch (err) {
+        clearTimeout(stageTimer);
         // Roll back unfulfilled user message from history
         if (aiChatHistory.length > 0 && aiChatHistory[aiChatHistory.length - 1].role === 'user') {
           aiChatHistory.pop();
