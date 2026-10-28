@@ -1616,6 +1616,71 @@
     .gig-card.past .gig-artist {
       opacity: 0.55;
     }
+
+    /* AI ASSISTANT DRAWER STYLES */
+    .ai-chip {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .ai-chip:hover {
+      background: rgba(255, 179, 0, 0.12);
+      color: var(--accent);
+      border-color: rgba(255, 179, 0, 0.35);
+    }
+    .ai-msg {
+      max-width: 88%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+    .ai-msg.user {
+      align-self: flex-end;
+      background: #2A2A2E;
+      color: #FFF;
+      border-bottom-right-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .ai-msg.assistant {
+      align-self: flex-start;
+      background: #1C1C1F;
+      color: #E2E8F0;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .ai-msg.assistant pre {
+      background: #111;
+      padding: 8px 12px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      margin: 6px 0;
+    }
+    .ai-msg.assistant code {
+      font-family: 'DM Mono', monospace;
+      background: rgba(255,255,255,0.08);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .ai-msg.assistant ul, .ai-msg.assistant ol {
+      margin-left: 18px;
+      margin-top: 4px;
+      margin-bottom: 4px;
+    }
+    .ai-msg.assistant li {
+      margin-bottom: 2px;
+    }
   </style>
 </head>
 
@@ -1649,6 +1714,13 @@
           <line x1="12" y1="14" x2="12" y2="14.01"></line>
           <line x1="8" y1="18" x2="8" y2="18.01"></line>
           <line x1="12" y1="18" x2="12" y2="18.01"></line>
+        </svg>
+      </button>
+      <button id="btnAiAssistant" class="header-btn"
+        style="background:var(--surface-2); color:var(--accent); border:1px solid var(--border); width: 44px; height: 44px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 12px; cursor: pointer;"
+        onclick="openAiDrawer()" title="AI Asistan & Hafıza">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
         </svg>
       </button>
       <button id="settingsTrigger" class="header-btn"
@@ -1704,6 +1776,64 @@
       </div>
       <div id="settingsBody" style="padding: 20px; padding-bottom: 70px; overflow-y: auto; flex: 1; -webkit-overflow-scrolling: touch;">
       </div>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT DRAWER -->
+  <div id="aiDrawerOverlay" class="modal-overlay" style="z-index: 1050; display: none;" onclick="if(event.target===this) closeAiDrawer()">
+    <div class="modal" id="aiDrawer" style="max-height: 88vh; height: 750px; display: flex; flex-direction: column; padding: 0; background: #121214; border: 1px solid rgba(255,255,255,0.08); border-top-left-radius: 20px; border-top-right-radius: 20px;">
+      
+      <!-- Drawer Header -->
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.06); background: #17171A;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div style="width: 28px; height: 28px; border-radius: 8px; background: rgba(255, 179, 0, 0.15); color: #FFB300; display: flex; align-items: center; justify-content: center; font-size: 15px;">✨</div>
+          <div>
+            <div style="font-weight: 700; font-size: 15px; color: #FFF; font-family: 'Syne', sans-serif;">GigTrack AI Asistanı</div>
+            <div style="font-size: 11px; color: #8A8A8F;">Konser, Takvim ve Eylem Hafızası</div>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <button onclick="clearAiChat()" title="Sohbeti Temizle" style="background: none; border: 1px solid rgba(255,255,255,0.08); color: #8A8A8F; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+          <button class="btn-close" onclick="closeAiDrawer()" style="width: 32px; height: 32px; font-size: 16px;">✕</button>
+        </div>
+      </div>
+
+      <!-- Quick Chips Bar -->
+      <div id="aiQuickChips" style="display: flex; gap: 8px; padding: 12px 18px; overflow-x: auto; -webkit-overflow-scrolling: touch; border-bottom: 1px solid rgba(255,255,255,0.04); background: #141416;">
+        <button class="ai-chip" onclick="handleAiChipClick('Dün veya son zamanlarda hangi konseri sildim?')">🗑 Silinenler</button>
+        <button class="ai-chip" onclick="handleAiChipClick('En son hangi konserleri veya ücretleri düzenledim?')">✏️ Son Düzenlemeler</button>
+        <button class="ai-chip" onclick="handleAiChipClick('Bu ayki konser durumum ve bekleyen ödemelerim nedir?')">💰 Bu Ayki Durum</button>
+        <button class="ai-chip" onclick="handleAiChipClick('Yaklaşan konserlerim ve takvimdeki gün notlarım neler?')">📅 Yaklaşan Takvim</button>
+      </div>
+
+      <!-- API Key Setup Area (shown only when API key is missing) -->
+      <div id="aiKeySetupArea" style="display: none; padding: 20px; background: rgba(255, 179, 0, 0.05); border-bottom: 1px solid rgba(255, 179, 0, 0.15); margin: 12px 16px; border-radius: 12px;">
+        <div style="font-weight: 700; font-size: 14px; color: #FFB300; margin-bottom: 6px;">Gemini API Anahtarı Gerekli</div>
+        <div style="font-size: 12px; color: #A0A0A5; line-height: 1.5; margin-bottom: 12px;">
+          Asistanın çalışması için Google Gemini API anahtarınızı girin. Anahtarınız yalnızca bu cihazın yerel hafızasında tutulur, asla GitHub'a veya sunucuya iletilmez.
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <input type="password" id="aiDrawerApiKeyInput" placeholder="AIzaSy..." style="flex: 1; background: #1A1A1C; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; color: #FFF; font-size: 13px;">
+          <button onclick="saveAiKeyFromDrawer()" style="background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 0 16px; font-weight: 700; font-size: 13px; cursor: pointer;">Kaydet</button>
+        </div>
+      </div>
+
+      <!-- Messages Stream -->
+      <div id="aiMessagesContainer" style="flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; -webkit-overflow-scrolling: touch;">
+      </div>
+
+      <!-- Input Area -->
+      <div style="padding: 12px 16px 20px 16px; border-top: 1px solid rgba(255,255,255,0.06); background: #17171A; display: flex; gap: 10px; align-items: center;">
+        <textarea id="aiPromptInput" rows="1" placeholder="Konserlerin, takvimin veya geçmiş hareketlerin hakkında sor..." 
+          style="flex: 1; background: #222226; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px 14px; color: #FFF; font-size: 13px; font-family: 'Inter', sans-serif; resize: none; max-height: 100px; outline: none;"
+          onkeydown="if(event.key==='Enter' && !event.shiftKey){ event.preventDefault(); sendAiMessage(); }"></textarea>
+        <button id="btnAiSend" onclick="sendAiMessage()" style="width: 44px; height: 44px; border-radius: 12px; background: var(--accent); color: #000; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-weight: bold; transition: opacity 0.15s;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -1996,6 +2126,7 @@
   <div class="toast" id="toast"></div>
 
   <script src="ai-logger.js"></script>
+  <script src="ai-assistant.js"></script>
   <script src="firebase-sync.js"></script>
   <script>
     // ===== i18n =====
@@ -4577,6 +4708,158 @@
         localStorage.clear();
         location.reload();
       });
+    }
+
+    // ===== AI ASSISTANT DRAWER LOGIC =====
+    let aiChatHistory = [];
+
+    function renderAiMarkdown(text) {
+      if (!text) return '';
+      let escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+
+      escaped = escaped.replace(/```([\s\S]*?)```/g, (m, code) => `<pre><code>${code.trim()}</code></pre>`);
+      escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+      escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      escaped = escaped.replace(/^\s*[-*]\s+(.*)$/gm, '<li>$1</li>');
+      escaped = escaped.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+      escaped = escaped.replace(/\n/g, '<br>');
+      return escaped;
+    }
+
+    function openAiDrawer() {
+      const overlay = document.getElementById('aiDrawerOverlay');
+      if (!overlay) return;
+      overlay.style.display = 'flex';
+      overlay.classList.add('open');
+
+      const hasKey = typeof AiAssistant !== 'undefined' && AiAssistant.hasApiKey();
+      const setupArea = document.getElementById('aiKeySetupArea');
+      if (setupArea) {
+        setupArea.style.display = hasKey ? 'none' : 'block';
+      }
+
+      if (aiChatHistory.length === 0) {
+        renderAiWelcomeMessage();
+      }
+
+      const input = document.getElementById('aiPromptInput');
+      if (input) {
+        setTimeout(() => input.focus(), 150);
+      }
+    }
+
+    function closeAiDrawer() {
+      const overlay = document.getElementById('aiDrawerOverlay');
+      if (!overlay) return;
+      overlay.classList.remove('open');
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 200);
+    }
+
+    function renderAiWelcomeMessage() {
+      const container = document.getElementById('aiMessagesContainer');
+      if (!container) return;
+      container.innerHTML = `
+        <div class="ai-msg assistant">
+          Merhaba Umut! Konserlerin, prova takvimin, gün notların ve sistemde yaptığın tüm ekleme/silme/düzenleme hareketlerinin hafızasına sahibim.
+          <br><br>
+          Aşağıdaki hızlı sorulara tıklayabilir veya aklındakini yazabilirsin.
+        </div>
+      `;
+    }
+
+    function clearAiChat() {
+      aiChatHistory = [];
+      renderAiWelcomeMessage();
+      showToast('Sohbet temizlendi');
+    }
+
+    function saveAiKeyFromDrawer() {
+      const inp = document.getElementById('aiDrawerApiKeyInput');
+      if (!inp) return;
+      const key = inp.value.trim();
+      if (!key) {
+        showToast('⚠️ Geçerli bir API anahtarı girin');
+        return;
+      }
+      if (typeof AiAssistant !== 'undefined') {
+        AiAssistant.setApiKey(key);
+      }
+      const setupArea = document.getElementById('aiKeySetupArea');
+      if (setupArea) setupArea.style.display = 'none';
+      inp.value = '';
+      showToast('✓ Gemini API Anahtarı kaydedildi');
+    }
+
+    function handleAiChipClick(text) {
+      const input = document.getElementById('aiPromptInput');
+      if (input) {
+        input.value = text;
+        sendAiMessage();
+      }
+    }
+
+    async function sendAiMessage() {
+      const input = document.getElementById('aiPromptInput');
+      if (!input) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (typeof AiAssistant === 'undefined' || !AiAssistant.hasApiKey()) {
+        const setupArea = document.getElementById('aiKeySetupArea');
+        if (setupArea) setupArea.style.display = 'block';
+        showToast('⚠️ Önce Gemini API anahtarınızı girin');
+        return;
+      }
+
+      input.value = '';
+      input.style.height = 'auto';
+
+      const container = document.getElementById('aiMessagesContainer');
+      if (!container) return;
+
+      const userBubble = document.createElement('div');
+      userBubble.className = 'ai-msg user';
+      userBubble.textContent = text;
+      container.appendChild(userBubble);
+
+      const loadingBubble = document.createElement('div');
+      loadingBubble.className = 'ai-msg assistant';
+      loadingBubble.innerHTML = '<span style="opacity:0.6;">Düşünüyor ve hafıza taranıyor...</span>';
+      container.appendChild(loadingBubble);
+      container.scrollTop = container.scrollHeight;
+
+      aiChatHistory.push({ role: 'user', text: text });
+
+      try {
+        const answer = await AiAssistant.ask(text, aiChatHistory.slice(0, -1), {
+          gigs: Array.isArray(gigs) ? gigs : [],
+          dayNotes: dayNotes || {},
+          activeYear: activeYear || new Date().getFullYear().toString()
+        });
+
+        loadingBubble.innerHTML = renderAiMarkdown(answer);
+        aiChatHistory.push({ role: 'assistant', text: answer });
+      } catch (err) {
+        console.error('[AI Assistant Error]:', err);
+        let errorMsg = '⚠️ Bir hata oluştu.';
+        if (err.message === 'API_KEY_MISSING' || err.message === 'INVALID_API_KEY') {
+          errorMsg = '⚠️ Gemini API anahtarı geçersiz veya eksik. Lütfen Ayarlar veya yukarıdaki alandan anahtarınızı kontrol edin.';
+          const setupArea = document.getElementById('aiKeySetupArea');
+          if (setupArea) setupArea.style.display = 'block';
+        } else if (err.message === 'RATE_LIMIT') {
+          errorMsg = '⚠️ API hız/kota sınırına ulaşıldı. Lütfen biraz bekleyin.';
+        } else if (err.message === 'NETWORK_ERROR') {
+          errorMsg = '⚠️ İnternet bağlantısı hatası. Lütfen ağınızı kontrol edin.';
+        }
+        loadingBubble.innerHTML = `<span style="color:#FF453A;">${errorMsg}</span>`;
+      }
+
+      container.scrollTop = container.scrollHeight;
     }
 
     // ===== PWA SERVICE WORKER =====
