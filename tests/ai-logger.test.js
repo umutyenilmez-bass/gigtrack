@@ -42,7 +42,7 @@ test('ActionLogger - should log actions and retrieve history', (t) => {
   assert.strictEqual(history[0].id, entry.id);
 });
 
-test('ActionLogger - calculateDiff should identify changed fields accurately', (t) => {
+test('ActionLogger - calculateDiff should identify changed fields accurately including repeat', (t) => {
   const oldGig = {
     id: 'gig1',
     artist: 'Umut',
@@ -51,6 +51,7 @@ test('ActionLogger - calculateDiff should identify changed fields accurately', (
     time: '21:00',
     fee: '15000',
     currency: 'TRY',
+    repeat: 'none',
     notes: 'Önemli',
     paid: false
   };
@@ -63,18 +64,22 @@ test('ActionLogger - calculateDiff should identify changed fields accurately', (
     time: '21:00',
     fee: '18000',          // changed
     currency: 'TRY',
+    repeat: 'weekly',      // changed
     notes: 'Önemli',
     paid: true             // changed
   };
 
   const diff = ActionLogger.calculateDiff(oldGig, newGig);
-  assert.strictEqual(diff.length, 4);
+  assert.strictEqual(diff.length, 5);
 
   const venueChange = diff.find(d => d.field === 'venue');
   assert.deepStrictEqual(venueChange, { field: 'venue', from: 'Dorock XL', to: 'Kadıköy Sahne' });
 
   const feeChange = diff.find(d => d.field === 'fee');
   assert.deepStrictEqual(feeChange, { field: 'fee', from: '15000', to: '18000' });
+
+  const repeatChange = diff.find(d => d.field === 'repeat');
+  assert.deepStrictEqual(repeatChange, { field: 'repeat', from: 'none', to: 'weekly' });
 
   const dateChange = diff.find(d => d.field === 'date');
   assert.deepStrictEqual(dateChange, { field: 'date', from: '2026-11-01', to: '2026-11-02' });
@@ -94,4 +99,16 @@ test('ActionLogger - should enforce FIFO limit of 200 items', (t) => {
   assert.strictEqual(history.length, 200);
   assert.strictEqual(history[0].summary, 'Item 219'); // newest first
   assert.strictEqual(history[199].summary, 'Item 20'); // oldest retained
+});
+
+test('ActionLogger - should gracefully recover from corrupted non-array JSON in localStorage', (t) => {
+  mockStorage.setItem('gigtrack_action_log', '{"invalid": "not_an_array"}');
+  const history = ActionLogger.getHistory();
+  assert.deepStrictEqual(history, []);
+
+  // Should successfully log after corruption
+  assert.doesNotThrow(() => {
+    ActionLogger.log('ADD_GIG', 'Kurtarma testi', {});
+  });
+  assert.strictEqual(ActionLogger.getHistory().length, 1);
 });

@@ -3325,8 +3325,13 @@
       renderCalendar();
     }
 
+    let dayNoteLogTimers = {};
+    let dayNoteInitialValues = {};
+
     window.saveDayNote = function(dateStr, val) {
-      const oldNote = dayNotes[dateStr] || '';
+      if (dayNoteInitialValues[dateStr] === undefined) {
+        dayNoteInitialValues[dateStr] = dayNotes[dateStr] || '';
+      }
       const newNote = val ? val.trim() : '';
       if (!newNote) {
         delete dayNotes[dateStr];
@@ -3334,14 +3339,27 @@
         dayNotes[dateStr] = newNote;
       }
       save();
-      if (typeof ActionLogger !== 'undefined' && oldNote !== newNote) {
-        ActionLogger.log('SAVE_NOTE', `${dateStr} gün notu güncellendi`, { date: dateStr, oldNote, newNote });
-      }
+
+      // Debounce ActionLogger to avoid writing every keystroke to audit log
+      if (dayNoteLogTimers[dateStr]) clearTimeout(dayNoteLogTimers[dateStr]);
+      dayNoteLogTimers[dateStr] = setTimeout(() => {
+        const initial = dayNoteInitialValues[dateStr] || '';
+        if (typeof ActionLogger !== 'undefined' && initial !== newNote) {
+          ActionLogger.log('SAVE_NOTE', `${dateStr} gün notu güncellendi`, { date: dateStr, oldNote: initial, newNote });
+        }
+        delete dayNoteInitialValues[dateStr];
+        delete dayNoteLogTimers[dateStr];
+      }, 800);
     };
 
     window.deleteDayNote = function(dateStr) {
+      if (dayNoteLogTimers[dateStr]) {
+        clearTimeout(dayNoteLogTimers[dateStr]);
+        delete dayNoteLogTimers[dateStr];
+      }
       const oldNote = dayNotes[dateStr] || '';
       delete dayNotes[dateStr];
+      delete dayNoteInitialValues[dateStr];
       save();
       renderCalendar();
       if (typeof ActionLogger !== 'undefined') {
@@ -4542,7 +4560,14 @@
       if (hash !== '#settings') {
         document.getElementById('settingsOverlay').classList.remove('open');
       }
-      if (hash !== '#modal' && hash !== '#calc' && hash !== '#calendar' && hash !== '#filter' && hash !== '#settings') {
+      if (hash !== '#ai') {
+        const aio = document.getElementById('aiDrawerOverlay');
+        if (aio && aio.classList.contains('open')) {
+          aio.classList.remove('open');
+          setTimeout(() => { aio.style.display = 'none'; }, 200);
+        }
+      }
+      if (hash !== '#modal' && hash !== '#calc' && hash !== '#calendar' && hash !== '#filter' && hash !== '#settings' && hash !== '#ai') {
         document.getElementById('modalOverlay').classList.remove('open');
       }
       if (hash !== '#confirm') {
@@ -4724,7 +4749,11 @@
         showToast('✓ Gemini API bağlantısı başarılı!');
       } catch (e) {
         console.error(e);
-        showToast('⚠️ Bağlantı başarısız: ' + e.message);
+        let msg = e.message;
+        if (msg === 'INVALID_API_KEY') msg = 'API anahtarı geçersiz';
+        else if (msg === 'NETWORK_ERROR') msg = 'Ağ bağlantısı kurulamadı';
+        else if (msg === 'RATE_LIMIT') msg = 'Kota veya hız sınırına ulaşıldı';
+        showToast('⚠️ Bağlantı başarısız: ' + msg);
       }
     }
 
@@ -4788,7 +4817,7 @@
       escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
       escaped = escaped.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
       escaped = escaped.replace(/^\s*[-*]\s+(.*)$/gm, '<li>$1</li>');
-      escaped = escaped.replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+      escaped = escaped.replace(/((?:<li>.*?<\/li>\s*)+)/gs, '<ul>$1</ul>');
       escaped = escaped.replace(/\n/g, '<br>');
       return escaped;
     }
@@ -4798,6 +4827,7 @@
       if (!overlay) return;
       overlay.style.display = 'flex';
       overlay.classList.add('open');
+      history.pushState({ modal: 'ai' }, '', '#ai');
 
       const hasKey = typeof AiAssistant !== 'undefined' && AiAssistant.hasApiKey();
       const setupArea = document.getElementById('aiKeySetupArea');
@@ -4819,6 +4849,7 @@
       const overlay = document.getElementById('aiDrawerOverlay');
       if (!overlay) return;
       overlay.classList.remove('open');
+      if (window.location.hash === '#ai') history.back();
       setTimeout(() => {
         overlay.style.display = 'none';
       }, 200);
@@ -4909,6 +4940,10 @@
         loadingBubble.innerHTML = renderAiMarkdown(answer);
         aiChatHistory.push({ role: 'assistant', text: answer });
       } catch (err) {
+        // Roll back unfulfilled user message from history
+        if (aiChatHistory.length > 0 && aiChatHistory[aiChatHistory.length - 1].role === 'user') {
+          aiChatHistory.pop();
+        }
         console.error('[AI Assistant Error]:', err);
         let errorMsg = '⚠️ Bir hata oluştu.';
         if (err.message === 'API_KEY_MISSING' || err.message === 'INVALID_API_KEY') {

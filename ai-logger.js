@@ -24,7 +24,8 @@
     if (!storage) return [];
     try {
       const data = storage.getItem(STORAGE_KEY);
-      return data ? JSON.parse(data) : [];
+      const parsed = data ? JSON.parse(data) : [];
+      return Array.isArray(parsed) ? parsed : [];
     } catch (e) {
       console.error('[ActionLogger] Parse error, resetting log:', e);
       return [];
@@ -99,7 +100,7 @@
      */
     calculateDiff: function (oldGig = {}, newGig = {}) {
       const diff = [];
-      const fields = ['artist', 'venue', 'date', 'time', 'fee', 'currency', 'notes', 'paid', 'expenseName', 'expenseAmount'];
+      const fields = ['artist', 'venue', 'date', 'time', 'fee', 'currency', 'repeat', 'notes', 'paid', 'expenseName', 'expenseAmount'];
 
       fields.forEach(field => {
         const oldVal = oldGig[field] !== undefined ? oldGig[field] : '';

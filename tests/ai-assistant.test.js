@@ -31,7 +31,19 @@ global.ActionLogger = {
       type: 'DELETE_GIG',
       summary: 'Dorock XL (2026-11-01) silindi',
       details: {
-        gig: { id: 'g1', artist: 'Umut', venue: 'Dorock XL', fee: '15000', currency: 'TRY', date: '2026-11-01' }
+        gig: {
+          id: 'g1',
+          artist: 'Umut',
+          venue: 'Dorock XL',
+          fee: '15000',
+          currency: 'TRY',
+          date: '2026-11-01',
+          time: '21:30',
+          paid: false,
+          notes: 'Yedek jak kablosu unutma',
+          expenseAmount: '500',
+          expenseName: 'Taksi'
+        }
       }
     },
     {
@@ -104,11 +116,15 @@ test('AiAssistant - buildContext creates comprehensive context with gigs, dayNot
   assert.ok(context.includes('Akustik Trio'), 'Must include gig details');
   assert.ok(context.includes('Bas gitar bakım günü'), 'Must include day notes');
   assert.ok(context.includes('Dorock XL (2026-11-01) silindi'), 'Must include deleted gig from action log');
+  assert.ok(context.includes('Yedek jak kablosu unutma'), 'Must include full deleted gig notes');
+  assert.ok(context.includes('Saat: 21:30'), 'Must include deleted gig time');
+  assert.ok(context.includes('Tahsil Edilen (Ödenen) Toplam:** 15.000 TRY'), 'Must include paid total breakdown');
+  assert.ok(context.includes('Bekleyen Alacaklar Toplamı:** 20.000 TRY'), 'Must include unpaid total breakdown');
   assert.ok(context.includes('EDIT_GIG'), 'Must include edit actions from log');
   assert.ok(context.includes('10000 -> 12000'), 'Must include field diffs');
 });
 
-test('AiAssistant - preparePayload builds valid Gemini API payload', (t) => {
+test('AiAssistant - preparePayload builds valid Gemini API payload with strict alternating turns', (t) => {
   const prompt = 'Dün hangi konseri sildim?';
   const history = [
     { role: 'user', text: 'Merhaba' },
@@ -121,8 +137,26 @@ test('AiAssistant - preparePayload builds valid Gemini API payload', (t) => {
   assert.ok(payload.systemInstruction, 'Payload must have systemInstruction');
   assert.strictEqual(payload.systemInstruction.parts[0].text.includes(context), true);
   assert.ok(Array.isArray(payload.contents), 'Contents must be array');
-  assert.strictEqual(payload.contents[payload.contents.length - 1].parts[0].text, prompt);
-  assert.strictEqual(payload.generationConfig.temperature, 0.2);
+  assert.strictEqual(payload.contents.length, 3);
+  assert.strictEqual(payload.contents[0].role, 'user');
+  assert.strictEqual(payload.contents[1].role, 'model');
+  assert.strictEqual(payload.contents[2].role, 'user');
+  assert.strictEqual(payload.contents[2].parts[0].text, prompt);
+
+  // Test consecutive user turns are merged or sanitized
+  const messyHistory = [
+    { role: 'user', text: 'İlk soru' },
+    { role: 'user', text: 'İkinci soru (ağ hatası kalıntısı)' }
+  ];
+  const messyPayload = AiAssistant.preparePayload('Üçüncü soru', messyHistory, context);
+  // Verify contents still strictly alternates (no consecutive same roles)
+  for (let i = 0; i < messyPayload.contents.length - 1; i++) {
+    assert.notStrictEqual(
+      messyPayload.contents[i].role,
+      messyPayload.contents[i + 1].role,
+      'Consecutive roles must never be identical'
+    );
+  }
 });
 
 test('AiAssistant - ask without API key throws expected error', async (t) => {

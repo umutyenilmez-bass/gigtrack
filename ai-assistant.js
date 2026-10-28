@@ -75,7 +75,8 @@
       // Finans ve gig istatistikleri
       let paidCount = 0;
       let unpaidCount = 0;
-      const totalsByCurrency = { TRY: 0, USD: 0, EUR: 0, GBP: 0 };
+      const paidTotals = { TRY: 0, USD: 0, EUR: 0, GBP: 0 };
+      const unpaidTotals = { TRY: 0, USD: 0, EUR: 0, GBP: 0 };
 
       gigs.forEach(g => {
         let feeNum = 0;
@@ -87,15 +88,19 @@
         }
 
         const curr = (g.currency || 'TRY').toUpperCase();
-        if (totalsByCurrency[curr] !== undefined) {
-          totalsByCurrency[curr] += feeNum;
+        if (g.paid) {
+          paidCount++;
+          paidTotals[curr] = (paidTotals[curr] || 0) + feeNum;
         } else {
-          totalsByCurrency.TRY += feeNum;
+          unpaidCount++;
+          unpaidTotals[curr] = (unpaidTotals[curr] || 0) + feeNum;
         }
-
-        if (g.paid) paidCount++;
-        else unpaidCount++;
       });
+
+      function formatCurrencyMap(map) {
+        const list = Object.entries(map).filter(([_, v]) => v > 0);
+        return list.length > 0 ? list.map(([c, v]) => `${v.toLocaleString('tr-TR')} ${c}`).join(' · ') : '0 TRY';
+      }
 
       // Eylem günlüğü (ActionLogger)
       let actionLogs = [];
@@ -112,10 +117,8 @@
       ctx += `**Şu Anki Zaman:** ${currentTimeStr}\n`;
       ctx += `**Aktif Görüntülenen Yıl:** ${activeYear}\n`;
       ctx += `**Genel Durum:** Toplam ${gigs.length} konser kayıtlı (${paidCount} ödendi, ${unpaidCount} ödeme bekliyor).\n`;
-      ctx += `**Toplam Kazanç Özeti:** ` + Object.entries(totalsByCurrency)
-        .filter(([_, v]) => v > 0)
-        .map(([c, v]) => `${v.toLocaleString('tr-TR')} ${c}`)
-        .join(', ') + `\n\n`;
+      ctx += `**Tahsil Edilen (Ödenen) Toplam:** ${formatCurrencyMap(paidTotals)}\n`;
+      ctx += `**Bekleyen Alacaklar Toplamı:** ${formatCurrencyMap(unpaidTotals)}\n\n`;
 
       // Güncel Konser Listesi
       ctx += `#### 1. KAYITLI KONSERLER (GIGS)\n`;
@@ -158,7 +161,11 @@
               detailStr = ` (Değişiklikler: ${diffText})`;
             } else if (entry.details.gig) {
               const g = entry.details.gig;
-              detailStr = ` [Detay: ${g.artist} @ ${g.venue}, ${g.date}, ${g.fee} ${g.currency || 'TRY'}]`;
+              const timeStr = g.time ? ` Saat: ${g.time}` : '';
+              const paidStr = g.paid ? ' [Ödendi]' : ' [Bekliyor]';
+              const noteStr = g.notes ? ` (Not: ${g.notes})` : '';
+              const expenseStr = g.expenseAmount ? ` [Masraf: ${g.expenseName || 'Masraf'} - ${g.expenseAmount}]` : '';
+              detailStr = ` [Detay: ${g.artist} @ ${g.venue}, ${g.date}${timeStr}, ${g.fee} ${g.currency || 'TRY'}${paidStr}${noteStr}${expenseStr}]`;
             } else if (entry.details.oldNote || entry.details.newNote) {
               detailStr = ` [Eski Not: "${entry.details.oldNote || ''}", Yeni Not: "${entry.details.newNote || ''}"]`;
             }
@@ -188,23 +195,35 @@ TALİMATLAR:
 4. Asla tahmin yürütme; sistemde kayıtlı olmayan bir şey için "Kayıtlarımda görünmüyor" de.`;
 
       const contents = [];
+      let lastRole = null;
 
-      // Geçmiş sohbet mesajları
+      // Geçmiş sohbet mesajlarını ardışık aynı rol gelmeyecek şekilde normalize et
       if (Array.isArray(history)) {
         history.forEach(item => {
           if (!item.text) return;
-          contents.push({
-            role: item.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: item.text }]
-          });
+          const role = item.role === 'assistant' ? 'model' : 'user';
+          if (role !== lastRole) {
+            contents.push({
+              role: role,
+              parts: [{ text: item.text }]
+            });
+            lastRole = role;
+          } else if (contents.length > 0) {
+            // Aynı rol ardışık gelirse birleştir
+            contents[contents.length - 1].parts[0].text += '\n' + item.text;
+          }
         });
       }
 
-      // Yeni kullanıcı sorusu
-      contents.push({
-        role: 'user',
-        parts: [{ text: userPrompt }]
-      });
+      // Yeni kullanıcı sorusunu ekle
+      if (lastRole === 'user' && contents.length > 0) {
+        contents[contents.length - 1].parts[0].text += '\n' + userPrompt;
+      } else {
+        contents.push({
+          role: 'user',
+          parts: [{ text: userPrompt }]
+        });
+      }
 
       return {
         systemInstruction: {
