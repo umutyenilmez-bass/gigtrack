@@ -2130,8 +2130,8 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
-  <script src="ai-logger.js?v=1.1.0"></script>
-  <script src="ai-assistant.js?v=1.1.0"></script>
+  <script src="ai-logger.js?v=1.2.0"></script>
+  <script src="ai-assistant.js?v=1.2.0"></script>
   <script src="firebase-sync.js"></script>
   <script>
     // ===== i18n =====
@@ -4981,6 +4981,8 @@
           errorMsg = '⚠️ API hız/kota sınırına ulaşıldı. Lütfen biraz bekleyip tekrar deneyin.';
         } else if (err.message === 'NETWORK_ERROR') {
           errorMsg = '⚠️ İnternet bağlantısı kurulamadı. Lütfen ağınızı kontrol edin.';
+        } else if (err.message === 'TIMEOUT_ERROR') {
+          errorMsg = '⚠️ Zaman aşımı (18s): Google Gemini API yanıt vermedi. VPN veya internet bağlantınızı kontrol edip tekrar deneyin.';
         } else if (err.message && err.message.toLowerCase().includes('location')) {
           errorMsg = '⚠️ Google Gemini bu bölgede kısıtlı olabilir (VPN kullanıyorsanız kapatmayı veya Türkiye\'ye almayı deneyin). Detay: ' + err.message;
         } else {
