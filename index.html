@@ -1995,6 +1995,7 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
+  <script src="ai-logger.js"></script>
   <script src="firebase-sync.js"></script>
   <script>
     // ===== i18n =====
@@ -2188,6 +2189,9 @@
       const last = gigHistory.pop();
       gigs = JSON.parse(last);
       save(); render();
+      if (typeof ActionLogger !== 'undefined') {
+        ActionLogger.log('UNDO', 'Son işlem geri alındı', {});
+      }
       showToast('↩ Geri alındı');
     }
 
@@ -3191,18 +3195,27 @@
     }
 
     window.saveDayNote = function(dateStr, val) {
-      if (!val || !val.trim()) {
+      const oldNote = dayNotes[dateStr] || '';
+      const newNote = val ? val.trim() : '';
+      if (!newNote) {
         delete dayNotes[dateStr];
       } else {
-        dayNotes[dateStr] = val;
+        dayNotes[dateStr] = newNote;
       }
       save();
+      if (typeof ActionLogger !== 'undefined' && oldNote !== newNote) {
+        ActionLogger.log('SAVE_NOTE', `${dateStr} gün notu güncellendi`, { date: dateStr, oldNote, newNote });
+      }
     };
 
     window.deleteDayNote = function(dateStr) {
+      const oldNote = dayNotes[dateStr] || '';
       delete dayNotes[dateStr];
       save();
       renderCalendar();
+      if (typeof ActionLogger !== 'undefined') {
+        ActionLogger.log('DELETE_NOTE', `${dateStr} gün notu silindi`, { date: dateStr, oldNote });
+      }
     };
 
     let calTouchStart = 0;
@@ -3270,6 +3283,15 @@
       const k = monthKey(gig.date);
       openMonthGroups.add(`details-gigs-${k}`);
       save(); render();
+      if (typeof ActionLogger !== 'undefined') {
+        ActionLogger.log('TOGGLE_PAID', `${gig.artist || 'İş'} (${gig.date}) ödeme durumu: ${gig.paid ? 'Ödendi' : 'Ödenmedi'}`, {
+          id: gig.id,
+          artist: gig.artist,
+          venue: gig.venue,
+          date: gig.date,
+          paid: gig.paid
+        });
+      }
       showToast(gig.paid ? T.toastPaid : T.toastUnpaid);
     }
 
@@ -3906,6 +3928,18 @@
           const oldGig = gigs[idx];
           const targetParentId = oldGig.parentId || oldGig.id;
 
+          if (typeof ActionLogger !== 'undefined') {
+            const diff = ActionLogger.calculateDiff(oldGig, data);
+            if (diff.length > 0) {
+              ActionLogger.log('EDIT_GIG', `${data.artist || 'İş'} (${data.date}) güncellendi`, {
+                id: editingId,
+                diff,
+                gig: data,
+                oldGig
+              });
+            }
+          }
+
           if (data.repeat !== 'none') {
             gigs = gigs.filter(g => String(g.id) !== String(editingId) && String(g.parentId) !== String(targetParentId));
             const base = { id: editingId, parentId: null, ...data };
@@ -3923,6 +3957,13 @@
         const base = { id: newId, parentId: null, ...data };
         const list = generateRepeats(base);
         gigs.push(...list);
+        if (typeof ActionLogger !== 'undefined') {
+          ActionLogger.log('ADD_GIG', `${data.artist || 'İş'} (${data.date}) eklendi`, {
+            id: newId,
+            gig: data,
+            count: list.length
+          });
+        }
         showToast(list.length > 1 ? `✓ ${list.length} iş oluşturuldu` : '✓ İş eklendi');
       }
 
@@ -3938,6 +3979,12 @@
       if (children) text += ` (Bu işin ${children} tekrarlayan kopyası daha var; sadece bu kayıt silinecek.)`;
       showConfirm('İşi Sil', text, () => {
         pushHistory();
+        if (typeof ActionLogger !== 'undefined') {
+          ActionLogger.log('DELETE_GIG', `${gig.artist || 'İş'} (${gig.date}) silindi`, {
+            id: gig.id,
+            gig: { ...gig }
+          });
+        }
         gigs = gigs.filter(g => String(g.id) !== String(id));
         save(); render(); showToast('🗑 İş silindi');
       });
