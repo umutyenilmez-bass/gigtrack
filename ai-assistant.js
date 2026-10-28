@@ -379,6 +379,40 @@ TALİMATLAR:
 
           const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
 
+          // Eğer sunucu geçici aşırı yoğunluk (high demand / 503) yaşıyorsa, alternatif havuzları ve modelleri otomatik dene:
+          if (
+            errMsg.includes('high demand') ||
+            errMsg.includes('Spikes in demand') ||
+            errMsg.includes('overloaded') ||
+            response.status === 503
+          ) {
+            console.warn('[AiAssistant] Google sunucusu geçici yoğunlukta (high demand). Alternatif modeller otomatik deneniyor...');
+            await new Promise(r => setTimeout(r, 1200));
+
+            const candidateModels = ['gemini-flash-latest', 'gemini-3.7-flash', 'gemini-3.5-flash'];
+            for (const cand of candidateModels) {
+              try {
+                return await this.callInteractionsApi(apiKey, cand, userPrompt, history, context, controller.signal);
+              } catch (e1) {}
+
+              try {
+                const candUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(cand)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+                const candRes = await fetch(candUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(payload),
+                  signal: controller.signal
+                });
+                if (candRes.ok) {
+                  const cdata = await candRes.json();
+                  if (cdata.candidates && cdata.candidates[0] && cdata.candidates[0].content && cdata.candidates[0].content.parts) {
+                    return cdata.candidates[0].content.parts[0].text;
+                  }
+                }
+              } catch (e2) {}
+            }
+          }
+
           // Eğer generateContent desteklenmiyorsa veya Interactions API öneriliyorsa (modern Google GenAI):
           if (
             errMsg.includes('Interactions API') ||
@@ -470,6 +504,16 @@ TALİMATLAR:
         let errBody = {};
         try { errBody = await res.json(); } catch (e) {}
         const msg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${res.status}`;
+
+        if (
+          (msg.includes('high demand') || msg.includes('Spikes in demand') || res.status === 503) &&
+          model !== 'gemini-flash-latest'
+        ) {
+          console.warn('[AiAssistant] Interactions API yoğun (high demand), gemini-flash-latest deneniyor...');
+          await new Promise(r => setTimeout(r, 1000));
+          return await this.callInteractionsApi(apiKey, 'gemini-flash-latest', userPrompt, history, context, signal);
+        }
+
         if (res.status === 400 || res.status === 403) {
           if (msg.includes('API key not valid') || msg.includes('API_KEY_INVALID')) {
             throw new Error('INVALID_API_KEY');
