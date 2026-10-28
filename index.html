@@ -4945,15 +4945,23 @@
           aiChatHistory.pop();
         }
         console.error('[AI Assistant Error]:', err);
-        let errorMsg = '⚠️ Bir hata oluştu.';
-        if (err.message === 'API_KEY_MISSING' || err.message === 'INVALID_API_KEY') {
-          errorMsg = '⚠️ Gemini API anahtarı geçersiz veya eksik. Lütfen Ayarlar veya yukarıdaki alandan anahtarınızı kontrol edin.';
+        let errorMsg = '⚠️ ' + (err.message || 'Bir hata oluştu.');
+        if (err.message === 'API_KEY_MISSING') {
+          errorMsg = '⚠️ Gemini API anahtarı girilmemiş. Lütfen yukarıdaki alandan veya Ayarlar\'dan anahtarınızı girin.';
+          const setupArea = document.getElementById('aiKeySetupArea');
+          if (setupArea) setupArea.style.display = 'block';
+        } else if (err.message === 'INVALID_API_KEY') {
+          errorMsg = '⚠️ Gemini API anahtarı geçersiz. Lütfen Google AI Studio\'dan aldığınız anahtarı doğru girdiğinizden emin olun.';
           const setupArea = document.getElementById('aiKeySetupArea');
           if (setupArea) setupArea.style.display = 'block';
         } else if (err.message === 'RATE_LIMIT') {
-          errorMsg = '⚠️ API hız/kota sınırına ulaşıldı. Lütfen biraz bekleyin.';
+          errorMsg = '⚠️ API hız/kota sınırına ulaşıldı. Lütfen biraz bekleyip tekrar deneyin.';
         } else if (err.message === 'NETWORK_ERROR') {
-          errorMsg = '⚠️ İnternet bağlantısı hatası. Lütfen ağınızı kontrol edin.';
+          errorMsg = '⚠️ İnternet bağlantısı kurulamadı. Lütfen ağınızı kontrol edin.';
+        } else if (err.message && err.message.toLowerCase().includes('location')) {
+          errorMsg = '⚠️ Google Gemini bu bölgede kısıtlı olabilir (VPN kullanıyorsanız kapatmayı veya Türkiye\'ye almayı deneyin). Detay: ' + err.message;
+        } else {
+          errorMsg = '⚠️ API Hatası: ' + err.message;
         }
         loadingBubble.innerHTML = `<span style="color:#FF453A;">${errorMsg}</span>`;
       }

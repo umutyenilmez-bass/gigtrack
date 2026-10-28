@@ -10,7 +10,7 @@
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const STORAGE_KEY_API_KEY = 'gigtrack_gemini_api_key';
-  const GEMINI_MODEL = 'gemini-2.5-flash';
+  const CANDIDATE_MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
 
   function getStorage() {
     try {
@@ -238,7 +238,7 @@ TALİMATLAR:
     },
 
     /**
-     * Gemini API'ye soru sor
+     * Gemini API'ye soru sor (Otomatik Model Fallback ile)
      * @param {string} userPrompt
      * @param {Array} history
      * @param {object} state
@@ -253,48 +253,74 @@ TALİMATLAR:
       const context = this.buildContext(state);
       const payload = this.preparePayload(userPrompt, history, context);
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      let lastError = null;
 
-      let response;
-      try {
-        response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        console.error('[AiAssistant] Fetch network error:', err);
-        throw new Error('NETWORK_ERROR');
-      }
+      for (const model of CANDIDATE_MODELS) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
-      if (!response.ok) {
+        let response;
+        try {
+          response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+          });
+        } catch (err) {
+          console.error('[AiAssistant] Fetch network error:', err);
+          throw new Error('NETWORK_ERROR');
+        }
+
+        if (response.ok) {
+          const data = await response.json();
+          if (
+            data.candidates &&
+            data.candidates.length > 0 &&
+            data.candidates[0].content &&
+            data.candidates[0].content.parts &&
+            data.candidates[0].content.parts.length > 0
+          ) {
+            return data.candidates[0].content.parts[0].text;
+          }
+          throw new Error('EMPTY_RESPONSE');
+        }
+
         let errBody = {};
         try { errBody = await response.json(); } catch (e) {}
 
-        if (response.status === 400 || response.status === 403) {
-          throw new Error('INVALID_API_KEY');
-        } else if (response.status === 429) {
-          throw new Error('RATE_LIMIT');
-        } else {
-          const msg = errBody.error && errBody.error.message ? errBody.error.message : `HTTP_${response.status}`;
-          throw new Error(msg);
+        const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
+
+        // Model bulunamadıysa (404) bir sonraki modeli dene
+        if (response.status === 404 || errMsg.toLowerCase().includes('not found') || errMsg.toLowerCase().includes('is not supported')) {
+          console.warn(`[AiAssistant] Model ${model} not available, trying next fallback...`, errMsg);
+          lastError = new Error(errMsg);
+          continue;
         }
+
+        // Geçersiz API anahtarı ise diğer modelleri boşuna denemeden hemen bildir
+        if (response.status === 400) {
+          if (errMsg.includes('API key not valid') || errMsg.includes('API_KEY_INVALID')) {
+            throw new Error('INVALID_API_KEY');
+          }
+          throw new Error(errMsg);
+        }
+
+        if (response.status === 403) {
+          if (errMsg.includes('API key not valid') || errMsg.includes('API_KEY_INVALID')) {
+            throw new Error('INVALID_API_KEY');
+          }
+          throw new Error(errMsg);
+        }
+
+        if (response.status === 429) {
+          throw new Error('RATE_LIMIT');
+        }
+
+        lastError = new Error(errMsg);
       }
 
-      const data = await response.json();
-      if (
-        data.candidates &&
-        data.candidates.length > 0 &&
-        data.candidates[0].content &&
-        data.candidates[0].content.parts &&
-        data.candidates[0].content.parts.length > 0
-      ) {
-        return data.candidates[0].content.parts[0].text;
-      }
-
-      throw new Error('EMPTY_RESPONSE');
+      throw lastError || new Error('MODEL_UNAVAILABLE');
     }
   };
 
