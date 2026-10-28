@@ -4583,7 +4583,33 @@
         syncColor = '#FFA000';
       }
 
+      const hasGeminiKey = typeof AiAssistant !== 'undefined' && AiAssistant.hasApiKey();
+      const currentGeminiKey = typeof AiAssistant !== 'undefined' ? AiAssistant.getApiKey() : '';
+
       body.innerHTML = `
+    <!-- YAPAY ZEKA (GEMINI API) -->
+    <div style="padding: 16px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 24px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div class="section-label" style="margin:0; font-size:14px; display:flex; align-items:center; gap:8px; font-weight:700; color:var(--text);">
+          <span style="color:var(--accent);">✨</span> Gemini API Anahtarı
+        </div>
+        <span id="geminiKeyStatusBadge" style="font-size:11px; font-weight:700; color:${hasGeminiKey ? '#30D158' : '#8E8E93'}; padding: 4px 8px; border-radius: 6px; background: rgba(255,255,255,0.04);">
+          ${hasGeminiKey ? '● Aktif' : '○ Ayarlanmadı'}
+        </span>
+      </div>
+      <div style="font-size: 12px; color: var(--text-3); margin-bottom: 12px; line-height: 1.5;">
+        Asistanın konser ve takvim hafızanıza erişebilmesi için Google Gemini API anahtarınızı girin. Anahtarınız sadece yerel cihazınızda saklanır, asla GitHub'a gitmez.
+      </div>
+      <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+        <input type="password" id="settingsGeminiKeyInput" value="${currentGeminiKey}" placeholder="AIzaSy..." 
+          style="flex: 1; background: #121214; border: 1px solid var(--border); padding: 10px 14px; border-radius: 10px; color: var(--text); font-size: 13px; outline: none; font-family: monospace;">
+        <button onclick="saveGeminiKeyFromSettings()" style="background: var(--accent); color: #000; border: none; padding: 0 16px; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer;">Kaydet</button>
+      </div>
+      <div style="display: flex; gap: 8px;">
+        <button onclick="testGeminiKeyFromSettings()" style="background: rgba(255,255,255,0.06); color: var(--text-2); border: 1px solid var(--border); padding: 7px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Bağlantıyı Test Et</button>
+        ${hasGeminiKey ? `<button onclick="deleteGeminiKeyFromSettings()" style="background: rgba(255,69,58,0.1); color: #FF453A; border: 1px solid rgba(255,69,58,0.2); padding: 7px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 600; cursor: pointer;">Anahtarı Sil</button>` : ''}
+      </div>
+    </div>
     <div style="margin-bottom: 24px;">
       <div class="section-label" style="margin-top:0;">${T.archiveTitle}</div>
       <div style="font-size:12px; color:var(--text-3); margin-bottom:12px;">${T.archiveHint}</div>
@@ -4662,6 +4688,44 @@
     function closeSettings() {
       document.getElementById('settingsOverlay').classList.remove('open');
       if (window.location.hash === '#settings') history.back();
+    }
+
+    function saveGeminiKeyFromSettings() {
+      const inp = document.getElementById('settingsGeminiKeyInput');
+      if (!inp) return;
+      const key = inp.value.trim();
+      if (!key) {
+        showToast('⚠️ Geçerli bir API anahtarı girin');
+        return;
+      }
+      if (typeof AiAssistant !== 'undefined') {
+        AiAssistant.setApiKey(key);
+      }
+      openSettings();
+      showToast('✓ Gemini API anahtarı kaydedildi');
+    }
+
+    function deleteGeminiKeyFromSettings() {
+      if (typeof AiAssistant !== 'undefined') {
+        AiAssistant.removeApiKey();
+      }
+      openSettings();
+      showToast('API anahtarı silindi');
+    }
+
+    async function testGeminiKeyFromSettings() {
+      if (typeof AiAssistant === 'undefined' || !AiAssistant.hasApiKey()) {
+        showToast('⚠️ Önce API anahtarını kaydedin');
+        return;
+      }
+      showToast('Gemini API test ediliyor...');
+      try {
+        await AiAssistant.ask('Test bağlantısı', [], { gigs: [], dayNotes: {}, activeYear: '2026' });
+        showToast('✓ Gemini API bağlantısı başarılı!');
+      } catch (e) {
+        console.error(e);
+        showToast('⚠️ Bağlantı başarısız: ' + e.message);
+      }
     }
 
     function setActiveYear(y) {
