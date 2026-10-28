@@ -190,3 +190,8 @@ test('AiAssistant - detectModel defaults and filters deprecated models', async (
   const cachedModel = await AiAssistant.detectModel('AIzaSyTestKey');
   assert.strictEqual(cachedModel, 'gemini-3.8-flash');
 });
+
+test('AiAssistant - has callInteractionsApi method for modern Google Interactions API', (t) => {
+  assert.strictEqual(typeof AiAssistant.callInteractionsApi, 'function');
+  assert.strictEqual(AiAssistant.DEFAULT_MODEL, 'gemini-3.8-flash');
+});

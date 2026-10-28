@@ -373,25 +373,40 @@ TALİMATLAR:
         clearTimeout(timeoutId);
       }
 
-      if (!response.ok) {
-        let errBody = {};
-        try { errBody = await response.json(); } catch (e) {}
+        if (!response.ok) {
+          let errBody = {};
+          try { errBody = await response.json(); } catch (e) {}
 
-        const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
+          const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
 
-        if (response.status === 400 || response.status === 403) {
-          if (errMsg.includes('API key not valid') || errMsg.includes('API_KEY_INVALID')) {
-            throw new Error('INVALID_API_KEY');
+          // Eğer generateContent desteklenmiyorsa veya Interactions API öneriliyorsa (modern Google GenAI):
+          if (
+            errMsg.includes('Interactions API') ||
+            errMsg.includes('not supported for generateContent') ||
+            response.status === 404
+          ) {
+            try {
+              console.warn('[AiAssistant] generateContent desteklenmiyor, modern Google Interactions API çağrılıyor...');
+              return await this.callInteractionsApi(apiKey, activeModel, userPrompt, history, context, controller.signal);
+            } catch (interactionErr) {
+              console.error('[AiAssistant] Interactions API hatası:', interactionErr);
+              throw interactionErr;
+            }
           }
+
+          if (response.status === 400 || response.status === 403) {
+            if (errMsg.includes('API key not valid') || errMsg.includes('API_KEY_INVALID')) {
+              throw new Error('INVALID_API_KEY');
+            }
+            throw new Error(errMsg);
+          }
+
+          if (response.status === 429) {
+            throw new Error('RATE_LIMIT');
+          }
+
           throw new Error(errMsg);
         }
-
-        if (response.status === 429) {
-          throw new Error('RATE_LIMIT');
-        }
-
-        throw new Error(errMsg);
-      }
 
       const data = await response.json();
       if (
@@ -404,6 +419,80 @@ TALİMATLAR:
         return data.candidates[0].content.parts[0].text;
       }
 
+      throw new Error('EMPTY_RESPONSE');
+    },
+
+    /**
+     * Modern Google Gemini Interactions API REST çağrısı
+     * POST https://generativelanguage.googleapis.com/v1beta/interactions
+     * @param {string} apiKey
+     * @param {string} model
+     * @param {string} userPrompt
+     * @param {Array} history
+     * @param {string} context
+     * @param {AbortSignal} [signal]
+     * @returns {Promise<string>}
+     */
+    callInteractionsApi: async function (apiKey, model, userPrompt, history = [], context = '', signal) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/interactions?key=${encodeURIComponent(apiKey)}`;
+
+      let fullPrompt = userPrompt;
+      if (Array.isArray(history) && history.length > 0) {
+        const historyText = history
+          .filter(h => h && h.text)
+          .map(h => `${h.role === 'user' ? 'Kullanıcı' : 'Asistan'}: ${h.text}`)
+          .join('\n\n');
+        fullPrompt = `[Önceki Konuşma]:\n${historyText}\n\n[Kullanıcı Sorusu]:\n${userPrompt}`;
+      }
+
+      const systemInstructionText = `Sen GigTrack uygulamasının dahili AI asistanısın. Umut'un konser takvimini, finansını ve sistem hareketlerini hafızandan takip ediyorsun.\n\n${context}`;
+
+      const body = {
+        model: model || DEFAULT_GEMINI_MODEL,
+        input: fullPrompt,
+        system_instruction: systemInstructionText,
+        generation_config: {
+          temperature: 0.2
+        }
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        },
+        body: JSON.stringify(body),
+        signal: signal
+      });
+
+      if (!res.ok) {
+        let errBody = {};
+        try { errBody = await res.json(); } catch (e) {}
+        const msg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${res.status}`;
+        if (res.status === 400 || res.status === 403) {
+          if (msg.includes('API key not valid') || msg.includes('API_KEY_INVALID')) {
+            throw new Error('INVALID_API_KEY');
+          }
+        }
+        if (res.status === 429) {
+          throw new Error('RATE_LIMIT');
+        }
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      if (data.output_text) return data.output_text;
+      if (data.interaction && data.interaction.output_text) return data.interaction.output_text;
+      if (Array.isArray(data.steps)) {
+        for (const step of data.steps) {
+          if (Array.isArray(step.content)) {
+            for (const c of step.content) {
+              if (c.type === 'text' && c.text) return c.text;
+            }
+          }
+        }
+      }
       throw new Error('EMPTY_RESPONSE');
     }
   };
