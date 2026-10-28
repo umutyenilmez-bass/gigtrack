@@ -1822,6 +1822,7 @@
         <div style="display: flex; gap: 8px;">
           <input type="password" id="aiDrawerApiKeyInput" placeholder="AIzaSy..." style="flex: 1; background: #1A1A1C; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 12px; color: #FFF; font-size: 13px;">
           <button onclick="saveAiKeyFromDrawer()" style="background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 0 16px; font-weight: 700; font-size: 13px; cursor: pointer;">Kaydet</button>
+          <button onclick="testAiKeyInDrawer()" style="background: rgba(255,255,255,0.08); color: var(--text-2); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 0 12px; font-size: 12px; font-weight: 600; cursor: pointer;">Test Et</button>
         </div>
       </div>
 
@@ -2130,8 +2131,8 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
-  <script src="ai-logger.js?v=1.2.0"></script>
-  <script src="ai-assistant.js?v=1.2.0"></script>
+  <script src="ai-logger.js?v=1.3.0"></script>
+  <script src="ai-assistant.js?v=1.3.0"></script>
   <script src="firebase-sync.js"></script>
   <script>
     // ===== i18n =====
@@ -4750,14 +4751,16 @@
       }
       showToast('Gemini API test ediliyor...');
       try {
+        const detected = await AiAssistant.detectModel();
         await AiAssistant.ask('Test bağlantısı', [], { gigs: [], dayNotes: {}, activeYear: '2026' });
-        showToast('✓ Gemini API bağlantısı başarılı!');
+        showToast(`✓ Gemini API bağlantısı başarılı! (${detected})`);
       } catch (e) {
         console.error(e);
         let msg = e.message;
         if (msg === 'INVALID_API_KEY') msg = 'API anahtarı geçersiz';
         else if (msg === 'NETWORK_ERROR') msg = 'Ağ bağlantısı kurulamadı';
         else if (msg === 'RATE_LIMIT') msg = 'Kota veya hız sınırına ulaşıldı';
+        else if (msg === 'TIMEOUT_ERROR') msg = 'Zaman aşımı (18s)';
         showToast('⚠️ Bağlantı başarısız: ' + msg);
       }
     }
@@ -4896,7 +4899,33 @@
       showToast('Sohbet temizlendi');
     }
 
-    function saveAiKeyFromDrawer() {
+    async function testAiKeyInDrawer() {
+      const inp = document.getElementById('aiDrawerApiKeyInput');
+      const tempKey = inp ? inp.value.trim() : '';
+      if (!tempKey && (typeof AiAssistant === 'undefined' || !AiAssistant.hasApiKey())) {
+        showToast('⚠️ Önce API anahtarı girin');
+        return;
+      }
+      if (tempKey && typeof AiAssistant !== 'undefined') {
+        AiAssistant.setApiKey(tempKey);
+      }
+      showToast('Gemini API test ediliyor...');
+      try {
+        const detected = await AiAssistant.detectModel();
+        await AiAssistant.ask('Test bağlantısı', [], { gigs: [], dayNotes: {}, activeYear: '2026' });
+        showToast(`✓ Bağlantı başarılı! Model: ${detected}`);
+      } catch (e) {
+        console.error(e);
+        let msg = e.message;
+        if (msg === 'INVALID_API_KEY') msg = 'API anahtarı geçersiz';
+        else if (msg === 'NETWORK_ERROR') msg = 'Ağ bağlantısı kurulamadı';
+        else if (msg === 'RATE_LIMIT') msg = 'Kota veya hız sınırına ulaşıldı';
+        else if (msg === 'TIMEOUT_ERROR') msg = 'Zaman aşımı (18s)';
+        showToast('⚠️ Bağlantı başarısız: ' + msg);
+      }
+    }
+
+    async function saveAiKeyFromDrawer() {
       const inp = document.getElementById('aiDrawerApiKeyInput');
       if (!inp) return;
       const key = inp.value.trim();
@@ -4911,6 +4940,10 @@
       if (setupArea) setupArea.style.display = 'none';
       inp.value = '';
       showToast('✓ Gemini API Anahtarı kaydedildi');
+      try {
+        const detected = await AiAssistant.detectModel(key);
+        showToast(`✓ Model hazır: ${detected}`);
+      } catch (e) {}
     }
 
     function handleAiChipClick(text) {

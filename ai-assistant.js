@@ -10,7 +10,8 @@
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const STORAGE_KEY_API_KEY = 'gigtrack_gemini_api_key';
-  const GEMINI_MODEL = 'gemini-1.5-flash';
+  const STORAGE_KEY_MODEL = 'gigtrack_gemini_active_model';
+  const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
 
   function getStorage() {
     try {
@@ -20,6 +21,8 @@
   }
 
   const AiAssistant = {
+    DEFAULT_MODEL: DEFAULT_GEMINI_MODEL,
+
     /**
      * Yerel olarak saklanan Gemini API anahtarını al
      */
@@ -30,13 +33,14 @@
     },
 
     /**
-     * API anahtarını kaydet
+     * API anahtarını kaydet ve model önbelleğini sıfırla
      * @param {string} key
      */
     setApiKey: function (key) {
       const storage = getStorage();
       if (storage) {
         storage.setItem(STORAGE_KEY_API_KEY, (key || '').trim());
+        storage.removeItem(STORAGE_KEY_MODEL);
       }
     },
 
@@ -47,6 +51,7 @@
       const storage = getStorage();
       if (storage) {
         storage.removeItem(STORAGE_KEY_API_KEY);
+        storage.removeItem(STORAGE_KEY_MODEL);
       }
     },
 
@@ -55,6 +60,65 @@
      */
     hasApiKey: function () {
       return this.getApiKey().length > 0;
+    },
+
+    /**
+     * Kullanıcının API anahtarına tanımlı ve generateContent destekleyen aktif modelleri sorgular.
+     * Google ModelService.ListModels endpoint'ini kullanarak geçerli modeli dinamik tespit eder.
+     * @param {string} [apiKey]
+     * @returns {Promise<string>}
+     */
+    detectModel: async function (apiKey) {
+      const key = (apiKey || this.getApiKey()).trim();
+      if (!key) return DEFAULT_GEMINI_MODEL;
+
+      const storage = getStorage();
+      if (storage) {
+        const cached = storage.getItem(STORAGE_KEY_MODEL);
+        // Eski kullanımdan kalkan modelleri önbellekten temizle
+        if (cached && cached !== 'gemini-1.5-flash' && cached !== 'gemini-2.5-flash' && cached.trim().length > 0) {
+          return cached;
+        }
+      }
+
+      try {
+        const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        const tid = controller ? setTimeout(() => controller.abort(), 6000) : null;
+        const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`;
+        const res = await fetch(listUrl, {
+          signal: controller ? controller.signal : undefined
+        });
+        if (tid) clearTimeout(tid);
+
+        if (res && res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.models)) {
+            const viable = data.models
+              .filter(m => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes('generateContent'))
+              .map(m => (m.name || '').replace(/^models\//, ''))
+              .filter(Boolean);
+
+            if (viable.length > 0) {
+              // Tercih sırası: gemini-3.8-flash -> 3.8 içeren -> flash içeren -> gemini -> ilk viable model
+              const chosen = viable.find(m => m === 'gemini-3.8-flash') ||
+                             viable.find(m => m.includes('3.8-flash')) ||
+                             viable.find(m => m.includes('flash')) ||
+                             viable.find(m => m.includes('gemini')) ||
+                             viable[0];
+              if (chosen) {
+                if (storage) {
+                  storage.setItem(STORAGE_KEY_MODEL, chosen);
+                }
+                return chosen;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('[AiAssistant] ListModels dinamik tespiti atlandı:', e);
+      }
+
+      return DEFAULT_GEMINI_MODEL;
     },
 
     /**
@@ -238,7 +302,7 @@ TALİMATLAR:
     },
 
     /**
-     * Gemini API'ye soru sor (Zaman Aşımı ve Doğrudan gemini-1.5-flash ile)
+     * Gemini API'ye soru sor (Dinamik model tespiti, zaman aşımı ve geri çekilme korumalı)
      * @param {string} userPrompt
      * @param {Array} history
      * @param {object} state
@@ -256,7 +320,8 @@ TALİMATLAR:
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 18000); // 18 saniye zaman aşımı
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      let activeModel = await this.detectModel(apiKey);
+      let url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
       let response;
       try {
@@ -268,6 +333,35 @@ TALİMATLAR:
           body: JSON.stringify(payload),
           signal: controller.signal
         });
+
+        // Eğer mevcut model bulunamadı veya kullanımdan kalktı hatası dönerse ve gemini-3.8-flash denenmemişse:
+        if (!response.ok && (response.status === 404 || response.status === 400) && activeModel !== DEFAULT_GEMINI_MODEL) {
+          let checkBody = {};
+          try { checkBody = await response.clone().json(); } catch (e) {}
+          const checkMsg = (checkBody.error && checkBody.error.message) || '';
+          if (
+            checkMsg.includes('not found') ||
+            checkMsg.includes('no longer available') ||
+            checkMsg.includes('ListModels') ||
+            checkMsg.includes('is not supported')
+          ) {
+            console.warn(`[AiAssistant] Model '${activeModel}' geçersiz, '${DEFAULT_GEMINI_MODEL}' ile yeniden deneniyor...`);
+            activeModel = DEFAULT_GEMINI_MODEL;
+            const storage = getStorage();
+            if (storage) {
+              storage.setItem(STORAGE_KEY_MODEL, DEFAULT_GEMINI_MODEL);
+            }
+            url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+            response = await fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(payload),
+              signal: controller.signal
+            });
+          }
+        }
       } catch (err) {
         clearTimeout(timeoutId);
         if (err.name === 'AbortError') {

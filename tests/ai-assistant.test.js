@@ -170,3 +170,23 @@ test('AiAssistant - ask without API key throws expected error', async (t) => {
     }
   );
 });
+
+test('AiAssistant - detectModel defaults and filters deprecated models', async (t) => {
+  AiAssistant.removeApiKey();
+  const defaultModel = await AiAssistant.detectModel();
+  assert.strictEqual(defaultModel, 'gemini-3.8-flash');
+
+  // Stale deprecated models in localStorage must be discarded
+  global.localStorage.setItem('gigtrack_gemini_active_model', 'gemini-1.5-flash');
+  const sanitizedModel1 = await AiAssistant.detectModel('AIzaSyTestKey');
+  assert.notStrictEqual(sanitizedModel1, 'gemini-1.5-flash');
+
+  global.localStorage.setItem('gigtrack_gemini_active_model', 'gemini-2.5-flash');
+  const sanitizedModel2 = await AiAssistant.detectModel('AIzaSyTestKey');
+  assert.notStrictEqual(sanitizedModel2, 'gemini-2.5-flash');
+
+  // Valid cached model should be returned
+  global.localStorage.setItem('gigtrack_gemini_active_model', 'gemini-3.8-flash');
+  const cachedModel = await AiAssistant.detectModel('AIzaSyTestKey');
+  assert.strictEqual(cachedModel, 'gemini-3.8-flash');
+});
