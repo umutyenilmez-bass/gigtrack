@@ -10,7 +10,7 @@
   }
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const STORAGE_KEY_API_KEY = 'gigtrack_gemini_api_key';
-  const CANDIDATE_MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-2.5-flash'];
+  const CANDIDATE_MODELS = ['gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-3.8-flash'];
 
   function getStorage() {
     try {
@@ -291,8 +291,14 @@ TALİMATLAR:
 
         const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
 
-        // Model bulunamadıysa (404) bir sonraki modeli dene
-        if (response.status === 404 || errMsg.toLowerCase().includes('not found') || errMsg.toLowerCase().includes('is not supported')) {
+        // Model bulunamadıysa (404) veya yeni kullanıcılara kapalıysa bir sonraki modeli dene
+        if (
+          response.status === 404 ||
+          errMsg.toLowerCase().includes('not found') ||
+          errMsg.toLowerCase().includes('is not supported') ||
+          errMsg.toLowerCase().includes('no longer available') ||
+          errMsg.toLowerCase().includes('update your code')
+        ) {
           console.warn(`[AiAssistant] Model ${model} not available, trying next fallback...`, errMsg);
           lastError = new Error(errMsg);
           continue;

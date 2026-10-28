@@ -1793,6 +1793,11 @@
           </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
+          <button onclick="toggleAiDrawerKeySetup()" title="API Anahtarını Gör / Değiştir" style="background: none; border: 1px solid rgba(255,255,255,0.08); color: #8A8A8F; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2l-2 2m-1.5 1.5L12 11l-4-4-5 5 1.5 1.5L6 12l2 2 1.5-1.5L13 16l1.5-1.5 2 2 1.5-1.5L22 17l-1-7-1-1z"/>
+            </svg>
+          </button>
           <button onclick="clearAiChat()" title="Sohbeti Temizle" style="background: none; border: 1px solid rgba(255,255,255,0.08); color: #8A8A8F; border-radius: 8px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
           </button>
@@ -2125,8 +2130,8 @@
   <!-- TOAST -->
   <div class="toast" id="toast"></div>
 
-  <script src="ai-logger.js"></script>
-  <script src="ai-assistant.js"></script>
+  <script src="ai-logger.js?v=1.1.0"></script>
+  <script src="ai-assistant.js?v=1.1.0"></script>
   <script src="firebase-sync.js"></script>
   <script>
     // ===== i18n =====
@@ -4833,6 +4838,10 @@
       const setupArea = document.getElementById('aiKeySetupArea');
       if (setupArea) {
         setupArea.style.display = hasKey ? 'none' : 'block';
+        const inp = document.getElementById('aiDrawerApiKeyInput');
+        if (inp && typeof AiAssistant !== 'undefined') {
+          inp.value = AiAssistant.getApiKey();
+        }
       }
 
       if (aiChatHistory.length === 0) {
@@ -4842,6 +4851,20 @@
       const input = document.getElementById('aiPromptInput');
       if (input) {
         setTimeout(() => input.focus(), 150);
+      }
+    }
+
+    function toggleAiDrawerKeySetup() {
+      const setupArea = document.getElementById('aiKeySetupArea');
+      if (!setupArea) return;
+      const isVisible = setupArea.style.display === 'block';
+      setupArea.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) {
+        const inp = document.getElementById('aiDrawerApiKeyInput');
+        if (inp && typeof AiAssistant !== 'undefined') {
+          inp.value = AiAssistant.getApiKey();
+          setTimeout(() => inp.focus(), 100);
+        }
       }
     }
 

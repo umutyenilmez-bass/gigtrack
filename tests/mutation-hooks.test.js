@@ -9,8 +9,8 @@ test('Mutation Hooks - index.html should load ai-logger.js and hook into mutatio
 
   // Verify script tag is included
   assert.ok(
-    content.includes('<script src="ai-logger.js"></script>') ||
-    content.includes('<script src="./ai-logger.js"></script>'),
+    content.includes('<script src="ai-logger.js') ||
+    content.includes('<script src="./ai-logger.js'),
     'index.html must include ai-logger.js script tag'
   );
 

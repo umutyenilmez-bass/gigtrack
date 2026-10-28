@@ -9,8 +9,8 @@ test('UI Structure - index.html should have complete AI Assistant UI and handler
 
   // 1. Script tag
   assert.ok(
-    html.includes('<script src="ai-assistant.js"></script>') ||
-    html.includes('<script src="./ai-assistant.js"></script>'),
+    html.includes('<script src="ai-assistant.js') ||
+    html.includes('<script src="./ai-assistant.js'),
     'Must include ai-assistant.js script'
   );
 
