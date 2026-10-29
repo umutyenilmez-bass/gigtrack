@@ -174,7 +174,7 @@ test('AiAssistant - ask without API key throws expected error', async (t) => {
 test('AiAssistant - detectModel defaults and filters deprecated models', async (t) => {
   AiAssistant.removeApiKey();
   const defaultModel = await AiAssistant.detectModel();
-  assert.strictEqual(defaultModel, 'gemini-3.8-flash');
+  assert.strictEqual(defaultModel, 'gemini-3.1-flash-lite');
 
   // Stale deprecated models in localStorage must be discarded
   global.localStorage.setItem('gigtrack_gemini_active_model', 'gemini-1.5-flash');
@@ -186,12 +186,102 @@ test('AiAssistant - detectModel defaults and filters deprecated models', async (
   assert.notStrictEqual(sanitizedModel2, 'gemini-2.5-flash');
 
   // Valid cached model should be returned
-  global.localStorage.setItem('gigtrack_gemini_active_model', 'gemini-3.8-flash');
+  global.localStorage.setItem('gigtrack_gemini_active_model', 'gemini-3.5-flash');
   const cachedModel = await AiAssistant.detectModel('AIzaSyTestKey');
-  assert.strictEqual(cachedModel, 'gemini-3.8-flash');
+  assert.strictEqual(cachedModel, 'gemini-3.5-flash');
 });
 
-test('AiAssistant - has callInteractionsApi method for modern Google Interactions API', (t) => {
+test('AiAssistant - has callInteractionsApi method and candidate models array', (t) => {
   assert.strictEqual(typeof AiAssistant.callInteractionsApi, 'function');
-  assert.strictEqual(AiAssistant.DEFAULT_MODEL, 'gemini-3.8-flash');
+  assert.strictEqual(AiAssistant.DEFAULT_MODEL, 'gemini-3.1-flash-lite');
+  assert.ok(Array.isArray(AiAssistant.CANDIDATE_MODELS));
+  assert.strictEqual(AiAssistant.CANDIDATE_MODELS[0], 'gemini-3.1-flash-lite');
+  assert.ok(AiAssistant.CANDIDATE_MODELS.includes('gemini-3.5-flash'));
+  assert.ok(AiAssistant.CANDIDATE_MODELS.includes('gemini-flash-latest'));
+});
+
+test('AiAssistant - ask cascades through candidate models when first model returns 503 or 404', async (t) => {
+  AiAssistant.setApiKey('AIzaSyTestKeyCascade');
+  global.localStorage.removeItem('gigtrack_gemini_active_model');
+
+  const originalFetch = global.fetch;
+  const attempts = [];
+
+  global.fetch = async (url) => {
+    const urlStr = String(url);
+    attempts.push(urlStr);
+
+    // İlk deneme: gemini-3.1-flash-lite -> 503 High Demand
+    if (urlStr.includes('gemini-3.1-flash-lite')) {
+      return {
+        ok: false,
+        status: 503,
+        json: async () => ({ error: { message: 'The model is overloaded. Please try again later.' } })
+      };
+    }
+
+    // İkinci deneme: gemini-3.5-flash -> Başarılı
+    if (urlStr.includes('gemini-3.5-flash')) {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          candidates: [
+            {
+              content: {
+                parts: [{ text: 'Başarılı yanıt (3.5-flash)' }]
+              }
+            }
+          ]
+        })
+      };
+    }
+
+    return {
+      ok: false,
+      status: 404,
+      json: async () => ({ error: { message: 'Not found' } })
+    };
+  };
+
+  try {
+    const response = await AiAssistant.ask('Merhaba', [], {});
+    assert.strictEqual(response, 'Başarılı yanıt (3.5-flash)');
+    assert.ok(attempts.length >= 2, 'En az 2 modele istek denenmiş olmalı');
+    assert.ok(attempts[0].includes('gemini-3.1-flash-lite'));
+    assert.ok(attempts[1].includes('gemini-3.5-flash'));
+    // Çalışan model önbelleğe alınmış olmalı
+    assert.strictEqual(global.localStorage.getItem('gigtrack_gemini_active_model'), 'gemini-3.5-flash');
+  } finally {
+    global.fetch = originalFetch;
+    AiAssistant.removeApiKey();
+  }
+});
+
+test('AiAssistant - ask stops immediately on INVALID_API_KEY without wasting retries', async (t) => {
+  AiAssistant.setApiKey('AIzaSyBadKey');
+  const originalFetch = global.fetch;
+  let callCount = 0;
+
+  global.fetch = async () => {
+    callCount++;
+    return {
+      ok: false,
+      status: 400,
+      json: async () => ({ error: { message: 'API key not valid. Please pass a valid API key.' } })
+    };
+  };
+
+  try {
+    await assert.rejects(
+      async () => {
+        await AiAssistant.ask('Test', [], {});
+      },
+      { message: 'INVALID_API_KEY' }
+    );
+    assert.strictEqual(callCount, 1, 'Geçersiz anahtarda diğer modeller denenmeden hemen durmalı');
+  } finally {
+    global.fetch = originalFetch;
+    AiAssistant.removeApiKey();
+  }
 });

@@ -11,7 +11,16 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   const STORAGE_KEY_API_KEY = 'gigtrack_gemini_api_key';
   const STORAGE_KEY_MODEL = 'gigtrack_gemini_active_model';
-  const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash';
+
+  // GigSync ile birebir uyumlu çoklu model yedekleme sırası
+  const CANDIDATE_MODELS = [
+    'gemini-3.1-flash-lite',
+    'gemini-3.5-flash',
+    'gemini-flash-latest',
+    'gemini-pro-latest',
+    'gemini-3.8-flash'
+  ];
+  const DEFAULT_GEMINI_MODEL = CANDIDATE_MODELS[0];
 
   function getStorage() {
     try {
@@ -22,6 +31,7 @@
 
   const AiAssistant = {
     DEFAULT_MODEL: DEFAULT_GEMINI_MODEL,
+    CANDIDATE_MODELS: CANDIDATE_MODELS,
 
     /**
      * Yerel olarak saklanan Gemini API anahtarını al
@@ -76,7 +86,7 @@
       if (storage) {
         const cached = storage.getItem(STORAGE_KEY_MODEL);
         // Eski kullanımdan kalkan modelleri önbellekten temizle
-        if (cached && cached !== 'gemini-1.5-flash' && cached !== 'gemini-2.5-flash' && cached.trim().length > 0) {
+        if (cached && !['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash'].includes(cached) && cached.trim().length > 0) {
           return cached;
         }
       }
@@ -99,9 +109,8 @@
               .filter(Boolean);
 
             if (viable.length > 0) {
-              // Tercih sırası: gemini-3.8-flash -> 3.8 içeren -> flash içeren -> gemini -> ilk viable model
-              const chosen = viable.find(m => m === 'gemini-3.8-flash') ||
-                             viable.find(m => m.includes('3.8-flash')) ||
+              // CANDIDATE_MODELS sırasına göre mevcut olan ilkini seç
+              const chosen = CANDIDATE_MODELS.find(cm => viable.includes(cm)) ||
                              viable.find(m => m.includes('flash')) ||
                              viable.find(m => m.includes('gemini')) ||
                              viable[0];
@@ -295,14 +304,15 @@ TALİMATLAR:
         },
         contents: contents,
         generationConfig: {
-          temperature: 0.2,
           maxOutputTokens: 2048
         }
       };
     },
 
     /**
-     * Gemini API'ye soru sor (Dinamik model tespiti, zaman aşımı ve geri çekilme korumalı)
+     * Gemini API'ye soru sor (GigSync benzeri otomatik çoklu model kademeli yedekleme)
+     * Sırasıyla aday modelleri dener; biri yoğunsa (503), kotalıysa (429) veya desteklenmiyorsa (404)
+     * bir sonraki modele anında kesintisiz geçiş yapar.
      * @param {string} userPrompt
      * @param {Array} history
      * @param {object} state
@@ -317,131 +327,106 @@ TALİMATLAR:
       const context = this.buildContext(state);
       const payload = this.preparePayload(userPrompt, history, context);
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 18000); // 18 saniye zaman aşımı
-
-      // Sohbet anında ListModels için fazladan ağ beklemesi yapma; önbellek veya varsayılan modeli anında kullan
       const storage = getStorage();
-      let activeModel = (storage && storage.getItem(STORAGE_KEY_MODEL)) || DEFAULT_GEMINI_MODEL;
-      if (activeModel === 'gemini-1.5-flash' || activeModel === 'gemini-2.5-flash') {
-        activeModel = DEFAULT_GEMINI_MODEL;
+      let cachedModel = (storage && storage.getItem(STORAGE_KEY_MODEL)) || '';
+      // Eski kullanımdan kalkmış modelleri önbellekten temizle
+      if (['gemini-1.5-flash', 'gemini-1.5-pro', 'gemini-2.0-flash', 'gemini-2.5-flash'].includes(cachedModel)) {
+        cachedModel = '';
       }
 
-      let url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      // Denenecek modeller sırası: Önbellekteki çalışan model varsa en başta, ardından tüm aday modeller
+      const modelsToTry = [];
+      if (cachedModel && CANDIDATE_MODELS.includes(cachedModel)) {
+        modelsToTry.push(cachedModel);
+      }
+      CANDIDATE_MODELS.forEach(m => {
+        if (!modelsToTry.includes(m)) {
+          modelsToTry.push(m);
+        }
+      });
 
-      let response;
-      try {
-        response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload),
-          signal: controller.signal
-        });
+      let lastError = null;
+      let lastNetworkError = false;
 
-        // Eğer mevcut model bulunamadı veya kullanımdan kalktı hatası dönerse ve gemini-3.8-flash denenmemişse:
-        if (!response.ok && (response.status === 404 || response.status === 400) && activeModel !== DEFAULT_GEMINI_MODEL) {
-          let checkBody = {};
-          try { checkBody = await response.clone().json(); } catch (e) {}
-          const checkMsg = (checkBody.error && checkBody.error.message) || '';
-          if (
-            checkMsg.includes('not found') ||
-            checkMsg.includes('no longer available') ||
-            checkMsg.includes('ListModels') ||
-            checkMsg.includes('is not supported')
-          ) {
-            console.warn(`[AiAssistant] Model '${activeModel}' geçersiz, '${DEFAULT_GEMINI_MODEL}' ile yeniden deneniyor...`);
-            activeModel = DEFAULT_GEMINI_MODEL;
-            if (storage) {
-              storage.setItem(STORAGE_KEY_MODEL, DEFAULT_GEMINI_MODEL);
+      for (let i = 0; i < modelsToTry.length; i++) {
+        const model = modelsToTry[i];
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 16000); // Model başına 16 saniye zaman aşımı
+
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+
+          clearTimeout(timeoutId);
+
+          if (response.ok) {
+            const data = await response.json();
+            if (
+              data.candidates &&
+              data.candidates.length > 0 &&
+              data.candidates[0].content &&
+              data.candidates[0].content.parts &&
+              data.candidates[0].content.parts.length > 0
+            ) {
+              // Başarılı modeli önbelleğe kaydet (sonraki istekler doğrudan bu modelle başlar)
+              if (storage) {
+                storage.setItem(STORAGE_KEY_MODEL, model);
+              }
+              return data.candidates[0].content.parts[0].text;
             }
-            url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-            response = await fetch(url, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(payload),
-              signal: controller.signal
-            });
+            throw new Error('EMPTY_RESPONSE');
           }
-        }
-      } catch (err) {
-        clearTimeout(timeoutId);
-        if (err.name === 'AbortError') {
-          throw new Error('TIMEOUT_ERROR');
-        }
-        console.error('[AiAssistant] Fetch network error:', err);
-        throw new Error('NETWORK_ERROR');
-      } finally {
-        clearTimeout(timeoutId);
-      }
 
-      if (!response.ok) {
-        let errBody = {};
-        try { errBody = await response.json(); } catch (e) {}
+          let errBody = {};
+          try { errBody = await response.json(); } catch (e) {}
+          const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
 
-        const errMsg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${response.status}`;
-
-        // Eğer sunucu geçici aşırı yoğunluk (high demand / 503) yaşıyorsa, alternatif havuzları hızlıca dene:
-        if (
-          errMsg.includes('high demand') ||
-          errMsg.includes('Spikes in demand') ||
-          errMsg.includes('overloaded') ||
-          response.status === 503
-        ) {
-          console.warn('[AiAssistant] gemini-3.8-flash geçici yoğunlukta (high demand). gemini-flash-latest havuzu deneniyor...');
-          try {
-            return await this.callInteractionsApi(apiKey, 'gemini-flash-latest', userPrompt, history, context, controller.signal);
-          } catch (e1) {}
-        }
-
-        // Eğer generateContent desteklenmiyorsa veya Interactions API öneriliyorsa (modern Google GenAI):
-        if (
-          errMsg.includes('Interactions API') ||
-          errMsg.includes('not supported for generateContent') ||
-          response.status === 404
-        ) {
-          try {
-            console.warn('[AiAssistant] generateContent desteklenmiyor, modern Google Interactions API çağrılıyor...');
-            return await this.callInteractionsApi(apiKey, activeModel, userPrompt, history, context, controller.signal);
-          } catch (interactionErr) {
-            console.error('[AiAssistant] Interactions API hatası:', interactionErr);
-            throw interactionErr;
-          }
-        }
-
+          // API anahtarı geçersizse diğer modelleri boşuna deneme, hemen bildir
           if (response.status === 400 || response.status === 403) {
             if (errMsg.includes('API key not valid') || errMsg.includes('API_KEY_INVALID')) {
               throw new Error('INVALID_API_KEY');
             }
-            throw new Error(errMsg);
           }
 
-          if (response.status === 429) {
-            throw new Error('RATE_LIMIT');
+          console.warn(`[AiAssistant] Model '${model}' yanıt vermedi (${response.status}: ${errMsg}), sıradaki modele geçiliyor...`);
+          lastError = new Error(errMsg);
+
+          // Kota / yoğunluk / 404 / 503 durumlarında döngü bir sonraki adaya devam eder
+          continue;
+        } catch (fetchErr) {
+          clearTimeout(timeoutId);
+          if (fetchErr.message === 'INVALID_API_KEY') {
+            throw fetchErr;
+          }
+          if (fetchErr.name === 'AbortError') {
+            console.warn(`[AiAssistant] Model '${model}' zaman aşımına uğradı (16s), sıradaki modele geçiliyor...`);
+            lastError = new Error('TIMEOUT_ERROR');
+            continue;
           }
 
-          throw new Error(errMsg);
+          console.warn(`[AiAssistant] Model '${model}' ağ hatası:`, fetchErr);
+          lastNetworkError = true;
+          lastError = new Error('NETWORK_ERROR');
         }
-
-      const data = await response.json();
-      if (
-        data.candidates &&
-        data.candidates.length > 0 &&
-        data.candidates[0].content &&
-        data.candidates[0].content.parts &&
-        data.candidates[0].content.parts.length > 0
-      ) {
-        return data.candidates[0].content.parts[0].text;
       }
 
-      throw new Error('EMPTY_RESPONSE');
+      if (lastNetworkError && (!lastError || lastError.message === 'NETWORK_ERROR')) {
+        throw new Error('NETWORK_ERROR');
+      }
+
+      throw lastError || new Error('MODEL_UNAVAILABLE');
     },
 
     /**
-     * Modern Google Gemini Interactions API REST çağrısı
+     * Modern Google Gemini Interactions API REST çağrısı (Opsiyonel / İleri düzey)
      * POST https://generativelanguage.googleapis.com/v1beta/interactions
      * @param {string} apiKey
      * @param {string} model
@@ -470,7 +455,7 @@ TALİMATLAR:
         input: fullPrompt,
         system_instruction: systemInstructionText,
         generation_config: {
-          temperature: 0.2
+          max_output_tokens: 2048
         }
       };
 
@@ -478,7 +463,8 @@ TALİMATLAR:
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-goog-api-key': apiKey
+          'x-goog-api-key': apiKey,
+          'Api-Revision': '2026-05-20'
         },
         body: JSON.stringify(body),
         signal: signal
@@ -488,15 +474,6 @@ TALİMATLAR:
         let errBody = {};
         try { errBody = await res.json(); } catch (e) {}
         const msg = (errBody.error && errBody.error.message) ? errBody.error.message : `HTTP_${res.status}`;
-
-        if (
-          (msg.includes('high demand') || msg.includes('Spikes in demand') || res.status === 503) &&
-          model !== 'gemini-flash-latest'
-        ) {
-          console.warn('[AiAssistant] Interactions API yoğun (high demand), gemini-flash-latest deneniyor...');
-          await new Promise(r => setTimeout(r, 1000));
-          return await this.callInteractionsApi(apiKey, 'gemini-flash-latest', userPrompt, history, context, signal);
-        }
 
         if (res.status === 400 || res.status === 403) {
           if (msg.includes('API key not valid') || msg.includes('API_KEY_INVALID')) {

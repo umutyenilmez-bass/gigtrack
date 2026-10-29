@@ -4753,14 +4753,15 @@
       try {
         const detected = await AiAssistant.detectModel();
         await AiAssistant.ask('Test bağlantısı', [], { gigs: [], dayNotes: {}, activeYear: '2026' });
-        showToast(`✓ Gemini API bağlantısı başarılı! (${detected})`);
+        const active = (typeof localStorage !== 'undefined' && localStorage.getItem('gigtrack_gemini_active_model')) || detected;
+        showToast(`✓ Gemini API bağlantısı başarılı! (${active})`);
       } catch (e) {
         console.error(e);
         let msg = e.message;
         if (msg === 'INVALID_API_KEY') msg = 'API anahtarı geçersiz';
-        else if (msg === 'NETWORK_ERROR') msg = 'Ağ bağlantısı kurulamadı';
+        else if (msg === 'NETWORK_ERROR') msg = 'Ağ/CORS hatası (localhost veya web üzerinden açın)';
         else if (msg === 'RATE_LIMIT') msg = 'Kota veya hız sınırına ulaşıldı';
-        else if (msg === 'TIMEOUT_ERROR') msg = 'Zaman aşımı (18s)';
+        else if (msg === 'TIMEOUT_ERROR') msg = 'Zaman aşımı (16s)';
         showToast('⚠️ Bağlantı başarısız: ' + msg);
       }
     }
@@ -4913,14 +4914,15 @@
       try {
         const detected = await AiAssistant.detectModel();
         await AiAssistant.ask('Test bağlantısı', [], { gigs: [], dayNotes: {}, activeYear: '2026' });
-        showToast(`✓ Bağlantı başarılı! Model: ${detected}`);
+        const active = (typeof localStorage !== 'undefined' && localStorage.getItem('gigtrack_gemini_active_model')) || detected;
+        showToast(`✓ Bağlantı başarılı! Model: ${active}`);
       } catch (e) {
         console.error(e);
         let msg = e.message;
         if (msg === 'INVALID_API_KEY') msg = 'API anahtarı geçersiz';
-        else if (msg === 'NETWORK_ERROR') msg = 'Ağ bağlantısı kurulamadı';
+        else if (msg === 'NETWORK_ERROR') msg = 'Ağ/CORS hatası (localhost veya web üzerinden açın)';
         else if (msg === 'RATE_LIMIT') msg = 'Kota veya hız sınırına ulaşıldı';
-        else if (msg === 'TIMEOUT_ERROR') msg = 'Zaman aşımı (18s)';
+        else if (msg === 'TIMEOUT_ERROR') msg = 'Zaman aşımı (16s)';
         showToast('⚠️ Bağlantı başarısız: ' + msg);
       }
     }
@@ -5021,13 +5023,13 @@
         } else if (err.message === 'RATE_LIMIT') {
           errorMsg = '⚠️ API hız/kota sınırına ulaşıldı. Lütfen biraz bekleyip tekrar deneyin.';
         } else if (err.message === 'NETWORK_ERROR') {
-          errorMsg = '⚠️ İnternet bağlantısı kurulamadı. Lütfen ağınızı kontrol edin.';
+          errorMsg = '⚠️ Ağ/CORS bağlantı hatası. Tarayıcıda doğrudan dosya (file://) üzerinden açıyorsanız Google API engellenebilir. Lütfen http://localhost:8080 veya web üzerinden açın.';
         } else if (err.message === 'TIMEOUT_ERROR') {
-          errorMsg = '⚠️ Zaman aşımı (18s): Google Gemini API yanıt vermedi. VPN veya internet bağlantınızı kontrol edip tekrar deneyin.';
+          errorMsg = '⚠️ Zaman aşımı: Google Gemini API modelleri yanıt vermedi. İnternet bağlantınızı kontrol edip tekrar deneyin.';
         } else if (err.message && err.message.toLowerCase().includes('location')) {
           errorMsg = '⚠️ Google Gemini bu bölgede kısıtlı olabilir (VPN kullanıyorsanız kapatmayı veya Türkiye\'ye almayı deneyin). Detay: ' + err.message;
         } else if (err.message && (err.message.includes('high demand') || err.message.includes('Spikes in demand'))) {
-          errorMsg = '⚠️ Google sunucuları şu an dünya genelinde anlık bir aşırı yoğunluk yaşıyor (High Demand / 503). API anahtarınız geçerli. Lütfen birkaç saniye sonra tekrar deneyin.';
+          errorMsg = '⚠️ Google sunucuları anlık aşırı yoğunluk yaşıyor. Lütfen birkaç saniye sonra tekrar deneyin.';
         } else {
           errorMsg = '⚠️ API Hatası: ' + err.message;
         }
