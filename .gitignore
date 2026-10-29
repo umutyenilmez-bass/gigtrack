@@ -5,3 +5,10 @@ node_modules
 .env.*
 *.key
 .superpowers/
+
+# IDE & Editor Settings
+.idea/
+android/.idea/
+*.iml
+.DS_Store
+Thumbs.db
